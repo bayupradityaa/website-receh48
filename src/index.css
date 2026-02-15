@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+@layer components {
+  .tone-surface {
+    @apply bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl;
+  }
+  .tone-surface-strong {
+    @apply bg-white/8 border border-white/12 backdrop-blur-xl rounded-3xl;
+  }
+  .tone-text-muted {
+    @apply text-white/70;
+  }
+  .tone-title {
+    @apply text-white font-extrabold;
+  }
+  .tone-btn-primary {
+    @apply bg-gradient-to-r from-amber-300 to-yellow-200 text-black font-semibold hover:brightness-95;
+  }
+  .tone-btn-ghost {
+    @apply bg-white/10 hover:bg-white/15 border border-white/15 text-white font-semibold;
+  }
+
+  /* ✅ Reusable scroll container (vertical + horizontal if needed) */
+  .tone-scroll {
+    @apply overflow-auto;
+    max-height: 70vh;
+  }
+
+  /* (Optional) versi lebih pendek */
+  .tone-scroll-tight {
+    @apply overflow-auto;
+    max-height: 60vh;
+  }
+}
+
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0A0E17; /* sama seperti background utama */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1F2937; /* gray-800 */
+  border-radius: 8px;
+  border: 2px solid #0A0E17;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #374151; /* gray-700 */
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #1F2937 #0A0E17;
+}
