@@ -220,7 +220,7 @@ export default function Reviews() {
                 to="/review"
                 className="px-5 py-3 rounded-xl bg-primary-600 text-white shadow-lg font-semibold hover:bg-primary-700 transition"
               >
-                ✍️ Tulis Review
+                Tulis Review
               </Link>
             </div>
           </div>

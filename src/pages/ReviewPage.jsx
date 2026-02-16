@@ -15,7 +15,7 @@ const SERVICE_OPTIONS = [
 
 function StarPicker({ value, onChange }) {
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-2">
       {Array.from({ length: 5 }).map((_, i) => {
         const star = i + 1;
         const active = star <= value;
@@ -24,13 +24,15 @@ function StarPicker({ value, onChange }) {
             key={star}
             type="button"
             onClick={() => onChange(star)}
-            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-              active ? "bg-yellow-100" : "bg-dark-50 hover:bg-dark-100"
+            className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-all border ${
+              active
+                ? "bg-yellow-500/15 border-yellow-500/30"
+                : "bg-[#0A0E17] border-gray-700 hover:bg-[#1A1F2E]"
             }`}
             aria-label={`Rate ${star} stars`}
           >
             <svg
-              className={`w-6 h-6 ${active ? "text-yellow-400" : "text-dark-300"}`}
+              className={`w-6 h-6 ${active ? "text-yellow-400" : "text-gray-500"}`}
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -70,7 +72,6 @@ export default function ReviewPage() {
   const isCooldown = remainingMs > 0;
 
   useEffect(() => {
-    // supaya countdown terasa, trigger re-render tiap 1 detik
     if (!isCooldown) return;
     const t = setInterval(() => {}, 1000);
     return () => clearInterval(t);
@@ -109,7 +110,7 @@ export default function ReviewPage() {
         service_type: serviceType,
         rating,
         message: message.trim(),
-        is_approved: false, // penting: RLS juga memaksa false
+        is_approved: false,
       };
 
       const { error: insertError } = await supabase.from("reviews").insert(payload);
@@ -129,22 +130,25 @@ export default function ReviewPage() {
   }
 
   return (
-    <div className="min-h-screen bg-dark-50 py-16">
+    <div className="min-h-screen bg-[#0A0E17] text-white py-16">
       <div className="container mx-auto px-4">
         <div className="max-w-2xl mx-auto">
           <div className="mb-6">
-            <Link to="/" className="text-primary-700 hover:text-primary-800 font-semibold">
+            <Link to="/" className="text-primary-400 hover:text-primary-300 font-semibold">
               ← Kembali ke Home
             </Link>
           </div>
 
-          <Card className="p-8 rounded-3xl shadow-xl">
-            <h1 className="text-3xl font-bold text-dark-900 mb-2">Tulis Review</h1>
+          <Card className="p-8 rounded-3xl border border-gray-800 bg-[#12161F] shadow-2xl">
+            <h1 className="text-3xl font-bold text-white mb-2">Tulis Review</h1>
+            <p className="text-sm text-gray-400 mb-6">
+              Review kamu akan tampil setelah di-approve admin.
+            </p>
 
             {error && <ErrorMessage message={error} />}
             {success && (
-              <div className="p-4 rounded-xl bg-green-50 text-green-800 font-semibold mb-4">
-                Review berhasil dikirim! ✅ 
+              <div className="p-4 rounded-xl bg-green-500/10 text-green-300 font-semibold mb-4 border border-green-500/20">
+                Review berhasil dikirim! ✅
               </div>
             )}
 
@@ -156,9 +160,9 @@ export default function ReviewPage() {
               </div>
 
               <div>
-                <label className="block font-semibold text-dark-800 mb-2">Nama</label>
+                <label className="block font-semibold text-gray-200 mb-2">Nama</label>
                 <input
-                  className="w-full px-4 py-3 rounded-xl border border-dark-200 focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white"
+                  className="w-full px-4 py-3 rounded-xl bg-[#0A0E17] border border-gray-700 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   placeholder="Misal: Nur Intan / Anonim"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -167,9 +171,9 @@ export default function ReviewPage() {
               </div>
 
               <div>
-                <label className="block font-semibold text-dark-800 mb-2">Layanan</label>
+                <label className="block font-semibold text-gray-200 mb-2">Layanan</label>
                 <select
-                  className="w-full px-4 py-3 rounded-xl border border-dark-200 focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white"
+                  className="w-full px-4 py-3 rounded-xl bg-[#0A0E17] border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
                   value={serviceType}
                   onChange={(e) => setServiceType(e.target.value)}
                 >
@@ -182,22 +186,20 @@ export default function ReviewPage() {
               </div>
 
               <div>
-                <label className="block font-semibold text-dark-800 mb-2">Rating</label>
+                <label className="block font-semibold text-gray-200 mb-2">Rating</label>
                 <StarPicker value={rating} onChange={setRating} />
               </div>
 
               <div>
-                <label className="block font-semibold text-dark-800 mb-2">Pesan</label>
+                <label className="block font-semibold text-gray-200 mb-2">Pesan</label>
                 <textarea
-                  className="w-full px-4 py-3 rounded-xl border border-dark-200 focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white min-h-[140px]"
+                  className="w-full px-4 py-3 rounded-xl bg-[#0A0E17] border border-gray-700 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 min-h-[140px]"
                   placeholder="Ceritain pengalaman kamu…"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   maxLength={500}
                 />
-                <div className="text-sm text-dark-500 mt-1">
-                  {message.length}/500
-                </div>
+                <div className="text-sm text-gray-500 mt-1">{message.length}/500</div>
               </div>
 
               <Button
@@ -216,6 +218,10 @@ export default function ReviewPage() {
                   "Kirim Review"
                 )}
               </Button>
+
+              <div className="text-xs text-gray-500 text-center">
+                Terimakasih sudah mengisi review untuk kita.
+              </div>
             </form>
           </Card>
         </div>

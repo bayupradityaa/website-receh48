@@ -17,7 +17,9 @@ export function Footer() {
               <li>
                 <a href="/video-call" className="hover:text-white transition-colors">Joki Video Call</a>
               </li>
-              <li className="opacity-50">Meet & Greet (Coming Soon)</li>
+              <li>
+                <a href="/meet-greet" className="hover:text-white transition-colors">Joki Meet N Greet</a>
+              </li>
               <li>
                 <a href="/twoshot" className="hover:text-white transition-colors">Joki 2Shoot</a>
               </li>

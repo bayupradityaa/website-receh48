@@ -103,7 +103,7 @@ export function Header() {
                 </div>
               </>
             ) : (
-              <div className="text-white/60 text-sm font-semibold">Guest</div>
+              <div className=""></div>
             )}
           </div>
         </div>
