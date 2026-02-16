@@ -10,4 +10,17 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react':    ['react', 'react-dom', 'react-router-dom'],
+          'vendor-supabase': ['@supabase/supabase-js'],
+          'vendor-form':     ['react-hook-form', '@hookform/resolvers', 'zod'],
+          'vendor-icons':    ['lucide-react'],
+        },
+      },
+    },
+  },
 })
