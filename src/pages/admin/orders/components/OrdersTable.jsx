@@ -1,11 +1,10 @@
 import { Badge } from '../../../../components/ui/Badge';
 import {
   formatCurrency,
-  formatDateTime,
   getStatusColor,
   getStatusLabel,
 } from '../../../../lib/utils';
-import { Video, Camera, Handshake } from 'lucide-react';
+import { Video, Camera, Handshake, Mail } from 'lucide-react';
 
 const ORDER_TYPE_CONFIG = {
   vc: {
@@ -43,6 +42,7 @@ export default function OrdersTable({
   onToggleSelect,
   onToggleSelectAll,
   onDeleteOrder,
+  onSendPaymentEmail,   // (order) => void
 }) {
   if (!orders || orders.length === 0) {
     return (
@@ -54,11 +54,12 @@ export default function OrdersTable({
 
   const isSelectable = typeof onToggleSelect === 'function';
   const isDeletable = typeof onDeleteOrder === 'function';
+  const isEmailable = typeof onSendPaymentEmail === 'function';
 
   return (
     <div className="bg-[#12161F] rounded-2xl border border-gray-800 overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[1080px]">
+        <table className="w-full min-w-[1200px]">
           <thead className="sticky top-0 z-10 bg-[#1A1F2E]">
             <tr className="border-b border-gray-800">
               <th className="px-4 py-4 text-left w-10">
@@ -86,18 +87,22 @@ export default function OrdersTable({
           <tbody className="divide-y divide-gray-800">
             {orders.map((order) => {
               const checked = selectedIds?.has?.(order.id) ?? false;
+              // Cek semua kemungkinan nilai status "selesai"
+              const isCompleted = ['completed', 'done', 'selesai'].includes(order.status);
+              const hasEmail = Boolean(order.contact_email);
+
               return (
                 <tr
                   key={order.id}
-                  className={`transition-colors cursor-pointer ${
-                    checked ? 'bg-primary-900/20' : 'hover:bg-[#1A1F2E]'
-                  }`}
+                  className={`transition-colors cursor-pointer ${checked ? 'bg-primary-900/20' : 'hover:bg-[#1A1F2E]'
+                    }`}
                   onClick={() => onOrderClick?.(order)}
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) => { if (e.key === 'Enter') onOrderClick?.(order); }}
                   title="Klik untuk melihat detail"
                 >
+                  {/* Checkbox */}
                   <td className="px-4 py-4" onClick={(e) => e.stopPropagation()}>
                     {isSelectable && (
                       <input
@@ -110,14 +115,17 @@ export default function OrdersTable({
                     )}
                   </td>
 
+                  {/* ID */}
                   <td className="px-4 py-4 text-sm font-mono text-gray-400">
                     {order.id?.slice?.(0, 8) || '-'}
                   </td>
 
+                  {/* Tipe */}
                   <td className="px-4 py-4">
                     <OrderTypeBadge orderType={order.order_type || 'vc'} />
                   </td>
 
+                  {/* Customer */}
                   <td className="px-4 py-4 text-sm">
                     <div className="font-medium text-white">{order.customer_name || '-'}</div>
                     {order.note && (
@@ -127,39 +135,59 @@ export default function OrdersTable({
                     )}
                   </td>
 
+                  {/* Email */}
                   <td className="px-4 py-4 text-sm text-gray-400">
                     <span className="inline-block max-w-[200px] truncate">
                       {order.contact_email || '-'}
                     </span>
                   </td>
 
+                  {/* Status */}
                   <td className="px-4 py-4">
                     <Badge className={getStatusColor(order.status)}>
                       {getStatusLabel(order.status)}
                     </Badge>
                   </td>
 
+                  {/* Total Fee */}
                   <td className="px-4 py-4 text-sm font-semibold text-primary-400 text-right">
                     {formatCurrency(order.total_fee ?? 0)}
                   </td>
 
+                  {/* Handled By */}
                   <td className="px-4 py-4 text-sm text-gray-400">
                     {order.handled_by || '-'}
                   </td>
 
+                  {/* Aksi */}
                   <td className="px-4 py-4 text-center" onClick={(e) => e.stopPropagation()}>
-                    <div className="flex items-center justify-center gap-2">
+                    <div className="flex items-center justify-center gap-2 flex-nowrap">
+                      {/* Detail */}
                       <button
                         onClick={() => onOrderClick?.(order)}
-                        className="px-3 py-1.5 text-sm font-medium bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors"
+                        className="px-3 py-1.5 text-sm font-medium bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors whitespace-nowrap"
                         title="Lihat detail"
                       >
                         Detail
                       </button>
+
+                      {/* Kirim Tagihan — hanya tampil jika status selesai & ada email */}
+                      {isEmailable && isCompleted && hasEmail && (
+                        <button
+                          onClick={() => onSendPaymentEmail(order)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors whitespace-nowrap"
+                          title="Kirim email tagihan ke customer"
+                        >
+                          <Mail className="w-3.5 h-3.5" />
+                          Kirim Email
+                        </button>
+                      )}
+
+                      {/* Hapus */}
                       {isDeletable && (
                         <button
                           onClick={() => onDeleteOrder(order.id)}
-                          className="px-3 py-1.5 text-sm font-medium bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+                          className="px-3 py-1.5 text-sm font-medium bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors whitespace-nowrap"
                           title="Hapus pesanan"
                         >
                           Hapus
@@ -175,7 +203,9 @@ export default function OrdersTable({
       </div>
 
       <div className="px-4 py-3 text-xs text-gray-500 border-t border-gray-800 bg-[#0A0E17]">
-        Klik baris untuk membuka detail.
+        Klik baris untuk membuka detail.{' '}
+        <span className="text-amber-400">Kirim Tagihan</span> otomatis muncul pada pesanan
+        berstatus <span className="text-white">Selesai</span>.
       </div>
     </div>
   );

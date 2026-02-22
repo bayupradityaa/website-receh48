@@ -10,8 +10,9 @@ import ReviewPage from "./pages/ReviewPage";
 import Reviews from "./pages/Reviews";
 import VideoCall from "./pages/VideoCall";
 import TwoShot from "./pages/TwoShot";
-import MeetGreet from "./pages/MeetGreet"; // 👈
+import MeetGreet from "./pages/MeetGreet";
 import OrderSuccess from "./pages/OrderSuccess";
+import CekPesanan from './pages/CekPesanan';
 import Login from "./pages/auth/Login";
 import AdminDashboard from "./pages/admin/Dashboard.jsx";
 
@@ -40,7 +41,8 @@ export default function App() {
           <Route path="/meet-greet"    element={<MeetGreet />} />
           <Route path="/order-success" element={<OrderSuccess />} />
           <Route path="/login"         element={<Login />} />
-
+          <Route path="/cek-pesanan"   element={<CekPesanan />} />
+          
           <Route
             path="/admin/*"
             element={

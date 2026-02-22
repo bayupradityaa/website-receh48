@@ -387,36 +387,43 @@ const faqData = [
     q: "Apa itu layanan Joki Tiket Receh48?",
     a: "Receh48 adalah layanan joki tiket terpercaya untuk event JKT48, mulai dari Video Call, Meet & Greet, 2-Shot, hingga Konser. Kami hadir buat kamu yang mau beli slot tapi terbatas waktu, takut kehabisan, atau butuh bantuan prosesnya dari awal sampai selesai.",
     emoji: "🎟️",
+    tag: "Tentang Kami",
   },
   {
     q: "Apakah layanan ini aman dan terpercaya?",
-    a: "100% aman! Receh48 sudah melayani 500+ pesanan dengan tingkat kepuasan 98%. Semua transaksi terdokumentasi dan kami berkomitmen penuh untuk menjaga kepercayaan setiap pelanggan. Cek thread review kami di X (Twitter) untuk bukti nyata #staywithreceh.",
+    a: "100% aman! Receh48 sudah melayani 500+ pesanan dengan tingkat kepuasan 98%. Semua transaksi terdokumentasi dan kami berkomitmen penuh menjaga kepercayaan setiap pelanggan. Cek thread review kami di X untuk bukti nyata.",
     emoji: "🔒",
+    tag: "Keamanan",
   },
   {
     q: "Bagaimana cara memesan layanan Joki di Receh48?",
-    a: "Mudah banget! Klik tombol 'Form Pemesanan' → pilih 'Form Joki (sesuai apa yang kalian mau)' → isi form dengan detail pesanan kamu (member pilihan, slot, dll) → tim kami akan segera menghubungi kamu via DM atau kontak yang kamu cantumkan. Fast response dijamin! ⚡",
+    a: "Klik tombol 'Form Pemesanan' → pilih tipe joki → isi form dengan detail pesanan kamu → tim kami segera menghubungi kamu via DM atau kontak yang kamu cantumkan. Fast response dijamin! ⚡",
     emoji: "📋",
+    tag: "Cara Pesan",
   },
   {
     q: "Berapa lama proses setelah pemesanan?",
-    a: "Tim kami akan merespons pesanan kamu dalam waktu kurang dari 1 jam (selama jam operasional). Proses joki dilakukan sesuai jadwal event yang sudah ditentukan. Kami pastikan kamu dapat update real-time selama proses berlangsung.",
+    a: "Tim kami merespons dalam waktu kurang dari beberapa menit selama jam operasional. Proses joki dilakukan sesuai jadwal event. Kamu dapat update real-time selama proses berlangsung.",
     emoji: "⏱️",
+    tag: "Proses",
   },
   {
     q: "Metode pembayaran apa yang tersedia?",
-    a: "Kami menerima berbagai metode pembayaran termasuk transfer bank, e-wallet (GoPay, OVO, Dana, ShopeePay), serta QRIS. Detail pembayaran akan diberikan saat konfirmasi pesanan. Kami juga tersedia di Shopee untuk transaksi lebih aman!",
+    a: "Transfer bank, e-wallet (GoPay, Dana), dan QRIS. Detail pembayaran diberikan saat konfirmasi pembayaran pesanan.",
     emoji: "💳",
+    tag: "Pembayaran",
   },
   {
     q: "Pembayarannya setelah atau sebelum joki?",
-    a: "Untuk pembayaran fee joki di kita yaitu setelag mendapatkan tiket, jadi kalian melakukan pembayaran setelah menerima email tiket yang kalian pesan dengan kata lain bayarnya belakangan.",
+    a: "Bayar belakangan! Kamu melakukan pembayaran fee joki setelah menerima email tiket yang dipesan. Jadi kamu hanya bayar setelah tiket berhasil di tangan.",
     emoji: "🛡️",
+    tag: "Pembayaran",
   },
   {
     q: "Bisa request member JKT48 tertentu?",
-    a: "Bisa! Kamu bebas request member favorit kamu (oshi). Saat mengisi form pemesanan, ada kolom khusus untuk memilih member yang diinginkan. Kami akan semaksimal mungkin memenuhi permintaan kamu sesuai ketersediaan slot.",
+    a: "Bisa! Kamu bebas request member favorit kamu (oshi). Saat mengisi form pemesanan ada kolom khusus untuk memilih member yang diinginkan sesuai ketersediaan slot.",
     emoji: "⭐",
+    tag: "Request",
   },
 ];
 
@@ -425,159 +432,243 @@ function FAQSection() {
   const toggle = (i) => setOpen(open === i ? null : i);
 
   return (
-    <section id="faq" className="relative overflow-hidden py-24 text-white">
-      {/* Base */}
+    <section id="faq" className="relative overflow-hidden py-28 text-white">
+      {/* ── Background ── */}
       <div className="absolute inset-0 bg-[#06070A]" />
 
       {/* Glow blobs */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[860px] h-[860px] rounded-full bg-amber-400/10 blur-[140px]" />
-        <div className="absolute -bottom-60 -right-48 w-[720px] h-[720px] rounded-full bg-primary-600/10 blur-[140px]" />
-        <div className="absolute top-1/2 -left-48 w-[520px] h-[520px] rounded-full bg-yellow-300/8 blur-[120px]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] rounded-full bg-amber-400/8 blur-[130px]" />
+        <div className="absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full bg-primary-600/8 blur-[120px]" />
       </div>
 
-      {/* Grid */}
+      {/* Dot grid */}
       <div
-        className="absolute inset-0 opacity-[0.09] pointer-events-none"
+        className="absolute inset-0 opacity-[0.12] pointer-events-none"
         style={{
-          backgroundImage:
-            "linear-gradient(to right, rgba(255,255,255,0.07) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px)",
-          backgroundSize: "60px 60px",
+          backgroundImage: "radial-gradient(circle, rgba(255,215,130,0.35) 1px, transparent 1px)",
+          backgroundSize: "36px 36px",
         }}
       />
 
-      <div className="container mx-auto px-4 relative z-10 max-w-4xl">
+      <div className="container mx-auto px-4 relative z-10 max-w-6xl">
 
-        {/* Title */}
-        <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-300/10 border border-amber-300/20 text-amber-200 text-sm font-bold mb-5 tracking-wide">
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+        {/* ── Title ── */}
+        <div className="text-center mb-20">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-300/10 border border-amber-300/20 text-amber-200 text-xs font-bold mb-5 tracking-[0.15em] uppercase">
+            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
             </svg>
-            FAQ
+            Pertanyaan Umum
           </div>
 
-          <h2 className="text-3xl md:text-5xl font-display font-extrabold leading-tight">
-            Ada Pertanyaan?{" "}
-            <span className="block mt-1 bg-gradient-to-r from-amber-200 via-yellow-200 to-amber-400 bg-clip-text text-transparent">
-              Kami Punya Jawabannya
+          <h2 className="text-4xl md:text-6xl font-display font-black leading-[1.05] tracking-tight">
+            Semua yang Perlu{" "}
+            <br className="hidden sm:block" />
+            <span className="bg-gradient-to-r from-amber-200 via-yellow-200 to-amber-400 bg-clip-text text-transparent">
+              Kamu Tahu
             </span>
           </h2>
 
-          <p className="text-white/60 mt-4 text-lg max-w-xl mx-auto">
-            Semua yang perlu kamu tahu tentang layanan Receh48, dijawab tuntas di sini 💬
+          <p className="text-white/50 mt-5 text-base max-w-md mx-auto leading-relaxed">
+            Jawaban lengkap untuk semua pertanyaanmu tentang layanan Receh48
           </p>
         </div>
 
-        {/* FAQ Items */}
+        {/* ── FAQ Layout: big featured card + grid ── */}
         <div className="space-y-4">
-          {faqData.map((faq, i) => {
-            const isOpen = open === i;
-            return (
-              <div
-                key={i}
-                className={`group relative rounded-2xl transition-all duration-300 ${
-                  isOpen
-                    ? "bg-gradient-to-br from-amber-300/8 to-yellow-200/5 border border-amber-300/30 shadow-[0_0_60px_-20px_rgba(255,215,130,0.18)]"
-                    : "bg-white/[0.04] border border-white/[0.08] hover:border-white/[0.15] hover:bg-white/[0.06]"
-                }`}
-              >
-                {/* Left accent bar when open */}
-                {isOpen && (
-                  <div className="absolute left-0 top-4 bottom-4 w-[3px] rounded-full bg-gradient-to-b from-amber-300 via-yellow-200 to-amber-400" />
-                )}
 
-                {/* Question row */}
-                <button
-                  onClick={() => toggle(i)}
-                  className="w-full flex items-center gap-4 px-6 py-5 text-left"
-                >
-                  {/* Emoji badge */}
-                  <div
-                    className={`flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center text-xl transition-all duration-300 ${
-                      isOpen
-                        ? "bg-gradient-to-br from-amber-300/30 to-yellow-200/20 border border-amber-300/30"
-                        : "bg-white/[0.07] border border-white/[0.08] group-hover:bg-white/[0.10]"
-                    }`}
-                  >
-                    {faq.emoji}
-                  </div>
+          {/* ── Row 1: Full-width featured item (first FAQ) ── */}
+          <FeaturedCard faq={faqData[0]} index={0} open={open} toggle={toggle} />
 
-                  <span
-                    className={`flex-1 font-bold text-[15px] md:text-base leading-snug transition-colors duration-300 ${
-                      isOpen ? "text-amber-200" : "text-white/90"
-                    }`}
-                  >
-                    {faq.q}
-                  </span>
+          {/* ── Row 2: Two columns ── */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <NormalCard faq={faqData[1]} index={1} open={open} toggle={toggle} />
+            <NormalCard faq={faqData[2]} index={2} open={open} toggle={toggle} />
+          </div>
 
-                  {/* Chevron */}
-                  <div
-                    className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
-                      isOpen
-                        ? "bg-amber-300/20 border border-amber-300/30 rotate-180"
-                        : "bg-white/[0.07] border border-white/[0.08]"
-                    }`}
-                  >
-                    <svg
-                      className={`w-4 h-4 transition-colors duration-300 ${isOpen ? "text-amber-200" : "text-white/60"}`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
-                </button>
+          {/* ── Row 3: Three columns ── */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <NormalCard faq={faqData[3]} index={3} open={open} toggle={toggle} />
+            <NormalCard faq={faqData[4]} index={4} open={open} toggle={toggle} />
+            <NormalCard faq={faqData[5]} index={5} open={open} toggle={toggle} />
+          </div>
 
-                {/* Answer */}
-                <div
-                  className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                    isOpen ? "max-h-60 opacity-100" : "max-h-0 opacity-0"
-                  }`}
-                >
-                  <div className="px-6 pb-6 pl-[4.75rem]">
-                    <p className="text-white/70 leading-relaxed text-[15px]">{faq.a}</p>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+          {/* ── Row 4: Full-width last ── */}
+          <FeaturedCard faq={faqData[6]} index={6} open={open} toggle={toggle} accent />
         </div>
 
-        {/* CTA bottom */}
-        <div className="mt-14 text-center">
-          <div className="inline-block rounded-3xl p-[1.5px] bg-gradient-to-br from-amber-300/50 via-primary-500/25 to-yellow-200/35">
-            <div className="rounded-[22px] bg-white/5 backdrop-blur border border-transparent px-8 py-7">
-              <p className="text-white/80 font-semibold text-lg mb-1">
-                Masih ada pertanyaan lain?
-              </p>
-              <p className="text-white/50 text-sm mb-5">
-                Hubungi kami langsung
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <a
-                  href="https://x.com/receh_48"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold
-                    bg-gradient-to-r from-amber-300 to-yellow-200 text-black hover:brightness-95
-                    shadow-[0_15px_60px_-30px_rgba(255,215,130,0.50)] transition-all text-sm"
-                >
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                  </svg>
-                  DM di X (Twitter)
-                </a>
-              </div>
+        {/* ── CTA ── */}
+        <div className="mt-20 relative">
+          {/* Glow behind CTA */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="w-96 h-24 bg-amber-400/10 blur-3xl rounded-full" />
+          </div>
+
+          <div className="relative flex flex-col sm:flex-row items-center justify-between gap-6
+                          bg-gradient-to-r from-white/[0.04] to-white/[0.02]
+                          border border-white/10 rounded-3xl px-8 py-6">
+            <div>
+              <p className="text-white font-bold text-lg">Masih ada pertanyaan lain?</p>
+              <p className="text-white/40 text-sm mt-0.5">Tim kami siap membantu kamu kapan saja</p>
             </div>
+
+            <a
+              href="https://x.com/receh_48"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-shrink-0 inline-flex items-center gap-2.5 px-7 py-3.5 rounded-2xl font-bold text-sm
+                         bg-gradient-to-r from-amber-300 to-yellow-200 text-black
+                         shadow-[0_0_40px_-10px_rgba(255,215,130,0.5)]
+                         hover:shadow-[0_0_60px_-10px_rgba(255,215,130,0.7)]
+                         hover:brightness-105 transition-all duration-200"
+            >
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
+              DM di X (Twitter)
+            </a>
           </div>
         </div>
+
       </div>
     </section>
   );
 }
 
+/* ── Featured Card (full-width, more visual weight) ─────────────────────── */
+function FeaturedCard({ faq, index, open, toggle, accent = false }) {
+  const isOpen = open === index;
+
+  return (
+    <div
+      className={`relative rounded-3xl border transition-all duration-300 overflow-hidden cursor-pointer
+        ${isOpen
+          ? "border-amber-400/40 bg-gradient-to-br from-amber-400/8 via-yellow-300/4 to-transparent shadow-[0_0_80px_-30px_rgba(255,215,130,0.25)]"
+          : "border-white/[0.08] bg-white/[0.03] hover:border-amber-400/20 hover:bg-white/[0.05]"
+        }`}
+      onClick={() => toggle(index)}
+    >
+      {/* Decorative number watermark */}
+      <span className="absolute right-6 top-1/2 -translate-y-1/2 text-[120px] font-black text-white/[0.025] select-none leading-none pointer-events-none">
+        {String(index + 1).padStart(2, "0")}
+      </span>
+
+      {/* Gold left bar when open */}
+      {isOpen && (
+        <div className="absolute left-0 inset-y-0 w-[3px] bg-gradient-to-b from-amber-300 via-yellow-200 to-amber-400 rounded-r-full" />
+      )}
+
+      <div className="flex items-start gap-5 px-8 py-7">
+        {/* Emoji */}
+        <div className={`flex-shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center text-2xl
+          transition-all duration-300
+          ${isOpen
+            ? "bg-amber-400/20 border border-amber-400/30"
+            : "bg-white/[0.06] border border-white/[0.08]"}`}
+        >
+          {faq.emoji}
+        </div>
+
+        <div className="flex-1 min-w-0">
+          {/* Tag */}
+          <span className={`inline-block text-[10px] font-bold uppercase tracking-[0.15em] mb-2
+            ${isOpen ? "text-amber-400" : "text-white/30"}`}>
+            {faq.tag}
+          </span>
+
+          {/* Question */}
+          <p className={`font-bold text-lg md:text-xl leading-snug transition-colors duration-200
+            ${isOpen ? "text-amber-100" : "text-white/90"}`}>
+            {faq.q}
+          </p>
+
+          {/* Answer */}
+          <div className={`overflow-hidden transition-all duration-300 ease-in-out
+            ${isOpen ? "max-h-48 opacity-100 mt-4" : "max-h-0 opacity-0"}`}>
+            <p className="text-white/60 leading-relaxed text-[15px] md:text-base">{faq.a}</p>
+          </div>
+        </div>
+
+        {/* Toggle icon */}
+        <div className={`flex-shrink-0 w-9 h-9 mt-1 rounded-full flex items-center justify-center
+          border transition-all duration-300
+          ${isOpen
+            ? "bg-amber-400/20 border-amber-400/30 rotate-45"
+            : "bg-white/[0.06] border-white/[0.08]"}`}
+        >
+          <svg className={`w-4 h-4 transition-colors ${isOpen ? "text-amber-300" : "text-white/40"}`}
+            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Normal Card (grid item) ──────────────────────────────────────────────── */
+function NormalCard({ faq, index, open, toggle }) {
+  const isOpen = open === index;
+
+  return (
+    <div
+      className={`relative rounded-2xl border transition-all duration-300 overflow-hidden cursor-pointer
+        ${isOpen
+          ? "border-amber-400/35 bg-gradient-to-br from-amber-400/8 to-transparent shadow-[0_0_50px_-20px_rgba(255,215,130,0.2)]"
+          : "border-white/[0.08] bg-white/[0.03] hover:border-amber-400/20 hover:bg-white/[0.05]"
+        }`}
+      onClick={() => toggle(index)}
+    >
+      {/* Gold left bar when open */}
+      {isOpen && (
+        <div className="absolute left-0 inset-y-0 w-[3px] bg-gradient-to-b from-amber-300 to-amber-500 rounded-r-full" />
+      )}
+
+      <div className="px-6 py-5">
+        {/* Top row: emoji + tag + toggle */}
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2.5">
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-lg
+              transition-all duration-200
+              ${isOpen ? "bg-amber-400/20 border border-amber-400/30" : "bg-white/[0.06] border border-white/[0.08]"}`}>
+              {faq.emoji}
+            </div>
+            <span className={`text-[10px] font-bold uppercase tracking-[0.15em]
+              ${isOpen ? "text-amber-400" : "text-white/30"}`}>
+              {faq.tag}
+            </span>
+          </div>
+
+          <div className={`w-7 h-7 rounded-full flex items-center justify-center border
+            transition-all duration-300
+            ${isOpen
+              ? "bg-amber-400/20 border-amber-400/30 rotate-45"
+              : "bg-white/[0.06] border-white/[0.08]"}`}>
+            <svg className={`w-3.5 h-3.5 transition-colors ${isOpen ? "text-amber-300" : "text-white/40"}`}
+              fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+          </div>
+        </div>
+
+        {/* Question */}
+        <p className={`font-bold text-[15px] leading-snug transition-colors duration-200
+          ${isOpen ? "text-amber-100" : "text-white/85"}`}>
+          {faq.q}
+        </p>
+
+        {/* Answer */}
+        <div className={`overflow-hidden transition-all duration-300 ease-in-out
+          ${isOpen ? "max-h-60 opacity-100 mt-3" : "max-h-0 opacity-0"}`}>
+          <div className="pt-3 border-t border-white/[0.07]">
+            <p className="text-white/55 leading-relaxed text-sm">{faq.a}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 /* ==============
    Home Component

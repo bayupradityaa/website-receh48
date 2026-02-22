@@ -11,7 +11,7 @@ export default function MembersManagement() {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold text-white mb-2">Members & Fees Management</h2>
-        <p className="text-gray-400">Kelola member JKT48 dan paket harga video call</p>
+        <p className="text-gray-400">Kelola Semua Member JKT48 Dan Masing Masing Harga Fee</p>
       </div>
 
       {/* Panel feel */}
