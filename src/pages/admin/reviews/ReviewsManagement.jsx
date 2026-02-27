@@ -120,7 +120,7 @@ export default function ReviewsManagement() {
 
       {/* Delete confirm */}
       <ConfirmDeleteModal
-        open={!!deleteTarget}
+        isOpen={!!deleteTarget}
         title="Hapus review?"
         description="Review yang dihapus tidak bisa dikembalikan."
         onClose={() => setDeleteTarget(null)}
