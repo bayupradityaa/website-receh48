@@ -62,9 +62,6 @@ export default function Login() {
               Login
             </Button>
           </form>
-          <p className="mt-4 text-sm text-center text-dark-600">
-            Untuk membuat admin user, daftar dulu lalu update role di database.
-          </p>
         </CardContent>
       </Card>
     </div>
