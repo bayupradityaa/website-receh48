@@ -6,18 +6,21 @@ import TermsManagement from './settings/TermsManagement';
 import TimetableManagement from './settings/TimetableManagement';
 import ReviewsManagement from "./reviews/ReviewsManagement";
 import ServiceStatusManagement from "./settings/ServiceStatusManagement";
+import RecapManagement from "./recap/RecapManagement";
+
 
 export default function AdminDashboard() {
   const location = useLocation();
   const navigate = useNavigate();
 
   const navItems = [
-    { path: '/admin',                label: 'Orders',            exact: true },
-    { path: '/admin/members',        label: 'Members & Fees'                 },
-    { path: '/admin/terms',          label: 'Terms'                          },
-    { path: '/admin/timetable',      label: 'Timetable Images'               },
-    { path: '/admin/reviews',        label: 'Reviews'                        },
-    { path: '/admin/service-status', label: 'Status Layanan'                 },
+    { path: '/admin', label: 'Orders', exact: true },
+    { path: '/admin/members', label: 'Members & Fees' },
+    { path: '/admin/recap', label: 'Rekap Total' },
+    { path: '/admin/terms', label: 'Terms' },
+    { path: '/admin/timetable', label: 'Timetable Images' },
+    { path: '/admin/reviews', label: 'Reviews' },
+    { path: '/admin/service-status', label: 'Status Layanan' },
   ];
 
   const isActive = (path, exact) => {
@@ -91,7 +94,7 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-                {/* Stats */}
+        {/* Stats */}
         {location.pathname === '/admin' && (
           <div className="mb-5 sm:mb-6">
             <DashboardStats />
@@ -102,11 +105,12 @@ export default function AdminDashboard() {
         <div className="bg-[#12161F] rounded-2xl border border-gray-800 overflow-hidden">
           <div className="p-4 sm:p-6">
             <Routes>
-              <Route path="/"               element={<OrdersManagement />} />
-              <Route path="/members"        element={<MembersManagement />} />
-              <Route path="/terms"          element={<TermsManagement />} />
-              <Route path="/timetable"      element={<TimetableManagement />} />
-              <Route path="/reviews"        element={<ReviewsManagement />} />
+              <Route path="/" element={<OrdersManagement />} />
+              <Route path="/members" element={<MembersManagement />} />
+              <Route path="/recap" element={<RecapManagement />} />
+              <Route path="/terms" element={<TermsManagement />} />
+              <Route path="/timetable" element={<TimetableManagement />} />
+              <Route path="/reviews" element={<ReviewsManagement />} />
               <Route path="/service-status" element={<ServiceStatusManagement />} />
             </Routes>
           </div>

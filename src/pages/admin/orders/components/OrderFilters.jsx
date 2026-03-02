@@ -1,4 +1,4 @@
-import { Search, Video, Filter, RefreshCw } from 'lucide-react';
+import { Search, Video, Filter, RefreshCw, UserCheck } from 'lucide-react';
 
 export default function OrderFilters({
   searchTerm,
@@ -7,12 +7,15 @@ export default function OrderFilters({
   onFilterChange,
   filterOrderType,
   onOrderTypeChange,
+  filterAssignedTo,
+  onAssignedToChange,
+  adminsList = [],
   onRefresh,
 }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 mb-6">
       {/* Search */}
-      <div className="lg:col-span-5">
+      <div className="lg:col-span-4">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
           <input
@@ -26,7 +29,7 @@ export default function OrderFilters({
       </div>
 
       {/* Type Dropdown */}
-      <div className="lg:col-span-3">
+      <div className="lg:col-span-2">
         <div className="relative">
           <Video className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
           <select
@@ -35,9 +38,9 @@ export default function OrderFilters({
             className="w-full pl-10 pr-10 py-3 bg-[#12161F] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none cursor-pointer"
           >
             <option value="">Semua Tipe</option>
-            <option value="vc">📹 Video Call (VC)</option>
-            <option value="twoshot">📸 TwoShot (2S)</option>
-            <option value="mng">🤝 Meet &amp; Greet (MnG)</option> 
+            <option value="vc">📹 VC</option>
+            <option value="twoshot">📸 2Shot</option>
+            <option value="mng">🤝 MnG</option>
           </select>
           <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">▼</span>
         </div>
@@ -57,6 +60,26 @@ export default function OrderFilters({
             <option value="confirmed">Confirmed</option>
             <option value="done">Done</option>
             <option value="cancelled">Cancelled</option>
+          </select>
+          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">▼</span>
+        </div>
+      </div>
+
+      {/* Assigned To Dropdown */}
+      <div className="lg:col-span-2">
+        <div className="relative">
+          <UserCheck className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+          <select
+            value={filterAssignedTo}
+            onChange={(e) => onAssignedToChange(e.target.value)}
+            className="w-full pl-10 pr-10 py-3 bg-[#12161F] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none cursor-pointer"
+          >
+            <option value="">Semua Admin</option>
+            {adminsList.map((a) => (
+              <option key={a.id} value={a.id}>
+                {a.full_name || a.email}
+              </option>
+            ))}
           </select>
           <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">▼</span>
         </div>

@@ -4,7 +4,7 @@ import {
   getStatusColor,
   getStatusLabel,
 } from '../../../../lib/utils';
-import { Video, Camera, Handshake, Mail } from 'lucide-react';
+import { Video, Camera, Handshake, Mail, StickyNote } from 'lucide-react';
 
 const ORDER_TYPE_CONFIG = {
   vc: {
@@ -42,7 +42,8 @@ export default function OrdersTable({
   onToggleSelect,
   onToggleSelectAll,
   onDeleteOrder,
-  onSendPaymentEmail,   // (order) => void
+  onSendPaymentEmail,
+  adminsList = [],   // [{ id, full_name }]
 }) {
   if (!orders || orders.length === 0) {
     return (
@@ -59,7 +60,7 @@ export default function OrdersTable({
   return (
     <div className="bg-[#12161F] rounded-2xl border border-gray-800 overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[1200px]">
+        <table className="w-full min-w-[1280px]">
           <thead className="sticky top-0 z-10 bg-[#1A1F2E]">
             <tr className="border-b border-gray-800">
               <th className="px-4 py-4 text-left w-10">
@@ -79,7 +80,8 @@ export default function OrdersTable({
               <th className="px-4 py-4 text-left text-sm font-semibold text-gray-300">Email</th>
               <th className="px-4 py-4 text-left text-sm font-semibold text-gray-300">Status</th>
               <th className="px-4 py-4 text-right text-sm font-semibold text-gray-300">Total Fee</th>
-              <th className="px-4 py-4 text-left text-sm font-semibold text-gray-300">Dikerjakan Oleh</th>
+              <th className="px-4 py-4 text-left text-sm font-semibold text-gray-300">Admin PIC</th>
+              <th className="px-4 py-4 text-center text-sm font-semibold text-gray-300">Catatan</th>
               <th className="px-4 py-4 text-center text-sm font-semibold text-gray-300">Aksi</th>
             </tr>
           </thead>
@@ -87,15 +89,20 @@ export default function OrdersTable({
           <tbody className="divide-y divide-gray-800">
             {orders.map((order) => {
               const checked = selectedIds?.has?.(order.id) ?? false;
-              // Cek semua kemungkinan nilai status "selesai"
               const isCompleted = ['completed', 'done', 'selesai'].includes(order.status);
               const hasEmail = Boolean(order.contact_email);
+              const hasAdminNote = Boolean(order.admin_note);
+
+              // Resolve assigned admin name
+              const assignedAdmin = adminsList.find((a) => a.id === order.assigned_to);
+              const adminPicName = assignedAdmin
+                ? (assignedAdmin.full_name || assignedAdmin.email || '–')
+                : (order.handled_by || '–');
 
               return (
                 <tr
                   key={order.id}
-                  className={`transition-colors cursor-pointer ${checked ? 'bg-primary-900/20' : 'hover:bg-[#1A1F2E]'
-                    }`}
+                  className={`transition-colors cursor-pointer ${checked ? 'bg-primary-900/20' : 'hover:bg-[#1A1F2E]'}`}
                   onClick={() => onOrderClick?.(order)}
                   role="button"
                   tabIndex={0}
@@ -154,9 +161,30 @@ export default function OrdersTable({
                     {formatCurrency(order.total_fee ?? 0)}
                   </td>
 
-                  {/* Handled By */}
+                  {/* Admin PIC */}
                   <td className="px-4 py-4 text-sm text-gray-400">
-                    {order.handled_by || '-'}
+                    {assignedAdmin ? (
+                      <span className="text-amber-400 font-medium">
+                        {assignedAdmin.full_name || assignedAdmin.email}
+                      </span>
+                    ) : (
+                      <span className="text-gray-600">–</span>
+                    )}
+                  </td>
+
+                  {/* Catatan Admin indicator */}
+                  <td className="px-4 py-4 text-center">
+                    {hasAdminNote ? (
+                      <span
+                        title={order.admin_note}
+                        className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full text-xs"
+                      >
+                        <StickyNote className="w-3 h-3" />
+                        Ada
+                      </span>
+                    ) : (
+                      <span className="text-gray-700 text-xs">–</span>
+                    )}
                   </td>
 
                   {/* Aksi */}
@@ -171,7 +199,7 @@ export default function OrdersTable({
                         Detail
                       </button>
 
-                      {/* Kirim Tagihan — hanya tampil jika status selesai & ada email */}
+                      {/* Kirim Tagihan */}
                       {isEmailable && isCompleted && hasEmail && (
                         <button
                           onClick={() => onSendPaymentEmail(order)}

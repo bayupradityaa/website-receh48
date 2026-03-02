@@ -3,6 +3,7 @@ import { Modal } from '../../../../components/ui/Modal';
 import { Input } from '../../../../components/ui/Input';
 import { Button } from '../../../../components/ui/Button';
 import { Badge } from '../../../../components/ui/Badge';
+import { Textarea } from '../../../../components/ui/Textarea';
 import {
   formatCurrency,
   formatDateTime,
@@ -26,18 +27,26 @@ export default function OrderDetailModal({
   onClose,
   onUpdateStatus,
   onSaveMeta,
+  onSaveAdminNote,  // (orderId, note) => Promise<boolean>
+  adminsList = [],  // [{ id, full_name, email }]
 }) {
   const [editTotalFee, setEditTotalFee] = useState('');
-  const [editHandledBy, setEditHandledBy] = useState('');
+  const [editAssignedTo, setEditAssignedTo] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  // Admin note — separate save action
+  const [adminNote, setAdminNote] = useState('');
+  const [savingNote, setSavingNote] = useState(false);
 
   useEffect(() => {
     if (!order) return;
     setEditTotalFee(formatNumberID(order.total_fee ?? 0));
-    setEditHandledBy(order.handled_by ?? '');
+    setEditAssignedTo(order.assigned_to ?? '');
+    setAdminNote(order.admin_note ?? '');
     setShowPassword(false);
     setSaving(false);
+    setSavingNote(false);
   }, [order, isOpen]);
 
   if (!order) return null;
@@ -48,9 +57,8 @@ export default function OrderDetailModal({
       const success = await onSaveMeta(
         order.id,
         parseNumberID(editTotalFee),
-        editHandledBy
+        editAssignedTo || null
       );
-
       if (success) {
         window.dispatchEvent(new Event('refreshDashboardStats'));
         onClose();
@@ -60,11 +68,20 @@ export default function OrderDetailModal({
     }
   };
 
+  const handleSaveNote = async () => {
+    if (!onSaveAdminNote) return;
+    try {
+      setSavingNote(true);
+      await onSaveAdminNote(order.id, adminNote);
+    } finally {
+      setSavingNote(false);
+    }
+  };
+
   const handleUpdateStatus = async (newStatus) => {
     try {
       setSaving(true);
 
-      // ✅ kalau mark done, pastikan total_fee tersimpan dulu
       if (newStatus === 'done') {
         const inputFee = parseNumberID(editTotalFee);
         const fallbackFee = Number(order.total_fee ?? 0);
@@ -75,15 +92,12 @@ export default function OrderDetailModal({
           return;
         }
 
-        // simpan meta dulu (fee + handled_by), biar revenue pasti kebaca
-        const metaOk = await onSaveMeta(order.id, finalFee, editHandledBy);
+        const metaOk = await onSaveMeta(order.id, finalFee, editAssignedTo || null);
         if (!metaOk) return;
       }
 
       const success = await onUpdateStatus(order.id, newStatus);
-
       if (success) {
-        // ✅ trigger refresh stats segera
         window.dispatchEvent(new Event('refreshDashboardStats'));
         onClose();
       }
@@ -92,10 +106,13 @@ export default function OrderDetailModal({
     }
   };
 
+  const assignedAdmin = adminsList.find((a) => a.id === order.assigned_to);
+
   return (
-    <Modal isOpen={isOpen} onClose={saving ? () => {} : onClose} title="Detail Pesanan" size="lg">
+    <Modal isOpen={isOpen} onClose={saving ? () => { } : onClose} title="Detail Pesanan" size="lg">
       <div className="space-y-5">
-        {/* Order Info */}
+
+        {/* ── Order Info ─────────────────────────────────────────────────────── */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <div>
             <strong className="text-white">Nama:</strong>
@@ -117,7 +134,7 @@ export default function OrderDetailModal({
             <p className="text-dark-300 mt-1">{order.contact_line || '-'}</p>
           </div>
 
-          {/* Password JKT */}
+          {/* Password JKT48 */}
           <div className="md:col-span-2">
             <strong className="text-white">Password Akun JKT48:</strong>
             <div className="mt-2 flex items-center gap-2">
@@ -129,7 +146,6 @@ export default function OrderDetailModal({
                   readOnly
                 />
               </div>
-
               <Button
                 type="button"
                 variant="outline"
@@ -167,7 +183,7 @@ export default function OrderDetailModal({
           </div>
         </div>
 
-        {/* Note */}
+        {/* ── Detail Pesanan (customer note) ─────────────────────────────────── */}
         <div>
           <strong className="text-white">Detail Pesanan:</strong>
           <div className="mt-2 bg-dark-900 p-4 rounded-lg border border-dark-600">
@@ -175,7 +191,43 @@ export default function OrderDetailModal({
           </div>
         </div>
 
-        {/* Editable */}
+        {/* ── Catatan Admin ──────────────────────────────────────────────────── */}
+        <div className="border-t border-gray-800 pt-4">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="font-semibold text-white flex items-center gap-2">
+              📝 Catatan Admin
+              <span className="text-xs font-normal text-gray-500">
+                (tidak terlihat oleh customer)
+              </span>
+            </h4>
+            <Button
+              onClick={handleSaveNote}
+              variant="outline"
+              size="sm"
+              isLoading={savingNote}
+              disabled={saving}
+            >
+              Simpan Catatan
+            </Button>
+          </div>
+
+          <Textarea
+            label=""
+            value={adminNote}
+            onChange={(e) => setAdminNote(e.target.value)}
+            placeholder="Tulis catatan internal admin di sini..."
+            rows={3}
+            disabled={saving || savingNote}
+          />
+
+          {order.admin_note_updated_at && (
+            <p className="mt-1.5 text-xs text-gray-500">
+              Terakhir diedit: {formatDateTime(order.admin_note_updated_at)}
+            </p>
+          )}
+        </div>
+
+        {/* ── Update Order ──────────────────────────────────────────────────── */}
         <div className="border-t border-gray-800 pt-4">
           <h4 className="font-semibold text-white mb-3">Update Order</h4>
 
@@ -189,17 +241,39 @@ export default function OrderDetailModal({
               helperText={`Preview: ${formatCurrency(parseNumberID(editTotalFee))}`}
             />
 
-            <Input
-              label="Dikerjakan Oleh"
-              type="text"
-              value={editHandledBy}
-              onChange={(e) => setEditHandledBy(e.target.value)}
-              placeholder="Nama admin / operator"
-            />
+            {/* Admin PIC dropdown */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                Admin PIC (Dikerjakan Oleh)
+              </label>
+              <div className="relative">
+                <select
+                  value={editAssignedTo}
+                  onChange={(e) => setEditAssignedTo(e.target.value)}
+                  disabled={saving}
+                  className="w-full px-3 py-2.5 bg-[#0A0E17] border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 appearance-none disabled:opacity-50"
+                >
+                  <option value="">— Belum di-assign —</option>
+                  {adminsList.map((a) => (
+                    <option key={a.id} value={a.id}>
+                      {a.full_name || a.email || a.id}
+                    </option>
+                  ))}
+                </select>
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs">
+                  ▼
+                </span>
+              </div>
+              {assignedAdmin && (
+                <p className="mt-1 text-xs text-gray-500">
+                  Saat ini: {assignedAdmin.full_name || assignedAdmin.email}
+                </p>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Actions */}
+        {/* ── Actions ───────────────────────────────────────────────────────── */}
         <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-800">
           <Button onClick={handleSaveMeta} variant="primary" size="sm" isLoading={saving}>
             Simpan
@@ -234,6 +308,7 @@ export default function OrderDetailModal({
             </Button>
           </div>
         </div>
+
       </div>
     </Modal>
   );

@@ -8,68 +8,45 @@ import ConfirmDeleteModal from '../shared/ConfirmDeleteModal';
 import PaymentEmailModal from './components/PaymentEmailModal';
 import { Download } from 'lucide-react';
 
-// ─── CSV EXPORT ───────────────────────────────────────────────────────────────
 const ORDER_TYPE_LABEL = { vc: 'VC', twoshot: '2Shot', mng: 'MnG' };
 const STATUS_LABEL = {
-  pending: 'Pending',
-  confirmed: 'Confirmed',
-  in_progress: 'In Progress',
-  completed: 'Completed',
-  cancelled: 'Cancelled',
+  pending: 'Pending', confirmed: 'Confirmed', in_progress: 'In Progress',
+  completed: 'Completed', cancelled: 'Cancelled', done: 'Selesai',
 };
 
-function exportToCSV(orders, filename = 'orders.csv') {
+function exportToCSV(orders, adminsList, filename = 'orders.csv') {
   if (!orders.length) return;
-
-  const headers = [
-    'ID',
-    'Tipe Order',
-    'Nama Customer',
-    'Email',
-    'Status',
-    'Total Fee (IDR)',
-    'Dikerjakan Oleh',
-    'Note',
-  ];
-
+  const headers = ['ID', 'Tipe Order', 'Nama Customer', 'Email', 'Status', 'Total Fee (IDR)', 'Admin PIC', 'Note'];
   const esc = (val) => {
     if (val == null) return '';
     const str = String(val).replace(/"/g, '""');
     return /[",\n]/.test(str) ? `"${str}"` : str;
   };
-
-  const rows = orders.map((o) => [
-    esc(o.id),
-    esc(ORDER_TYPE_LABEL[o.order_type] ?? o.order_type ?? 'VC'),
-    esc(o.customer_name),
-    esc(o.contact_email),
-    esc(STATUS_LABEL[o.status] ?? o.status),
-    esc(o.total_fee ?? 0),
-    esc(o.handled_by),
-    esc(o.note),
-  ]);
-
+  const rows = orders.map((o) => {
+    const admin = adminsList.find(a => a.id === o.assigned_to);
+    const picName = admin ? (admin.full_name || admin.email) : (o.handled_by || '');
+    return [esc(o.id), esc(ORDER_TYPE_LABEL[o.order_type] ?? o.order_type ?? 'VC'),
+    esc(o.customer_name), esc(o.contact_email), esc(STATUS_LABEL[o.status] ?? o.status),
+    esc(o.total_fee ?? 0), esc(picName), esc(o.note)];
+  });
   const csv = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
-  // BOM (\uFEFF) supaya Excel auto-detect UTF-8
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  a.click();
+  const a = document.createElement('a'); a.href = url; a.download = filename; a.click();
   URL.revokeObjectURL(url);
 }
-// ─────────────────────────────────────────────────────────────────────────────
 
 export default function OrdersManagement() {
   const { showToast } = useToast();
 
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [adminsList, setAdminsList] = useState([]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
+  const [assignedToFilter, setAssignedToFilter] = useState('');
 
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -81,15 +58,31 @@ export default function OrdersManagement() {
   const [emailTarget, setEmailTarget] = useState(null);
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
 
-  useEffect(() => { fetchOrders(); }, []);
+  useEffect(() => {
+    fetchOrders();
+    fetchAdmins(); // ✅ FIX: nama fungsi konsisten, sebelumnya dipanggil fetchAdminsList() yang tidak ada
+  }, []);
+
+  // ✅ FIX: satu fungsi konsisten, langsung set ke state (tidak return)
+  async function fetchAdmins() {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, full_name')
+        .eq('role', 'admin')
+        .order('full_name');
+      if (error) throw error;
+      setAdminsList(data || []);
+    } catch (e) {
+      console.error('Error fetching admins:', e);
+    }
+  }
 
   async function fetchOrders() {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('orders')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .from('orders').select('*').order('created_at', { ascending: false });
       if (error) throw error;
       setOrders(data || []);
     } catch (err) {
@@ -103,25 +96,22 @@ export default function OrdersManagement() {
   const filteredOrders = useMemo(() => {
     return (orders || []).filter((order) => {
       const s = searchTerm.toLowerCase();
-      const matchSearch =
-        !s ||
-        order.customer_name?.toLowerCase().includes(s) ||
-        order.contact_email?.toLowerCase().includes(s) ||
-        order.id?.toLowerCase().includes(s);
+      const matchSearch = !s || order.customer_name?.toLowerCase().includes(s) ||
+        order.contact_email?.toLowerCase().includes(s) || order.id?.toLowerCase().includes(s);
       const matchStatus = !statusFilter || order.status === statusFilter;
       const matchType = !typeFilter || (order.order_type || 'vc') === typeFilter;
-      return matchSearch && matchStatus && matchType;
+      const matchAssigned = !assignedToFilter || order.assigned_to === assignedToFilter;
+      return matchSearch && matchStatus && matchType && matchAssigned;
     });
-  }, [orders, searchTerm, statusFilter, typeFilter]);
+  }, [orders, searchTerm, statusFilter, typeFilter, assignedToFilter]);
 
   const allSelected = useMemo(
     () => filteredOrders.length > 0 && filteredOrders.every((o) => selectedIds.has(o.id)),
     [filteredOrders, selectedIds]
   );
 
-  useEffect(() => { setSelectedIds(new Set()); }, [searchTerm, statusFilter, typeFilter]);
+  useEffect(() => { setSelectedIds(new Set()); }, [searchTerm, statusFilter, typeFilter, assignedToFilter]);
 
-  // ── Handlers ────────────────────────────────────────────────────────────────
   const handleOrderClick = (order) => { setSelectedOrder(order); setIsDetailOpen(true); };
 
   const handleUpdateStatus = async (orderId, newStatus) => {
@@ -133,27 +123,40 @@ export default function OrdersManagement() {
       window.dispatchEvent(new CustomEvent('refreshDashboardStats'));
       return true;
     } catch (err) {
-      console.error(err);
-      showToast('Gagal update status', 'error');
-      return false;
+      console.error(err); showToast('Gagal update status', 'error'); return false;
     }
   };
 
-  const handleSaveMeta = async (orderId, totalFee, handledBy) => {
+  const handleSaveMeta = async (orderId, totalFee, assignedTo) => {
     try {
-      const { error } = await supabase
-        .from('orders')
-        .update({ total_fee: totalFee, handled_by: handledBy })
-        .eq('id', orderId);
+      const { error } = await supabase.from('orders')
+        .update({ total_fee: totalFee, assigned_to: assignedTo }).eq('id', orderId);
       if (error) throw error;
       showToast('Data berhasil disimpan', 'success');
       await fetchOrders();
       window.dispatchEvent(new CustomEvent('refreshDashboardStats'));
       return true;
     } catch (err) {
-      console.error(err);
-      showToast('Gagal menyimpan data', 'error');
-      return false;
+      console.error(err); showToast('Gagal menyimpan data', 'error'); return false;
+    }
+  };
+
+  const handleSaveAdminNote = async (orderId, note) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      const { error } = await supabase.from('orders').update({
+        admin_note: note,
+        admin_note_updated_by: user?.id ?? null,
+        admin_note_updated_at: new Date().toISOString(),
+      }).eq('id', orderId);
+      if (error) throw error;
+      showToast('Catatan admin berhasil disimpan', 'success');
+      await fetchOrders();
+      setSelectedOrder((prev) => prev
+        ? { ...prev, admin_note: note, admin_note_updated_at: new Date().toISOString() } : prev);
+      return true;
+    } catch (err) {
+      console.error(err); showToast('Gagal menyimpan catatan', 'error'); return false;
     }
   };
 
@@ -184,27 +187,23 @@ export default function OrdersManagement() {
       await fetchOrders();
       window.dispatchEvent(new CustomEvent('refreshDashboardStats'));
     } catch (err) {
-      console.error(err);
-      showToast('Gagal menghapus pesanan', 'error');
+      console.error(err); showToast('Gagal menghapus pesanan', 'error');
     } finally {
       setDeleting(false);
     }
   };
 
-  // ── Export CSV ───────────────────────────────────────────────────────────────
   const handleExportCSV = (exportAll = false) => {
     const data = exportAll ? orders : filteredOrders;
     if (!data.length) { showToast('Tidak ada data untuk diexport', 'warning'); return; }
     const ts = new Date().toISOString().slice(0, 10);
-    exportToCSV(data, exportAll ? `orders-semua-${ts}.csv` : `orders-terfilter-${ts}.csv`);
+    exportToCSV(data, adminsList, exportAll ? `orders-semua-${ts}.csv` : `orders-terfilter-${ts}.csv`);
     showToast(`Berhasil export ${data.length} pesanan ke CSV`, 'success');
   };
 
-  // ── Email ────────────────────────────────────────────────────────────────────
   const handleOpenEmailModal = (order) => { setEmailTarget(order); setIsEmailModalOpen(true); };
   const handleCloseEmailModal = () => { setIsEmailModalOpen(false); setEmailTarget(null); };
 
-  // ── Render ───────────────────────────────────────────────────────────────────
   if (loading) {
     return (
       <div className="text-center py-12">
@@ -217,47 +216,32 @@ export default function OrdersManagement() {
   return (
     <div className="space-y-6">
       <OrderFilters
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        filterStatus={statusFilter}
-        onFilterChange={setStatusFilter}
-        filterOrderType={typeFilter}
-        onOrderTypeChange={setTypeFilter}
-        onRefresh={fetchOrders}
+        searchTerm={searchTerm} onSearchChange={setSearchTerm}
+        filterStatus={statusFilter} onFilterChange={setStatusFilter}
+        filterOrderType={typeFilter} onOrderTypeChange={setTypeFilter}
+        filterAssignedTo={assignedToFilter} onAssignedToChange={setAssignedToFilter}
+        adminsList={adminsList} onRefresh={fetchOrders}
       />
 
-      {/* Info baris + Export */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm text-gray-400">
         <p>
-          Menampilkan{' '}
-          <span className="font-semibold text-white">{filteredOrders.length}</span> dari{' '}
+          Menampilkan <span className="font-semibold text-white">{filteredOrders.length}</span> dari{' '}
           <span className="font-semibold text-white">{orders.length}</span> pesanan
         </p>
-
         <div className="flex items-center gap-3">
           {selectedIds.size > 0 && (
             <span className="text-primary-400 font-medium">{selectedIds.size} dipilih</span>
           )}
-
-          {/* Export CSV dropdown */}
           <div className="relative group">
             <button className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium bg-emerald-700 hover:bg-emerald-600 text-white rounded-lg transition-colors select-none">
-              <Download className="w-4 h-4" />
-              Export CSV
+              <Download className="w-4 h-4" /> Export CSV
             </button>
-            {/* Dropdown — visible on hover */}
             <div className="absolute right-0 mt-1 w-56 bg-[#1A1F2E] border border-gray-700 rounded-xl shadow-2xl z-20 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-150 pointer-events-none group-hover:pointer-events-auto">
-              <button
-                onClick={() => handleExportCSV(false)}
-                className="w-full text-left px-4 py-2.5 text-sm text-gray-200 hover:bg-[#252B3B] rounded-t-xl transition-colors"
-              >
+              <button onClick={() => handleExportCSV(false)} className="w-full text-left px-4 py-2.5 text-sm text-gray-200 hover:bg-[#252B3B] rounded-t-xl transition-colors">
                 Export yang terfilter ({filteredOrders.length})
               </button>
               <div className="border-t border-gray-700" />
-              <button
-                onClick={() => handleExportCSV(true)}
-                className="w-full text-left px-4 py-2.5 text-sm text-gray-200 hover:bg-[#252B3B] rounded-b-xl transition-colors"
-              >
+              <button onClick={() => handleExportCSV(true)} className="w-full text-left px-4 py-2.5 text-sm text-gray-200 hover:bg-[#252B3B] rounded-b-xl transition-colors">
                 Export semua ({orders.length})
               </button>
             </div>
@@ -266,28 +250,22 @@ export default function OrdersManagement() {
       </div>
 
       <OrdersTable
-        orders={filteredOrders}
-        onOrderClick={handleOrderClick}
-        selectedIds={selectedIds}
-        allSelected={allSelected}
-        onToggleSelect={handleToggleSelect}
-        onToggleSelectAll={handleToggleSelectAll}
-        onDeleteOrder={handleAskDelete}
-        onSendPaymentEmail={handleOpenEmailModal}
+        orders={filteredOrders} onOrderClick={handleOrderClick}
+        selectedIds={selectedIds} allSelected={allSelected}
+        onToggleSelect={handleToggleSelect} onToggleSelectAll={handleToggleSelectAll}
+        onDeleteOrder={handleAskDelete} onSendPaymentEmail={handleOpenEmailModal}
+        adminsList={adminsList}
       />
 
       <OrderDetailModal
-        order={selectedOrder}
-        isOpen={isDetailOpen}
+        order={selectedOrder} isOpen={isDetailOpen}
         onClose={() => setIsDetailOpen(false)}
-        onUpdateStatus={handleUpdateStatus}
-        onSaveMeta={handleSaveMeta}
+        onUpdateStatus={handleUpdateStatus} onSaveMeta={handleSaveMeta}
+        onSaveAdminNote={handleSaveAdminNote} adminsList={adminsList}
       />
 
       <PaymentEmailModal
-        order={emailTarget}
-        isOpen={isEmailModalOpen}
-        onClose={handleCloseEmailModal}
+        order={emailTarget} isOpen={isEmailModalOpen} onClose={handleCloseEmailModal}
         onSuccess={() => showToast('Email tagihan berhasil dikirim!', 'success')}
         onError={() => showToast('Gagal mengirim email tagihan', 'error')}
       />
@@ -296,15 +274,11 @@ export default function OrdersManagement() {
         isOpen={!!deleteTarget}
         onClose={() => (deleting ? null : setDeleteTarget(null))}
         title="Hapus Pesanan?"
-        description={
-          deleteTarget
-            ? `Pesanan ${deleteTarget.id?.slice?.(0, 8)} atas nama "${deleteTarget.customer_name || '-'}" akan dihapus permanen.`
-            : 'Pesanan akan dihapus permanen.'
-        }
-        confirmText="Ya, hapus pesanan"
-        cancelText="Batal"
-        isLoading={deleting}
-        onConfirm={handleConfirmDelete}
+        description={deleteTarget
+          ? `Pesanan ${deleteTarget.id?.slice?.(0, 8)} atas nama "${deleteTarget.customer_name || '-'}" akan dihapus permanen.`
+          : 'Pesanan akan dihapus permanen.'}
+        confirmText="Ya, hapus pesanan" cancelText="Batal"
+        isLoading={deleting} onConfirm={handleConfirmDelete}
       />
     </div>
   );
