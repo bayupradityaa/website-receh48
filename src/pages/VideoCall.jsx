@@ -33,6 +33,9 @@ const orderSchema = z
     contact_line: z.string().optional(),
     contact_email: z.string().email("Email tidak valid"),
     password_jkt: z.string().min(1, "Password harus diisi"),
+    account_type: z.enum(["ofc", "general"], {
+      required_error: "Pilih tipe akun terlebih dahulu",
+    }),
     agree_terms: z.boolean().refine((val) => val === true, {
       message: "Anda harus menyetujui syarat dan ketentuan",
     }),
@@ -49,7 +52,7 @@ function getFeeByType(member, feeType) {
 }
 
 export default function VideoCall() {
-  const { user } = useAuth(); 
+  const { user } = useAuth();
   const { showToast } = useToast();
 
   const { isOpen, loading: statusLoading } = useIsServiceOpen("video_call");
@@ -69,6 +72,7 @@ export default function VideoCall() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(orderSchema),
@@ -78,6 +82,7 @@ export default function VideoCall() {
       contact_line: "",
       contact_email: "",
       password_jkt: "",
+      account_type: "",
       agree_terms: false,
     },
   });
@@ -263,6 +268,7 @@ export default function VideoCall() {
         contact_line: data.contact_line || null,
         contact_email: data.contact_email,
         password_jkt: data.password_jkt,
+        account_type: data.account_type,
         order_type: ORDER_TYPE,
         status: "pending",
         total_fee: totalFee,
@@ -317,9 +323,8 @@ export default function VideoCall() {
           <div className="lg:col-span-2 space-y-4 md:space-y-6">
             {/* Member Picker */}
             <div
-              className={`bg-[#12161F] rounded-2xl border border-gray-800 overflow-hidden transition-opacity ${
-                !isOpen ? "opacity-60 pointer-events-none select-none" : ""
-              }`}
+              className={`bg-[#12161F] rounded-2xl border border-gray-800 overflow-hidden transition-opacity ${!isOpen ? "opacity-60 pointer-events-none select-none" : ""
+                }`}
             >
               <div className="p-4 md:p-6 border-b border-gray-800">
                 <h2 className="text-lg md:text-xl font-bold mb-3 md:mb-4">
@@ -521,9 +526,8 @@ export default function VideoCall() {
           <div className="lg:col-span-1 space-y-4 md:space-y-6">
             {/* Cart */}
             <div
-              className={`bg-[#12161F] rounded-2xl border border-gray-800 transition-opacity lg:sticky lg:top-6 ${
-                !isOpen ? "opacity-60 pointer-events-none select-none" : ""
-              }`}
+              className={`bg-[#12161F] rounded-2xl border border-gray-800 transition-opacity lg:sticky lg:top-6 ${!isOpen ? "opacity-60 pointer-events-none select-none" : ""
+                }`}
             >
               <div className="p-4 md:p-6 border-b border-gray-800">
                 <div className="flex items-center justify-between">
@@ -760,9 +764,8 @@ export default function VideoCall() {
 
             {/* Form */}
             <div
-              className={`bg-[#12161F] rounded-2xl border border-gray-800 transition-opacity ${
-                !isOpen ? "opacity-60 pointer-events-none select-none" : ""
-              }`}
+              className={`bg-[#12161F] rounded-2xl border border-gray-800 transition-opacity ${!isOpen ? "opacity-60 pointer-events-none select-none" : ""
+                }`}
             >
               <div className="p-4 md:p-6 border-b border-gray-800">
                 <h3 className="text-base md:text-lg font-bold">
@@ -870,6 +873,60 @@ export default function VideoCall() {
                     )}
                   </div>
 
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Tipe Akun JKT48 *
+                    </label>
+                    <div className="grid grid-cols-2 gap-3">
+                      {[
+                        {
+                          value: "ofc",
+                          label: "OFC",
+                          color: "primary",
+                        },
+                        {
+                          value: "general",
+                          label: "General",
+                          color: "gray",
+                        },
+                      ].map((opt) => {
+                        const isSelected = watch("account_type") === opt.value;
+                        return (
+                          <label
+                            key={opt.value}
+                            className={`flex flex-col gap-1 p-3 rounded-lg border-2 cursor-pointer transition-all select-none
+                              ${isSelected
+                                ? "border-primary-500 bg-primary-900/20"
+                                : "border-gray-700 bg-[#0A0E17] hover:border-gray-500"
+                              }
+                              ${!isOpen ? "cursor-not-allowed opacity-50" : ""}
+                            `}
+                          >
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="radio"
+                                value={opt.value}
+                                {...register("account_type")}
+                                disabled={!isOpen}
+                                className="accent-primary-600 w-4 h-4"
+                              />
+                              <span className={`font-semibold text-sm ${isSelected ? "text-primary-400" : "text-white"}`}>
+                                {opt.label}
+                              </span>
+                            </div>
+                            <span className="text-xs text-gray-400 pl-6">{opt.desc}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                    {errors.account_type && (
+                      <p className="text-sm text-red-400 mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {errors.account_type.message}
+                      </p>
+                    )}
+                  </div>
+
                   <div className="flex items-start gap-3 pt-2">
                     <input
                       type="checkbox"
@@ -905,8 +962,8 @@ export default function VideoCall() {
                     {submitting
                       ? "Memproses..."
                       : !isOpen
-                      ? "Layanan Tidak Tersedia"
-                      : "Kirim Pesanan"}
+                        ? "Layanan Tidak Tersedia"
+                        : "Kirim Pesanan"}
                   </button>
 
                   {cart.length === 0 && isOpen && (

@@ -27,15 +27,13 @@ export default function OrderDetailModal({
   onClose,
   onUpdateStatus,
   onSaveMeta,
-  onSaveAdminNote,  // (orderId, note) => Promise<boolean>
-  adminsList = [],  // [{ id, full_name, email }]
+  onSaveAdminNote,
+  adminsList = [],
 }) {
   const [editTotalFee, setEditTotalFee] = useState('');
   const [editAssignedTo, setEditAssignedTo] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [saving, setSaving] = useState(false);
-
-  // Admin note — separate save action
   const [adminNote, setAdminNote] = useState('');
   const [savingNote, setSavingNote] = useState(false);
 
@@ -112,7 +110,7 @@ export default function OrderDetailModal({
     <Modal isOpen={isOpen} onClose={saving ? () => { } : onClose} title="Detail Pesanan" size="lg">
       <div className="space-y-5">
 
-        {/* ── Order Info ─────────────────────────────────────────────────────── */}
+        {/* ── Order Info ───────────────────────────────────────────────────── */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <div>
             <strong className="text-white">Nama:</strong>
@@ -170,6 +168,22 @@ export default function OrderDetailModal({
             </div>
           </div>
 
+          {/* ── BARU: Tipe Akun ── */}
+          <div>
+            <strong className="text-white">Tipe Akun:</strong>
+            <div className="mt-1">
+              {order.account_type === 'ofc' ? (
+                <span className="inline-flex items-center gap-1 px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-full text-sm font-semibold">
+                  OFC
+                </span>
+              ) : (
+                <span className="inline-flex items-center px-3 py-1 bg-gray-800 text-gray-400 border border-gray-700 rounded-full text-sm">
+                  General
+                </span>
+              )}
+            </div>
+          </div>
+
           <div>
             <strong className="text-white">Dibuat:</strong>
             <p className="text-dark-300 mt-1">{formatDateTime(order.created_at)}</p>
@@ -183,7 +197,7 @@ export default function OrderDetailModal({
           </div>
         </div>
 
-        {/* ── Detail Pesanan (customer note) ─────────────────────────────────── */}
+        {/* ── Detail Pesanan ───────────────────────────────────────────────── */}
         <div>
           <strong className="text-white">Detail Pesanan:</strong>
           <div className="mt-2 bg-dark-900 p-4 rounded-lg border border-dark-600">
@@ -191,11 +205,11 @@ export default function OrderDetailModal({
           </div>
         </div>
 
-        {/* ── Catatan Admin ──────────────────────────────────────────────────── */}
+        {/* ── Catatan Admin ────────────────────────────────────────────────── */}
         <div className="border-t border-gray-800 pt-4">
           <div className="flex items-center justify-between mb-2">
             <h4 className="font-semibold text-white flex items-center gap-2">
-              📝 Catatan Admin
+              Catatan Admin
               <span className="text-xs font-normal text-gray-500">
                 (tidak terlihat oleh customer)
               </span>
@@ -227,7 +241,7 @@ export default function OrderDetailModal({
           )}
         </div>
 
-        {/* ── Update Order ──────────────────────────────────────────────────── */}
+        {/* ── Update Order ─────────────────────────────────────────────────── */}
         <div className="border-t border-gray-800 pt-4">
           <h4 className="font-semibold text-white mb-3">Update Order</h4>
 
@@ -241,7 +255,6 @@ export default function OrderDetailModal({
               helperText={`Preview: ${formatCurrency(parseNumberID(editTotalFee))}`}
             />
 
-            {/* Admin PIC dropdown */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1.5">
                 Admin PIC (Dikerjakan Oleh)
@@ -273,7 +286,7 @@ export default function OrderDetailModal({
           </div>
         </div>
 
-        {/* ── Actions ───────────────────────────────────────────────────────── */}
+        {/* ── Actions ──────────────────────────────────────────────────────── */}
         <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-800">
           <Button onClick={handleSaveMeta} variant="primary" size="sm" isLoading={saving}>
             Simpan
@@ -295,7 +308,7 @@ export default function OrderDetailModal({
               size="sm"
               disabled={saving}
             >
-              ✅ Mark Done
+              ✅ Selesai
             </Button>
 
             <Button

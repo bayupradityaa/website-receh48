@@ -34,6 +34,22 @@ function OrderTypeBadge({ orderType }) {
   );
 }
 
+// ── BARU: badge tipe akun OFC / General
+function AccountTypeBadge({ accountType }) {
+  if (accountType === 'ofc') {
+    return (
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-full text-xs font-semibold whitespace-nowrap">
+        OFC
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center px-2 py-0.5 bg-gray-800 text-gray-400 border border-gray-700 rounded-full text-xs whitespace-nowrap">
+      General
+    </span>
+  );
+}
+
 export default function OrdersTable({
   orders,
   onOrderClick,
@@ -43,7 +59,7 @@ export default function OrdersTable({
   onToggleSelectAll,
   onDeleteOrder,
   onSendPaymentEmail,
-  adminsList = [],   // [{ id, full_name }]
+  adminsList = [],
 }) {
   if (!orders || orders.length === 0) {
     return (
@@ -60,7 +76,7 @@ export default function OrdersTable({
   return (
     <div className="bg-[#12161F] rounded-2xl border border-gray-800 overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[1280px]">
+        <table className="w-full min-w-[1380px]">
           <thead className="sticky top-0 z-10 bg-[#1A1F2E]">
             <tr className="border-b border-gray-800">
               <th className="px-4 py-4 text-left w-10">
@@ -76,6 +92,7 @@ export default function OrdersTable({
               </th>
               <th className="px-4 py-4 text-left text-sm font-semibold text-gray-300">ID</th>
               <th className="px-4 py-4 text-left text-sm font-semibold text-gray-300">Tipe</th>
+              <th className="px-4 py-4 text-left text-sm font-semibold text-gray-300">Akun</th>
               <th className="px-4 py-4 text-left text-sm font-semibold text-gray-300">Customer</th>
               <th className="px-4 py-4 text-left text-sm font-semibold text-gray-300">Email</th>
               <th className="px-4 py-4 text-left text-sm font-semibold text-gray-300">Status</th>
@@ -92,24 +109,21 @@ export default function OrdersTable({
               const isCompleted = ['completed', 'done', 'selesai'].includes(order.status);
               const hasEmail = Boolean(order.contact_email);
               const hasAdminNote = Boolean(order.admin_note);
+              const isOfc = order.account_type === 'ofc';
 
-              // Resolve assigned admin name
               const assignedAdmin = adminsList.find((a) => a.id === order.assigned_to);
-              const adminPicName = assignedAdmin
-                ? (assignedAdmin.full_name || assignedAdmin.email || '–')
-                : (order.handled_by || '–');
 
               return (
                 <tr
                   key={order.id}
-                  className={`transition-colors cursor-pointer ${checked ? 'bg-primary-900/20' : 'hover:bg-[#1A1F2E]'}`}
+                  className={`transition-colors cursor-pointer border-l-4 ${isOfc ? 'border-l-amber-400' : 'border-l-gray-700'
+                    } ${checked ? 'bg-primary-900/20' : 'hover:bg-[#1A1F2E]'}`}
                   onClick={() => onOrderClick?.(order)}
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) => { if (e.key === 'Enter') onOrderClick?.(order); }}
                   title="Klik untuk melihat detail"
                 >
-                  {/* Checkbox */}
                   <td className="px-4 py-4" onClick={(e) => e.stopPropagation()}>
                     {isSelectable && (
                       <input
@@ -122,17 +136,19 @@ export default function OrdersTable({
                     )}
                   </td>
 
-                  {/* ID */}
                   <td className="px-4 py-4 text-sm font-mono text-gray-400">
                     {order.id?.slice?.(0, 8) || '-'}
                   </td>
 
-                  {/* Tipe */}
                   <td className="px-4 py-4">
                     <OrderTypeBadge orderType={order.order_type || 'vc'} />
                   </td>
 
-                  {/* Customer */}
+                  {/* ── BARU: kolom tipe akun */}
+                  <td className="px-4 py-4">
+                    <AccountTypeBadge accountType={order.account_type} />
+                  </td>
+
                   <td className="px-4 py-4 text-sm">
                     <div className="font-medium text-white">{order.customer_name || '-'}</div>
                     {order.note && (
@@ -142,26 +158,22 @@ export default function OrdersTable({
                     )}
                   </td>
 
-                  {/* Email */}
                   <td className="px-4 py-4 text-sm text-gray-400">
                     <span className="inline-block max-w-[200px] truncate">
                       {order.contact_email || '-'}
                     </span>
                   </td>
 
-                  {/* Status */}
                   <td className="px-4 py-4">
                     <Badge className={getStatusColor(order.status)}>
                       {getStatusLabel(order.status)}
                     </Badge>
                   </td>
 
-                  {/* Total Fee */}
                   <td className="px-4 py-4 text-sm font-semibold text-primary-400 text-right">
                     {formatCurrency(order.total_fee ?? 0)}
                   </td>
 
-                  {/* Admin PIC */}
                   <td className="px-4 py-4 text-sm text-gray-400">
                     {assignedAdmin ? (
                       <span className="text-amber-400 font-medium">
@@ -172,7 +184,6 @@ export default function OrdersTable({
                     )}
                   </td>
 
-                  {/* Catatan Admin indicator */}
                   <td className="px-4 py-4 text-center">
                     {hasAdminNote ? (
                       <span
@@ -187,36 +198,29 @@ export default function OrdersTable({
                     )}
                   </td>
 
-                  {/* Aksi */}
                   <td className="px-4 py-4 text-center" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center justify-center gap-2 flex-nowrap">
-                      {/* Detail */}
                       <button
                         onClick={() => onOrderClick?.(order)}
                         className="px-3 py-1.5 text-sm font-medium bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors whitespace-nowrap"
-                        title="Lihat detail"
                       >
                         Detail
                       </button>
 
-                      {/* Kirim Tagihan */}
                       {isEmailable && isCompleted && hasEmail && (
                         <button
                           onClick={() => onSendPaymentEmail(order)}
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors whitespace-nowrap"
-                          title="Kirim email tagihan ke customer"
                         >
                           <Mail className="w-3.5 h-3.5" />
                           Kirim Email
                         </button>
                       )}
 
-                      {/* Hapus */}
                       {isDeletable && (
                         <button
                           onClick={() => onDeleteOrder(order.id)}
                           className="px-3 py-1.5 text-sm font-medium bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors whitespace-nowrap"
-                          title="Hapus pesanan"
                         >
                           Hapus
                         </button>
@@ -232,6 +236,7 @@ export default function OrdersTable({
 
       <div className="px-4 py-3 text-xs text-gray-500 border-t border-gray-800 bg-[#0A0E17]">
         Klik baris untuk membuka detail.{' '}
+        <br />
         <span className="text-amber-400">Kirim Tagihan</span> otomatis muncul pada pesanan
         berstatus <span className="text-white">Selesai</span>.
       </div>
