@@ -15,6 +15,7 @@ import OrderSuccess from "./pages/OrderSuccess";
 import CekPesanan from './pages/CekPesanan';
 import Login from "./pages/auth/Login";
 import AdminDashboard from "./pages/admin/Dashboard.jsx";
+import PricelistPage from "./pages/PricelistPage";
 
 function ProtectedRoute({ children, adminOnly = false }) {
   const { user, profile, loading } = useAuth();
@@ -33,16 +34,17 @@ export default function App() {
 
       <main className="flex-1">
         <Routes>
-          <Route path="/"              element={<Home />} />
-          <Route path="/review"        element={<ReviewPage />} />
-          <Route path="/reviews"       element={<Reviews />} />
-          <Route path="/video-call"    element={<VideoCall />} />
-          <Route path="/twoshot"       element={<TwoShot />} />
-          <Route path="/meet-greet"    element={<MeetGreet />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/review" element={<ReviewPage />} />
+          <Route path="/reviews" element={<Reviews />} />
+          <Route path="/video-call" element={<VideoCall />} />
+          <Route path="/twoshot" element={<TwoShot />} />
+          <Route path="/meet-greet" element={<MeetGreet />} />
           <Route path="/order-success" element={<OrderSuccess />} />
-          <Route path="/login"         element={<Login />} />
-          <Route path="/cek-pesanan"   element={<CekPesanan />} />
-          
+          <Route path="/login" element={<Login />} />
+          <Route path="/cek-pesanan" element={<CekPesanan />} />
+          <Route path="/pricelist" element={<PricelistPage />} />
+
           <Route
             path="/admin/*"
             element={

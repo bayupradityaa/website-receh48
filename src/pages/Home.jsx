@@ -59,10 +59,10 @@ function ReviewsSlider({ reviews }) {
                 <p className="text-dark-500 text-sm">
                   {r.created_at
                     ? new Date(r.created_at).toLocaleDateString("id-ID", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })
                     : ""}
                 </p>
               </div>
@@ -73,9 +73,8 @@ function ReviewsSlider({ reviews }) {
               {Array.from({ length: 5 }).map((_, i) => (
                 <svg
                   key={i}
-                  className={`w-5 h-5 ${
-                    i < (r.rating || 0) ? "text-yellow-400" : "text-dark-200"
-                  }`}
+                  className={`w-5 h-5 ${i < (r.rating || 0) ? "text-yellow-400" : "text-dark-200"
+                    }`}
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -115,11 +114,10 @@ function ReviewsSlider({ reviews }) {
                 <button
                   key={i}
                   onClick={() => setActive(i)}
-                  className={`h-3 rounded-full transition-all ${
-                    i === safeActive
-                      ? "bg-primary-600 w-8"
-                      : "bg-primary-200 w-3 hover:bg-primary-300"
-                  }`}
+                  className={`h-3 rounded-full transition-all ${i === safeActive
+                    ? "bg-primary-600 w-8"
+                    : "bg-primary-200 w-3 hover:bg-primary-300"
+                    }`}
                 />
               ))}
             </div>
@@ -175,10 +173,10 @@ function Stars({ rating = 0 }) {
 function ReviewCard({ r }) {
   const dateText = r.created_at
     ? new Date(r.created_at).toLocaleDateString("id-ID", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      })
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    })
     : "";
 
   return (
@@ -193,7 +191,7 @@ function ReviewCard({ r }) {
 
       {/* Card */}
       <div className="relative rounded-[24px] bg-white/92 backdrop-blur-xl overflow-hidden border border-white/60 shadow-[0_25px_80px_-45px_rgba(0,0,0,0.55)] group-hover:shadow-[0_35px_100px_-55px_rgba(0,0,0,0.65)] transition-all duration-300">
-        
+
         {/* Accent stripe (brand) */}
         <div className="absolute left-0 top-0 h-full w-[10px] bg-gradient-to-b from-primary-600 via-pink-500 to-yellow-300" />
 
@@ -344,9 +342,8 @@ function ReviewsCarousel({ reviews = [] }) {
             <button
               key={i}
               onClick={() => setIndex(i)}
-              className={`h-3 rounded-full transition-all ${
-                i === index ? "bg-primary-600 w-8" : "bg-primary-200 w-3 hover:bg-primary-300"
-              }`}
+              className={`h-3 rounded-full transition-all ${i === index ? "bg-primary-600 w-8" : "bg-primary-200 w-3 hover:bg-primary-300"
+                }`}
               aria-label={`Go to page ${i + 1}`}
             />
           ))}
@@ -821,7 +818,7 @@ export default function Home() {
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            
+
             {/* LEFT - Logo card */}
             <div className="order-2 lg:order-1 lg:flex lg:justify-center">
               <div className="relative w-[280px] h-[280px] sm:w-[340px] sm:h-[340px] mx-auto lg:mx-0">
@@ -865,7 +862,7 @@ export default function Home() {
               </h1>
 
               <p className="mt-5 text-lg sm:text-xl text-white/80 max-w-xl mx-auto lg:mx-0">
-                Specialist Joki Tiket VideoCall, Meet n Greet, 2-Shot, Konser JKT48.  
+                Specialist Joki Tiket VideoCall, Meet n Greet, 2-Shot, Konser JKT48.
               </p>
 
               {/* CTAs */}
@@ -887,6 +884,18 @@ export default function Home() {
                     </svg>
                   </span>
                 </Button>
+
+                <Link
+                  to="/pricelist"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold
+                    bg-white/10 hover:bg-white/15 border border-white/15 text-white shadow-lg transition-all"
+                >
+                  <svg className="w-4 h-4 text-amber-300" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clipRule="evenodd" />
+                  </svg>
+                  Cek Harga Joki
+                </Link>
 
                 <Link
                   to="/reviews"
@@ -998,9 +1007,8 @@ export default function Home() {
                       {timetableImages.map((img, index) => (
                         <div
                           key={index}
-                          className={`absolute inset-0 transition-opacity duration-500 ${
-                            index === currentSlide ? "opacity-100" : "opacity-0"
-                          }`}
+                          className={`absolute inset-0 transition-opacity duration-500 ${index === currentSlide ? "opacity-100" : "opacity-0"
+                            }`}
                         >
                           <img
                             src={img}
@@ -1047,9 +1055,8 @@ export default function Home() {
                             <button
                               key={i}
                               onClick={() => setCurrentSlide(i)}
-                              className={`h-3 rounded-full transition-all ${
-                                i === currentSlide ? "bg-amber-200 w-8" : "bg-white/30 w-3 hover:bg-white/50"
-                              }`}
+                              className={`h-3 rounded-full transition-all ${i === currentSlide ? "bg-amber-200 w-8" : "bg-white/30 w-3 hover:bg-white/50"
+                                }`}
                             />
                           ))}
                         </div>

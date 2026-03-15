@@ -12,25 +12,24 @@ export function Header() {
   const isActive = (path) => location.pathname === path;
 
   const navClass = (active) =>
-    `px-4 py-2 rounded-xl font-semibold transition-all ${
-      active
-        ? "bg-white/10 text-amber-200 border border-white/15 shadow-[0_12px_40px_-25px_rgba(255,215,130,0.6)]"
-        : "text-white/70 hover:text-white hover:bg-white/10"
+    `px-4 py-2 rounded-xl font-semibold transition-all ${active
+      ? "bg-white/10 text-amber-200 border border-white/15 shadow-[0_12px_40px_-25px_rgba(255,215,130,0.6)]"
+      : "text-white/70 hover:text-white hover:bg-white/10"
     }`;
 
   const mobileNavClass = (active) =>
-    `block w-full text-left px-4 py-3 rounded-xl font-semibold transition-all ${
-      active
-        ? "bg-white/10 text-amber-200 border border-white/15"
-        : "text-white/70 hover:text-white hover:bg-white/10"
+    `block w-full text-left px-4 py-3 rounded-xl font-semibold transition-all ${active
+      ? "bg-white/10 text-amber-200 border border-white/15"
+      : "text-white/70 hover:text-white hover:bg-white/10"
     }`;
 
   const navLinks = [
-    { to: "/",           label: "Home" },
+    { to: "/", label: "Home" },
+    { to: "/pricelist", label: "Pricelist" },
     { to: "/video-call", label: "Joki Video Call" },
     { to: "/meet-greet", label: "Joki Meet n Greet" },
-    { to: "/twoshot",    label: "Joki 2-Shoot" },
-    { to: "/cek-pesanan",label: "Cek Pesanan" },
+    { to: "/twoshot", label: "Joki 2-Shoot" },
+    { to: "/cek-pesanan", label: "Cek Pesanan" },
   ];
 
   return (
