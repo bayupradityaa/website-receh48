@@ -26,6 +26,7 @@ import {
 
 const ORDER_TYPE = "mng";
 const TERMS_KEY = "terms_meetngreet";
+const MAX_TICKETS = 20;
 
 const orderSchema = z
   .object({
@@ -284,7 +285,7 @@ export default function MeetGreet() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 max-w-7xl mx-auto">
-          {/* LEFT — member picker + terms (identik dengan aslinya, tidak ada perubahan) */}
+          {/* LEFT */}
           <div className="lg:col-span-2 space-y-4 md:space-y-6">
             <div className={`bg-[#12161F] rounded-2xl border border-gray-800 overflow-hidden transition-opacity ${!isOpen ? "opacity-60 pointer-events-none select-none" : ""}`}>
               <div className="p-4 md:p-6 border-b border-gray-800">
@@ -422,7 +423,7 @@ export default function MeetGreet() {
           {/* RIGHT */}
           <div className="lg:col-span-1 space-y-4 md:space-y-6">
             {/* Cart */}
-            <div className={`bg-[#12161F] rounded-2xl border border-gray-800 transition-opacity lg:sticky lg:top-6 ${!isOpen ? "opacity-60 pointer-events-none select-none" : ""}`}>
+            <div className={`bg-[#12161F] rounded-2xl border border-gray-800 transition-opacity ${!isOpen ? "opacity-60 pointer-events-none select-none" : ""}`}>
               <div className="p-4 md:p-6 border-b border-gray-800">
                 <div className="flex items-center justify-between">
                   <h3 className="text-base md:text-lg font-bold flex items-center gap-2">
@@ -512,14 +513,19 @@ export default function MeetGreet() {
                           )}
                         </div>
 
+                        {/* Tiket dropdown 1-20 */}
                         <div className="flex items-center justify-between pt-2 border-t border-gray-700">
                           <div className="flex items-center gap-2">
-                            <label className="text-xs text-gray-400">Tiket:</label>
-                            <input
-                              type="number" min="1" max="5" value={item.quantity}
-                              onChange={(e) => updateCartItem(item.id, "quantity", parseInt(e.target.value) || 1)}
-                              className="w-16 px-2 py-1 text-sm text-center bg-[#12161F] border border-gray-700 rounded text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
-                            />
+                            <label className="text-xs text-gray-400">Jumlah Tiket:</label>
+                            <select
+                              value={item.quantity}
+                              onChange={(e) => updateCartItem(item.id, "quantity", parseInt(e.target.value))}
+                              className="w-20 px-2 py-1.5 text-sm bg-[#12161F] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+                            >
+                              {Array.from({ length: MAX_TICKETS }, (_, i) => i + 1).map((n) => (
+                                <option key={n} value={n}>{n} tiket</option>
+                              ))}
+                            </select>
                           </div>
                           <p className="font-semibold text-primary-400">{formatCurrency(item.fee)}</p>
                         </div>
@@ -576,7 +582,6 @@ export default function MeetGreet() {
                     {errors.password_jkt && <p className="text-sm text-red-400 mt-1 flex items-center gap-1"><AlertCircle className="w-4 h-4" />{errors.password_jkt.message}</p>}
                   </div>
 
-                  {/* ── Tipe Akun ── */}
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">Tipe Akun JKT48 *</label>
                     <div className="grid grid-cols-2 gap-3">

@@ -8,6 +8,11 @@ import MemberModal from './MemberModal';
 import MembersStats from './MembersStats';
 import { Plus, RefreshCw } from 'lucide-react';
 
+// ─── Konstanta bucket Supabase Storage ───────────────────────────────────────
+// Pastikan bucket "member-photos" sudah dibuat di Supabase Storage
+// dan policy-nya mengizinkan public read (atau sesuaikan dengan setup kamu)
+const STORAGE_BUCKET = 'member-photos';
+
 function normalizeToArray(value) {
   if (Array.isArray(value)) return value;
   if (!value) return [];
@@ -19,6 +24,54 @@ function getFeeGroupByType(member, type) {
   const fees = normalizeToArray(member?.member_fees);
   const item = fees.find((x) => x?.fee_type === type);
   return item?.fee_groups || null;
+}
+
+/**
+ * Upload foto ke Supabase Storage dan kembalikan public URL-nya.
+ * Kalau sudah ada foto lama (oldPhotoUrl) dan itu dari storage kita,
+ * foto lama akan dihapus dulu sebelum upload yang baru.
+ *
+ * @param {File}        file        - File yang akan di-upload
+ * @param {string|null} oldPhotoUrl - URL foto lama (opsional, untuk hapus file lama)
+ * @returns {Promise<string>}        - Public URL foto baru
+ */
+async function uploadMemberPhoto(file, oldPhotoUrl = null) {
+  // Hapus foto lama kalau ada dan berasal dari bucket kita
+  if (oldPhotoUrl) {
+    try {
+      const url = new URL(oldPhotoUrl);
+      // Path di storage biasanya: /storage/v1/object/public/<bucket>/<path>
+      const marker = `/object/public/${STORAGE_BUCKET}/`;
+      const idx = url.pathname.indexOf(marker);
+      if (idx !== -1) {
+        const oldPath = decodeURIComponent(url.pathname.slice(idx + marker.length));
+        await supabase.storage.from(STORAGE_BUCKET).remove([oldPath]);
+      }
+    } catch {
+      // Kalau gagal hapus lama, lanjut saja — tidak fatal
+    }
+  }
+
+  // Buat nama file unik: members/<timestamp>-<namafile>
+  const ext = file.name.split('.').pop();
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+  const filePath = `members/${Date.now()}-${safeName}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from(STORAGE_BUCKET)
+    .upload(filePath, file, {
+      cacheControl: '3600',
+      upsert: false,
+      contentType: file.type,
+    });
+
+  if (uploadError) throw uploadError;
+
+  const { data: urlData } = supabase.storage
+    .from(STORAGE_BUCKET)
+    .getPublicUrl(filePath);
+
+  return urlData.publicUrl;
 }
 
 export default function MembersTab() {
@@ -88,8 +141,8 @@ export default function MembersTab() {
           member_fees: Array.isArray(m.member_fees)
             ? m.member_fees
             : m.member_fees
-            ? [m.member_fees]
-            : [],
+              ? [m.member_fees]
+              : [],
         }))
       );
     } catch (err) {
@@ -115,12 +168,38 @@ export default function MembersTab() {
 
   async function handleSaveMember(payload) {
     try {
-      const { fee_group_vc_id, fee_group_twoshot_id, fee_group_mng_id, ...memberData } = payload;
+      const {
+        fee_group_vc_id,
+        fee_group_twoshot_id,
+        fee_group_mng_id,
+        photo_file,   // File object dari MemberModal (upload baru)
+        photo_url,    // URL lama kalau tidak ada upload baru
+        ...rest
+      } = payload;
 
+      // ── 1. Upload foto ke Storage kalau ada file baru ──────────────────────
+      let finalPhotoUrl = photo_url ?? null; // default: pakai URL lama / null
+
+      if (photo_file) {
+        try {
+          const oldUrl = editingMember?.photo_url ?? null;
+          finalPhotoUrl = await uploadMemberPhoto(photo_file, oldUrl);
+        } catch (uploadErr) {
+          console.error('Upload foto gagal:', uploadErr);
+          showToast('Gagal upload foto: ' + uploadErr.message, 'error');
+          return false;
+        }
+      }
+
+      // ── 2. Simpan data member ke tabel ─────────────────────────────────────
+      const memberData = { ...rest, photo_url: finalPhotoUrl };
       let memberId = editingMember?.id;
 
       if (editingMember) {
-        const { error } = await supabase.from('members').update(memberData).eq('id', editingMember.id);
+        const { error } = await supabase
+          .from('members')
+          .update(memberData)
+          .eq('id', editingMember.id);
         if (error) throw error;
         showToast('Member berhasil diupdate', 'success');
       } else {
@@ -136,6 +215,7 @@ export default function MembersTab() {
 
       if (!memberId) throw new Error('Member ID tidak ditemukan setelah simpan');
 
+      // ── 3. Upsert member_fees ──────────────────────────────────────────────
       const rows = [];
       if (fee_group_vc_id) rows.push({ member_id: memberId, fee_type: 'vc', fee_group_id: fee_group_vc_id });
       if (fee_group_twoshot_id) rows.push({ member_id: memberId, fee_type: 'twoshot', fee_group_id: fee_group_twoshot_id });
@@ -154,13 +234,29 @@ export default function MembersTab() {
       return true;
     } catch (err) {
       console.error('Error saving member:', err);
-      showToast('Gagal menyimpan member', 'error');
+      showToast('Gagal menyimpan member: ' + err.message, 'error');
       return false;
     }
   }
 
   async function handleDeleteMember(id) {
     try {
+      // Hapus foto dari storage kalau ada
+      const member = members.find((m) => m.id === id);
+      if (member?.photo_url) {
+        try {
+          const url = new URL(member.photo_url);
+          const marker = `/object/public/${STORAGE_BUCKET}/`;
+          const idx = url.pathname.indexOf(marker);
+          if (idx !== -1) {
+            const path = decodeURIComponent(url.pathname.slice(idx + marker.length));
+            await supabase.storage.from(STORAGE_BUCKET).remove([path]);
+          }
+        } catch {
+          // Foto gagal dihapus dari storage — lanjut hapus record saja
+        }
+      }
+
       const { error } = await supabase.from('members').delete().eq('id', id);
       if (error) throw error;
       showToast('Member berhasil dihapus', 'success');
