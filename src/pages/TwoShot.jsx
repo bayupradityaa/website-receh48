@@ -450,7 +450,7 @@ export default function TwoShot() {
           {/* RIGHT */}
           <div className="lg:col-span-1 space-y-4 md:space-y-6">
             {/* Cart */}
-            <div className={`bg-[#12161F] rounded-2xl border border-gray-800 transition-opacity lg:sticky lg:top-6 ${!isOpen ? "opacity-60 pointer-events-none select-none" : ""}`}>
+            <div className={`bg-[#12161F] rounded-2xl border border-gray-800 transition-opacity ${!isOpen ? "opacity-60 pointer-events-none select-none" : ""}`}>
               <div className="p-4 md:p-6 border-b border-gray-800">
                 <div className="flex items-center justify-between">
                   <h3 className="text-base md:text-lg font-bold flex items-center gap-2">
