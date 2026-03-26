@@ -15,44 +15,71 @@ export function usePricelist(feeType = 'vc') {
             setLoading(true);
             setError(null);
 
-            // 1. Fetch rows dari view members_with_fees, filter by fee_group_type
-            const { data: rows, error: rowsError } = await supabase
-                .from('members_with_fees')
-                .select('id, name, fee_group_id, fee_group_name, fee')
-                .eq('fee_group_type', feeType)
-                .eq('is_active', true)
-                .order('fee', { ascending: false });
+            // Perbaikan: Ambil data langsung dari tabel members dengan join
+            const { data: membersData, error: membersError } = await supabase
+                .from('members')
+                .select(`
+                    id,
+                    name,
+                    is_active,
+                    photo_url,
+                    full_slots,
+                    member_fees!inner (
+                        fee_type,
+                        fee_group_id,
+                        fee_groups!inner (
+                            id,
+                            name,
+                            fee,
+                            fee_type,
+                            is_active
+                        )
+                    )
+                `)
+                .eq('member_fees.fee_type', feeType)
+                .eq('member_fees.fee_groups.is_active', true)
+                .eq('is_active', true);
 
-            if (rowsError) throw rowsError;
+            if (membersError) throw membersError;
 
-            if (!rows || rows.length === 0) {
+            if (!membersData || membersData.length === 0) {
                 setGroups([]);
                 return;
             }
 
-            // 2. Group by fee_group_id — setiap grup punya list members
+            // Group by fee_group_id
             const groupMap = new Map();
 
-            rows.forEach((row) => {
-                if (!groupMap.has(row.fee_group_id)) {
-                    groupMap.set(row.fee_group_id, {
-                        id: row.fee_group_id,
-                        name: row.fee_group_name,
-                        fee: row.fee,
+            membersData.forEach((member) => {
+                // Ambil fee_groups dari member_fees
+                const feeGroup = member.member_fees?.[0]?.fee_groups;
+                if (!feeGroup) return;
+
+                const groupId = feeGroup.id;
+
+                if (!groupMap.has(groupId)) {
+                    groupMap.set(groupId, {
+                        id: groupId,
+                        name: feeGroup.name,
+                        fee: feeGroup.fee,
                         members: [],
                     });
                 }
-                groupMap.get(row.fee_group_id).members.push({
-                    id: row.id,
-                    name: row.name,
+
+                groupMap.get(groupId).members.push({
+                    id: member.id,
+                    name: member.name,
+                    photo_url: member.photo_url,
+                    full_slots: member.full_slots || [], // ← Pastikan full_slots disimpan
                 });
             });
 
-            // 3. Sort grup by fee descending (Premium → Regular → Basic)
+            // Sort groups by fee descending
             const grouped = Array.from(groupMap.values()).sort(
                 (a, b) => b.fee - a.fee
             );
 
+            console.log('Pricelist groups with full_slots:', grouped); // Debug
             setGroups(grouped);
         } catch (err) {
             console.error('Error fetching pricelist:', err);

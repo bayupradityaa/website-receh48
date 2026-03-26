@@ -9,8 +9,6 @@ import MembersStats from './MembersStats';
 import { Plus, RefreshCw } from 'lucide-react';
 
 // ─── Konstanta bucket Supabase Storage ───────────────────────────────────────
-// Pastikan bucket "member-photos" sudah dibuat di Supabase Storage
-// dan policy-nya mengizinkan public read (atau sesuaikan dengan setup kamu)
 const STORAGE_BUCKET = 'member-photos';
 
 function normalizeToArray(value) {
@@ -28,19 +26,11 @@ function getFeeGroupByType(member, type) {
 
 /**
  * Upload foto ke Supabase Storage dan kembalikan public URL-nya.
- * Kalau sudah ada foto lama (oldPhotoUrl) dan itu dari storage kita,
- * foto lama akan dihapus dulu sebelum upload yang baru.
- *
- * @param {File}        file        - File yang akan di-upload
- * @param {string|null} oldPhotoUrl - URL foto lama (opsional, untuk hapus file lama)
- * @returns {Promise<string>}        - Public URL foto baru
  */
 async function uploadMemberPhoto(file, oldPhotoUrl = null) {
-  // Hapus foto lama kalau ada dan berasal dari bucket kita
   if (oldPhotoUrl) {
     try {
       const url = new URL(oldPhotoUrl);
-      // Path di storage biasanya: /storage/v1/object/public/<bucket>/<path>
       const marker = `/object/public/${STORAGE_BUCKET}/`;
       const idx = url.pathname.indexOf(marker);
       if (idx !== -1) {
@@ -48,11 +38,10 @@ async function uploadMemberPhoto(file, oldPhotoUrl = null) {
         await supabase.storage.from(STORAGE_BUCKET).remove([oldPath]);
       }
     } catch {
-      // Kalau gagal hapus lama, lanjut saja — tidak fatal
+      // Lanjut saja jika gagal hapus
     }
   }
 
-  // Buat nama file unik: members/<timestamp>-<namafile>
   const ext = file.name.split('.').pop();
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
   const filePath = `members/${Date.now()}-${safeName}`;
@@ -80,7 +69,6 @@ export default function MembersTab() {
   const [loading, setLoading] = useState(true);
 
   const [searchTerm, setSearchTerm] = useState('');
-  // filter format: 'all' | 'vc:<id>' | 'twoshot:<id>' | 'mng:<id>'
   const [feeGroupFilter, setFeeGroupFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedIds, setSelectedIds] = useState(new Set());
@@ -138,6 +126,7 @@ export default function MembersTab() {
       setMembers(
         (data || []).map((m) => ({
           ...m,
+          full_slots: m.full_slots || [], // Pastikan full_slots selalu array
           member_fees: Array.isArray(m.member_fees)
             ? m.member_fees
             : m.member_fees
@@ -166,19 +155,65 @@ export default function MembersTab() {
     }
   }
 
+  // ─── FUNGSI TOGGLE FULL SLOT ──────────────────────────────────────────────
+  const handleToggleFullSlot = async (memberId, serviceType, currentlyFull) => {
+    try {
+      // Ambil data member saat ini
+      const { data: memberData, error: fetchError } = await supabase
+        .from('members')
+        .select('full_slots')
+        .eq('id', memberId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      const currentSlots = Array.isArray(memberData?.full_slots) ? memberData.full_slots : [];
+
+      // Toggle: hapus jika sudah ada, tambah jika belum
+      const updatedSlots = currentlyFull
+        ? currentSlots.filter((s) => s !== serviceType)
+        : [...new Set([...currentSlots, serviceType])];
+
+      const { error: updateError } = await supabase
+        .from('members')
+        .update({ full_slots: updatedSlots })
+        .eq('id', memberId);
+
+      if (updateError) throw updateError;
+
+      // Update state lokal
+      setMembers((prev) =>
+        prev.map((m) =>
+          m.id === memberId ? { ...m, full_slots: updatedSlots } : m
+        )
+      );
+
+      const konfigurasi = { vc: 'VC', twoshot: 'TwoShot', mng: 'Meet & Greet' };
+      showToast(
+        currentlyFull
+          ? `Slot ${konfigurasi[serviceType]} dibuka kembali`
+          : `${konfigurasi[serviceType]} ditandai full slot`,
+        currentlyFull ? 'success' : 'info'
+      );
+    } catch (err) {
+      console.error('Error toggling full slot:', err);
+      showToast('Gagal update full slot: ' + (err?.message || 'unknown'), 'error');
+    }
+  };
+  // ──────────────────────────────────────────────────────────────────────────
+
   async function handleSaveMember(payload) {
     try {
       const {
         fee_group_vc_id,
         fee_group_twoshot_id,
         fee_group_mng_id,
-        photo_file,   // File object dari MemberModal (upload baru)
-        photo_url,    // URL lama kalau tidak ada upload baru
+        photo_file,
+        photo_url,
         ...rest
       } = payload;
 
-      // ── 1. Upload foto ke Storage kalau ada file baru ──────────────────────
-      let finalPhotoUrl = photo_url ?? null; // default: pakai URL lama / null
+      let finalPhotoUrl = photo_url ?? null;
 
       if (photo_file) {
         try {
@@ -191,7 +226,6 @@ export default function MembersTab() {
         }
       }
 
-      // ── 2. Simpan data member ke tabel ─────────────────────────────────────
       const memberData = { ...rest, photo_url: finalPhotoUrl };
       let memberId = editingMember?.id;
 
@@ -215,7 +249,7 @@ export default function MembersTab() {
 
       if (!memberId) throw new Error('Member ID tidak ditemukan setelah simpan');
 
-      // ── 3. Upsert member_fees ──────────────────────────────────────────────
+      // Upsert member_fees
       const rows = [];
       if (fee_group_vc_id) rows.push({ member_id: memberId, fee_type: 'vc', fee_group_id: fee_group_vc_id });
       if (fee_group_twoshot_id) rows.push({ member_id: memberId, fee_type: 'twoshot', fee_group_id: fee_group_twoshot_id });
@@ -241,7 +275,6 @@ export default function MembersTab() {
 
   async function handleDeleteMember(id) {
     try {
-      // Hapus foto dari storage kalau ada
       const member = members.find((m) => m.id === id);
       if (member?.photo_url) {
         try {
@@ -524,7 +557,7 @@ export default function MembersTab() {
         </div>
       )}
 
-      {/* Table */}
+      {/* Table - Tambahkan prop onToggleFullSlot */}
       <MembersTable
         members={filteredMembers}
         selectedIds={selectedIds}
@@ -534,6 +567,7 @@ export default function MembersTab() {
         onEdit={handleEditMember}
         onDelete={handleDeleteMember}
         onToggleActive={handleToggleActive}
+        onToggleFullSlot={handleToggleFullSlot}  // <── Tambahkan ini
       />
 
       {/* Modal */}

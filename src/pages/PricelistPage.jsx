@@ -104,8 +104,14 @@ function useMemberPhotos() {
 
 /* ─── MemberCard ─────────────────────────────────────────────────────────── */
 
-function MemberCard({ member, fee, isPremium, photoMap }) {
+function MemberCard({ member, fee, isPremium, photoMap, serviceType }) {
     const [imgFailed, setImgFailed] = useState(false);
+
+    // Cek apakah member fullslot untuk service ini
+    const isFullSlot = useMemo(() => {
+        const fullSlots = Array.isArray(member?.full_slots) ? member.full_slots : [];
+        return fullSlots.includes(serviceType);
+    }, [member?.full_slots, serviceType]);
 
     const photoUrl = useMemo(() => {
         const titleSlug = member.name
@@ -115,7 +121,6 @@ function MemberCard({ member, fee, isPremium, photoMap }) {
             .replace(/[^a-zA-Z0-9_]/g, "");
         const lowerSlug = titleSlug.toLowerCase();
 
-        // try TitleCase first, fallback to lowercase
         return photoMap.get(titleSlug) ?? photoMap.get(lowerSlug) ?? null;
     }, [member.name, photoMap]);
 
@@ -132,9 +137,11 @@ function MemberCard({ member, fee, isPremium, photoMap }) {
         <div
             className={`
                 flex flex-col rounded-2xl overflow-hidden border transition-all duration-200
-                ${isPremium
-                    ? "bg-amber-400/[0.06] border-amber-400/20 hover:border-amber-400/40 hover:bg-amber-400/10"
-                    : "bg-white/[0.03] border-white/[0.07] hover:border-white/[0.14] hover:bg-white/[0.06]"
+                ${isFullSlot
+                    ? "opacity-60 border-red-500/20 bg-red-950/10"
+                    : isPremium
+                        ? "bg-amber-400/[0.06] border-amber-400/20 hover:border-amber-400/40 hover:bg-amber-400/10"
+                        : "bg-white/[0.03] border-white/[0.07] hover:border-white/[0.14] hover:bg-white/[0.06]"
                 }
             `}
         >
@@ -145,38 +152,81 @@ function MemberCard({ member, fee, isPremium, photoMap }) {
                         src={photoUrl}
                         alt={member.name}
                         loading="lazy"
-                        className="w-full h-full object-cover object-top transition-transform duration-300 hover:scale-105"
+                        className={`
+                            w-full h-full object-cover object-top transition-transform duration-300 
+                            hover:scale-105 ${isFullSlot ? "grayscale" : ""}
+                        `}
                         onError={() => setImgFailed(true)}
                     />
                 ) : (
                     <div
                         className={`
                             w-full h-full flex items-center justify-center text-2xl font-black tracking-tight select-none
-                            ${isPremium ? "text-amber-400/30" : "text-white/20"}
+                            ${isFullSlot
+                                ? "text-red-500/30"
+                                : isPremium
+                                    ? "text-amber-400/30"
+                                    : "text-white/20"
+                            }
                         `}
                     >
                         {initials}
                     </div>
                 )}
 
-                {/* Premium badge */}
-                {isPremium && (
+                {/* Premium badge - only if not fullslot */}
+                {isPremium && !isFullSlot && (
                     <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-amber-400 flex items-center justify-center shadow-md">
                         <svg className="w-2.5 h-2.5 text-black" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                         </svg>
                     </div>
                 )}
+
+                {/* Fullslot overlay badge */}
+                {isFullSlot && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+                        <div className="bg-red-900/90 border border-red-500/40 rounded-lg px-2 py-1 transform -rotate-6 shadow-lg">
+                            <span className="text-[10px] font-black text-red-200 uppercase tracking-widest">
+                                FULLSLOT
+                            </span>
+                        </div>
+                    </div>
+                )}
+
+                {/* Small fullslot indicator dot */}
+                {isFullSlot && (
+                    <div className="absolute top-2 left-2 w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-lg shadow-red-500/50" />
+                )}
             </div>
 
             {/* Info */}
             <div className="p-3 flex flex-col gap-1">
-                <p className={`text-xs font-bold leading-tight truncate ${isPremium ? "text-amber-50" : "text-white/90"}`}>
+                <p className={`
+                    text-xs font-bold leading-tight truncate 
+                    ${isFullSlot
+                        ? "text-gray-500 line-through"
+                        : isPremium
+                            ? "text-amber-50"
+                            : "text-white/90"
+                    }
+                `}>
                     {member.name.replace(/ JKT48$/i, "")}
                 </p>
-                <p className={`text-sm font-extrabold leading-none mt-0.5 ${isPremium ? "text-amber-300" : "text-white/70"}`}>
-                    {formatRupiah(fee)}
+                <p className={`
+                    text-sm font-extrabold leading-none mt-0.5
+                    ${isFullSlot
+                        ? "text-gray-600 line-through"
+                        : isPremium
+                            ? "text-amber-300"
+                            : "text-white/70"
+                    }
+                `}>
+                    {isFullSlot ? "FULLSLOT" : formatRupiah(fee)}
                 </p>
+                {isFullSlot && (
+                    <p className="text-[9px] text-red-400/70 mt-0.5">Tidak tersedia</p>
+                )}
             </div>
         </div>
     );
@@ -203,11 +253,17 @@ function SkeletonGrid() {
 
 /* ─── TierSection ────────────────────────────────────────────────────────── */
 
-function TierSection({ group, isPremium, photoMap, photosReady }) {
+function TierSection({ group, isPremium, photoMap, photosReady, serviceType }) {
     const [showAll, setShowAll] = useState(false);
     const INITIAL = 12;
     const visibleMembers = showAll ? group.members : group.members.slice(0, INITIAL);
     const hasMore = group.members.length > INITIAL;
+
+    // Hitung jumlah member yang tidak fullslot untuk ditampilkan
+    const nonFullslotCount = group.members.filter(m => {
+        const fullSlots = Array.isArray(m?.full_slots) ? m.full_slots : [];
+        return !fullSlots.includes(serviceType);
+    }).length;
 
     return (
         <div className="mb-10">
@@ -237,7 +293,7 @@ function TierSection({ group, isPremium, photoMap, photosReady }) {
                 <div className="flex-1 h-px bg-white/[0.06] hidden sm:block" />
 
                 <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${isPremium ? "bg-amber-400/10 text-amber-300/60" : "bg-white/[0.05] text-white/25"}`}>
-                    {group.members.length} member
+                    {nonFullslotCount} / {group.members.length} member
                 </span>
 
                 <p className={`text-sm font-extrabold ${isPremium ? "text-amber-300" : "text-white/50"}`}>
@@ -257,6 +313,7 @@ function TierSection({ group, isPremium, photoMap, photosReady }) {
                             fee={group.fee}
                             isPremium={isPremium}
                             photoMap={photoMap}
+                            serviceType={serviceType}
                         />
                     ))}
                 </div>
@@ -426,6 +483,7 @@ export default function PricelistPage() {
                                     isPremium={i === 0}
                                     photoMap={photoMap}
                                     photosReady={photosReady}
+                                    serviceType={activeService.id}
                                 />
                             ))}
 

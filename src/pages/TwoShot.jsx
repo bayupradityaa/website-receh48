@@ -52,6 +52,11 @@ function getFeeByType(member, feeType) {
   return item?.fee_groups || null;
 }
 
+function isFullSlot(member, serviceType) {
+  const fullSlots = Array.isArray(member?.full_slots) ? member.full_slots : [];
+  return fullSlots.includes(serviceType);
+}
+
 export default function TwoShot() {
   const { user } = useAuth(); // eslint-disable-line no-unused-vars
   const { showToast } = useToast();
@@ -97,6 +102,51 @@ export default function TwoShot() {
   }, []);
 
   useEffect(() => {
+    const channel = supabase
+      .channel('members-fullslot')
+      .on('postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'members',
+          filter: `is_active=eq.true`
+        },
+        (payload) => {
+          console.log('Realtime update member:', payload.new.name, 'full_slots:', payload.new.full_slots);
+
+          // Update state members
+          setMembers(prev =>
+            prev.map(m =>
+              m.id === payload.new.id
+                ? { ...m, full_slots: payload.new.full_slots || [] }
+                : m
+            )
+          );
+
+          // Optional: Hapus dari cart jika member yang sudah di cart menjadi fullslot
+          setCart(prev =>
+            prev.filter(item => {
+              if (item.member_id === payload.new.id && isFullSlot(payload.new, ORDER_TYPE)) {
+                showToast(`${payload.new.name} telah menjadi FULLSLOT, dihapus dari keranjang.`, "warning");
+                return false;
+              }
+              if (item.backup_id === payload.new.id && isFullSlot(payload.new, ORDER_TYPE)) {
+                showToast(`Member cadangan ${payload.new.name} telah menjadi FULLSLOT, cadangan dihapus.`, "warning");
+                return false;
+              }
+              return true;
+            })
+          );
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [members, ORDER_TYPE]);
+
+  useEffect(() => {
     document.body.style.overflow = successOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
@@ -112,7 +162,7 @@ export default function TwoShot() {
         .from("members")
         .select(
           `
-          id, name, is_active, photo_url,
+          id, name, is_active, photo_url,full_slots,
           member_fees (
             id, fee_type, fee_group_id,
             fee_groups ( id, name, fee, description, fee_type, is_active )
@@ -168,6 +218,12 @@ export default function TwoShot() {
 
   const addToCart = (member) => {
     if (!isOpen) return;
+
+    // Cek fullslot
+    if (isFullSlot(member, ORDER_TYPE)) {
+      showToast(`${member.name} sedang fullslot untuk layanan ini`, 'error');
+      return;
+    }
     const fg = getFeeByType(member, ORDER_TYPE);
     setCart((prev) => [
       ...prev,
@@ -340,8 +396,15 @@ export default function TwoShot() {
                         {filteredMembers.map((m) => {
                           const fg = getFeeByType(m, ORDER_TYPE);
                           const price = fg?.fee || 0;
+                          const full = isFullSlot(m, ORDER_TYPE);
                           return (
-                            <tr key={m.id} className="hover:bg-[#1A1F2E] transition-colors">
+                            <tr
+                              key={m.id}
+                              className={[
+                                'transition-colors',
+                                full ? 'opacity-50 bg-red-950/10' : 'hover:bg-[#1A1F2E]'
+                              ].join(' ')}
+                            >
                               <td className="px-6 py-4">
                                 <div className="flex items-center gap-3">
                                   <img
@@ -351,7 +414,14 @@ export default function TwoShot() {
                                     loading="lazy"
                                     onError={(e) => { e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=3B82F6&color=fff`; }}
                                   />
-                                  <span className="font-medium text-white">{m.name}</span>
+                                  <div>
+                                    <span className="font-medium text-white">{m.name}</span>
+                                    {full && (
+                                      <span className="ml-2 text-[10px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 border border-red-500/30 font-bold align-middle">
+                                        FULLSLOT
+                                      </span>
+                                    )}
+                                  </div>
                                 </div>
                               </td>
                               <td className="px-6 py-4 text-right">
@@ -360,11 +430,12 @@ export default function TwoShot() {
                               <td className="px-6 py-4 text-center">
                                 <button
                                   onClick={() => addToCart(m)}
-                                  disabled={!isOpen}
+                                  disabled={!isOpen || full}
+                                  title={full ? 'Member ini sedang fullslot' : ''}
                                   className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed text-white rounded-lg transition-colors font-medium text-sm"
                                 >
                                   <Plus className="w-4 h-4" />
-                                  Tambah
+                                  {full ? 'Fullslot' : 'Tambah'}
                                 </button>
                               </td>
                             </tr>
@@ -375,47 +446,88 @@ export default function TwoShot() {
                     {filteredMembers.length === 0 && (
                       <div className="text-center py-12 text-gray-500">
                         <p>Tidak ada member yang ditemukan.</p>
-                        <p className="text-sm mt-2">Pastikan member sudah di-assign ke fee group TwoShot</p>
                       </div>
                     )}
                   </div>
                 </div>
               </div>
 
-              {/* Mobile: Card list */}
+              {/* Mobile */}
               <div className="md:hidden p-4">
                 {filteredMembers.length === 0 ? (
                   <div className="text-center py-10 text-gray-500">
                     <p>Tidak ada member yang ditemukan.</p>
-                    <p className="text-sm mt-2">Pastikan member sudah di-assign ke fee group TwoShot</p>
                   </div>
                 ) : (
                   <div className="space-y-3 max-h-[520px] overflow-y-auto pr-1">
                     {filteredMembers.map((m) => {
                       const fg = getFeeByType(m, ORDER_TYPE);
                       const price = fg?.fee || 0;
+                      const full = isFullSlot(m, ORDER_TYPE);
                       return (
-                        <div key={m.id} className="bg-[#0A0E17] border border-gray-700 rounded-xl p-3 flex items-center justify-between gap-3">
+                        <div
+                          key={m.id}
+                          className={[
+                            'bg-[#0A0E17] border rounded-xl p-3 flex items-center justify-between gap-3 transition-all',
+                            full
+                              ? 'opacity-60 bg-red-950/10 border-red-800/50'
+                              : 'border-gray-700'
+                          ].join(' ')}
+                        >
                           <div className="flex items-center gap-3 min-w-0">
-                            <img
-                              src={m.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=3B82F6&color=fff`}
-                              alt={m.name}
-                              className="w-11 h-11 rounded-full object-cover border border-gray-700 flex-shrink-0"
-                              loading="lazy"
-                              onError={(e) => { e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=3B82F6&color=fff`; }}
-                            />
+                            <div className="relative">
+                              <img
+                                src={m.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=3B82F6&color=fff`}
+                                alt={m.name}
+                                className={[
+                                  'w-11 h-11 rounded-full object-cover border',
+                                  full ? 'border-red-500/50 grayscale' : 'border-gray-700'
+                                ].join(' ')}
+                                loading="lazy"
+                                onError={(e) => { e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=3B82F6&color=fff`; }}
+                              />
+                              {full && (
+                                <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                              )}
+                            </div>
                             <div className="min-w-0">
-                              <p className="font-semibold text-white truncate">{m.name}</p>
-                              <p className="text-sm font-semibold text-primary-400">{formatCurrency(price)}</p>
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <p className={[
+                                  'font-semibold truncate',
+                                  full ? 'text-gray-400' : 'text-white'
+                                ].join(' ')}>
+                                  {m.name}
+                                </p>
+                                {full && (
+                                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 border border-red-500/30 font-bold shrink-0">
+                                    FULLSLOT
+                                  </span>
+                                )}
+                              </div>
+                              <p className={[
+                                'text-sm font-semibold',
+                                full ? 'text-gray-500' : 'text-primary-400'
+                              ].join(' ')}>
+                                {formatCurrency(price)}
+                              </p>
+                              {full && (
+                                <p className="text-[10px] text-red-400/70 mt-0.5">Tidak tersedia</p>
+                              )}
                             </div>
                           </div>
                           <button
                             onClick={() => addToCart(m)}
-                            disabled={!isOpen}
-                            className="inline-flex items-center gap-1.5 px-3 py-2 bg-primary-600 hover:bg-primary-700 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed text-white rounded-lg transition-colors font-medium text-sm flex-shrink-0"
+                            disabled={!isOpen || full}
+                            title={full ? 'Member ini sedang fullslot' : ''}
+                            className={[
+                              'inline-flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors font-medium text-sm flex-shrink-0',
+                              full
+                                ? 'bg-gray-700/50 text-gray-500 cursor-not-allowed border border-gray-600'
+                                : 'bg-primary-600 hover:bg-primary-700 text-white'
+                            ].join(' ')}
                           >
                             <Plus className="w-4 h-4" />
-                            Tambah
+                            {full ? 'Full' : 'Tambah'}
                           </button>
                         </div>
                       );
