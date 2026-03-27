@@ -585,6 +585,11 @@ export default function MeetGreet() {
                               <option value="Sesi 1">Sesi 1</option>
                               <option value="Sesi 2">Sesi 2</option>
                               <option value="Sesi 3">Sesi 3</option>
+                              <option value="Sesi 4">Sesi 4</option>
+                              <option value="Sesi 5">Sesi 5</option>
+                              <option value="Sesi 6">Sesi 6</option>
+                              <option value="Sesi 7">Sesi 7</option>
+                              <option value="Sesi 8">Sesi 8</option>
                             </select>
                           </div>
                         </div>
@@ -612,6 +617,11 @@ export default function MeetGreet() {
                                     <option value="Sesi 1">Sesi 1</option>
                                     <option value="Sesi 2">Sesi 2</option>
                                     <option value="Sesi 3">Sesi 3</option>
+                                    <option value="Sesi 4">Sesi 4</option>
+                                    <option value="Sesi 5">Sesi 5</option>
+                                    <option value="Sesi 6">Sesi 6</option>
+                                    <option value="Sesi 7">Sesi 7</option>
+                                    <option value="Sesi 8">Sesi 8</option>
                                   </select>
                                 </div>
                               </div>
