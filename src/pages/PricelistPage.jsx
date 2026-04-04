@@ -9,6 +9,8 @@ const SUPABASE_URL = "https://ngzvcfcsarxclfmxuwfc.supabase.co";
 const BUCKET = "member-photos";
 const FOLDER = "members";
 
+const PROMO_SERVICE_ID = "vc";
+
 /* ─── Service Types ──────────────────────────────────────────────────────── */
 
 const SERVICE_TYPES = [
@@ -102,12 +104,64 @@ function useMemberPhotos() {
     return { photoMap, ready };
 }
 
+/* ─── PromoBanner ────────────────────────────────────────────────────────── */
+
+function PromoBanner({ fee }) {
+    return (
+        <div className="relative mb-8 overflow-hidden rounded-2xl">
+            <div className="absolute inset-0 bg-gradient-to-r from-[#1a0a00] via-[#2d1200] to-[#1a0800]" />
+            <div
+                className="absolute inset-0 opacity-[0.06]"
+                style={{
+                    backgroundImage: "repeating-linear-gradient(45deg, rgba(255,120,0,0.15) 0px, rgba(255,120,0,0.15) 1px, transparent 1px, transparent 12px)",
+                }}
+            />
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-orange-500/60 to-transparent" />
+            <div className="absolute -right-20 top-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-orange-600/10 blur-3xl pointer-events-none" />
+            <div className="absolute -left-10 top-1/2 -translate-y-1/2 w-40 h-40 rounded-full bg-red-700/10 blur-2xl pointer-events-none" />
+
+            <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-6 py-5">
+                <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2 mb-0.5">
+                        <div className="h-px w-6 bg-orange-500/60" />
+                        <span className="text-orange-400/80 text-[9px] font-black uppercase tracking-[0.2em]">
+                            Penawaran Terbatas
+                        </span>
+                    </div>
+                    <p className="text-white font-black text-lg sm:text-xl leading-tight tracking-tight">
+                        Harga Spesial{" "}
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-300 via-amber-200 to-orange-400">
+                            Bulan Ini
+                        </span>
+                    </p>
+                    <p className="text-white/40 text-xs mt-0.5 font-medium">
+                        Semua sesi Video Call — flat rate, tanpa biaya tambahan
+                    </p>
+                </div>
+
+                <div className="flex-shrink-0 flex flex-col items-start sm:items-end gap-1">
+                    <div className="relative">
+                        <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 blur-md opacity-40" />
+                        <div className="relative px-5 py-2 rounded-xl bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-500/30">
+                            <span className="text-2xl font-black text-white tracking-tight">
+                                {fee ? formatRupiah(fee) : "Rp 35.000"}
+                            </span>
+                            <span className="text-orange-300/60 text-[10px] font-bold ml-1.5">/ sesi</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-orange-600/30 to-transparent" />
+        </div>
+    );
+}
+
 /* ─── MemberCard ─────────────────────────────────────────────────────────── */
 
-function MemberCard({ member, fee, isPremium, photoMap, serviceType }) {
+function MemberCard({ member, fee, isPremium, photoMap, serviceType, isPromo }) {
     const [imgFailed, setImgFailed] = useState(false);
 
-    // Cek apakah member fullslot untuk service ini
     const isFullSlot = useMemo(() => {
         const fullSlots = Array.isArray(member?.full_slots) ? member.full_slots : [];
         return fullSlots.includes(serviceType);
@@ -120,7 +174,6 @@ function MemberCard({ member, fee, isPremium, photoMap, serviceType }) {
             .replace(/\s+/g, "_")
             .replace(/[^a-zA-Z0-9_]/g, "");
         const lowerSlug = titleSlug.toLowerCase();
-
         return photoMap.get(titleSlug) ?? photoMap.get(lowerSlug) ?? null;
     }, [member.name, photoMap]);
 
@@ -139,9 +192,11 @@ function MemberCard({ member, fee, isPremium, photoMap, serviceType }) {
                 flex flex-col rounded-2xl overflow-hidden border transition-all duration-200
                 ${isFullSlot
                     ? "opacity-60 border-red-500/20 bg-red-950/10"
-                    : isPremium
-                        ? "bg-amber-400/[0.06] border-amber-400/20 hover:border-amber-400/40 hover:bg-amber-400/10"
-                        : "bg-white/[0.03] border-white/[0.07] hover:border-white/[0.14] hover:bg-white/[0.06]"
+                    : isPromo
+                        ? "bg-gradient-to-b from-orange-950/30 to-[#0d0500] border-orange-600/20 hover:border-orange-500/40"
+                        : isPremium
+                            ? "bg-amber-400/[0.06] border-amber-400/20 hover:border-amber-400/40 hover:bg-amber-400/10"
+                            : "bg-white/[0.03] border-white/[0.07] hover:border-white/[0.14] hover:bg-white/[0.06]"
                 }
             `}
         >
@@ -159,23 +214,33 @@ function MemberCard({ member, fee, isPremium, photoMap, serviceType }) {
                         onError={() => setImgFailed(true)}
                     />
                 ) : (
-                    <div
-                        className={`
-                            w-full h-full flex items-center justify-center text-2xl font-black tracking-tight select-none
-                            ${isFullSlot
-                                ? "text-red-500/30"
-                                : isPremium
-                                    ? "text-amber-400/30"
-                                    : "text-white/20"
-                            }
-                        `}
-                    >
+                    <div className={`
+                        w-full h-full flex items-center justify-center text-2xl font-black tracking-tight select-none
+                        ${isFullSlot ? "text-red-500/30" : isPremium ? "text-amber-400/30" : "text-white/20"}
+                    `}>
                         {initials}
                     </div>
                 )}
 
-                {/* Premium badge - only if not fullslot */}
-                {isPremium && !isFullSlot && (
+                {/* Diagonal ribbon badge PROMO */}
+                {isPromo && !isFullSlot && (
+                    <div className="absolute top-0 left-0 overflow-hidden w-16 h-16 pointer-events-none">
+                        <div
+                            className="absolute -left-4 top-3 w-20 text-center py-0.5 rotate-[-45deg] origin-center"
+                            style={{
+                                background: "linear-gradient(90deg, #c2410c, #ea580c)",
+                                boxShadow: "0 1px 6px rgba(234,88,12,0.5)",
+                            }}
+                        >
+                            <span className="text-[7px] font-black text-white uppercase tracking-widest">
+                                PROMO
+                            </span>
+                        </div>
+                    </div>
+                )}
+
+                {/* Premium badge */}
+                {isPremium && !isFullSlot && !isPromo && (
                     <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-amber-400 flex items-center justify-center shadow-md">
                         <svg className="w-2.5 h-2.5 text-black" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -183,20 +248,21 @@ function MemberCard({ member, fee, isPremium, photoMap, serviceType }) {
                     </div>
                 )}
 
-                {/* Fullslot overlay badge */}
+                {/* Fullslot overlay */}
                 {isFullSlot && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
                         <div className="bg-red-900/90 border border-red-500/40 rounded-lg px-2 py-1 transform -rotate-6 shadow-lg">
-                            <span className="text-[10px] font-black text-red-200 uppercase tracking-widest">
-                                FULLSLOT
-                            </span>
+                            <span className="text-[10px] font-black text-red-200 uppercase tracking-widest">FULLSLOT</span>
                         </div>
                     </div>
                 )}
-
-                {/* Small fullslot indicator dot */}
                 {isFullSlot && (
                     <div className="absolute top-2 left-2 w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-lg shadow-red-500/50" />
+                )}
+
+                {/* Promo bottom gradient */}
+                {isPromo && !isFullSlot && (
+                    <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-orange-950/60 to-transparent pointer-events-none" />
                 )}
             </div>
 
@@ -204,29 +270,26 @@ function MemberCard({ member, fee, isPremium, photoMap, serviceType }) {
             <div className="p-3 flex flex-col gap-1">
                 <p className={`
                     text-xs font-bold leading-tight truncate 
-                    ${isFullSlot
-                        ? "text-gray-500 line-through"
-                        : isPremium
-                            ? "text-amber-50"
-                            : "text-white/90"
-                    }
+                    ${isFullSlot ? "text-gray-500 line-through" : isPremium ? "text-amber-50" : "text-white/90"}
                 `}>
                     {member.name.replace(/ JKT48$/i, "")}
                 </p>
+
                 <p className={`
                     text-sm font-extrabold leading-none mt-0.5
                     ${isFullSlot
                         ? "text-gray-600 line-through"
-                        : isPremium
-                            ? "text-amber-300"
-                            : "text-white/70"
+                        : isPromo
+                            ? "text-orange-400"
+                            : isPremium
+                                ? "text-amber-300"
+                                : "text-white/70"
                     }
                 `}>
                     {isFullSlot ? "FULLSLOT" : formatRupiah(fee)}
                 </p>
-                {isFullSlot && (
-                    <p className="text-[9px] text-red-400/70 mt-0.5">Tidak tersedia</p>
-                )}
+
+                {isFullSlot && <p className="text-[9px] text-red-400/70 mt-0.5">Tidak tersedia</p>}
             </div>
         </div>
     );
@@ -256,10 +319,10 @@ function SkeletonGrid() {
 function TierSection({ group, isPremium, photoMap, photosReady, serviceType }) {
     const [showAll, setShowAll] = useState(false);
     const INITIAL = 12;
+    const isPromo = serviceType === PROMO_SERVICE_ID;
     const visibleMembers = showAll ? group.members : group.members.slice(0, INITIAL);
     const hasMore = group.members.length > INITIAL;
 
-    // Hitung jumlah member yang tidak fullslot untuk ditampilkan
     const nonFullslotCount = group.members.filter(m => {
         const fullSlots = Array.isArray(m?.full_slots) ? m.full_slots : [];
         return !fullSlots.includes(serviceType);
@@ -269,34 +332,38 @@ function TierSection({ group, isPremium, photoMap, photosReady, serviceType }) {
         <div className="mb-10">
             {/* Tier header */}
             <div className="flex items-center gap-3 mb-4 flex-wrap">
-                <span
-                    className={`
-                        inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border
-                        ${isPremium
-                            ? "bg-amber-400/15 border-amber-400/25 text-amber-200"
-                            : "bg-white/[0.05] border-white/[0.09] text-white/35"
-                        }
-                    `}
-                >
-                    {isPremium && (
-                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                {isPromo ? (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border bg-orange-500/10 border-orange-500/25 text-orange-300">
+                        <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
                         </svg>
-                    )}
-                    {isPremium ? "Premium" : "Reguler"}
-                </span>
+                        Special Price
+                    </span>
+                ) : (
+                    <span className={`
+                        inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border
+                        ${isPremium ? "bg-amber-400/15 border-amber-400/25 text-amber-200" : "bg-white/[0.05] border-white/[0.09] text-white/35"}
+                    `}>
+                        {isPremium && (
+                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                        )}
+                        {isPremium ? "Premium" : "Reguler"}
+                    </span>
+                )}
 
-                <p className={`text-sm font-bold ${isPremium ? "text-amber-100/80" : "text-white/60"}`}>
+                <p className={`text-sm font-bold ${isPromo ? "text-orange-100/70" : isPremium ? "text-amber-100/80" : "text-white/60"}`}>
                     {group.name}
                 </p>
 
                 <div className="flex-1 h-px bg-white/[0.06] hidden sm:block" />
 
-                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${isPremium ? "bg-amber-400/10 text-amber-300/60" : "bg-white/[0.05] text-white/25"}`}>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${isPromo ? "bg-orange-500/10 text-orange-300/60" : isPremium ? "bg-amber-400/10 text-amber-300/60" : "bg-white/[0.05] text-white/25"}`}>
                     {nonFullslotCount} / {group.members.length} member
                 </span>
 
-                <p className={`text-sm font-extrabold ${isPremium ? "text-amber-300" : "text-white/50"}`}>
+                <p className={`text-sm font-extrabold ${isPromo ? "text-orange-400" : isPremium ? "text-amber-300" : "text-white/50"}`}>
                     {formatRupiah(group.fee)}
                 </p>
             </div>
@@ -314,27 +381,27 @@ function TierSection({ group, isPremium, photoMap, photosReady, serviceType }) {
                             isPremium={isPremium}
                             photoMap={photoMap}
                             serviceType={serviceType}
+                            isPromo={isPromo}
                         />
                     ))}
                 </div>
             )}
 
-            {/* Expand / collapse */}
             {hasMore && photosReady && (
                 <div className="mt-4 text-center">
                     <button
                         onClick={() => setShowAll((v) => !v)}
                         className={`
                             px-5 py-2 rounded-xl text-xs font-bold border transition-all
-                            ${isPremium
-                                ? "border-amber-400/20 text-amber-300/60 hover:bg-amber-400/10 hover:text-amber-200"
-                                : "border-white/[0.09] text-white/35 hover:bg-white/[0.05] hover:text-white/60"
+                            ${isPromo
+                                ? "border-orange-500/20 text-orange-400/60 hover:bg-orange-500/10 hover:text-orange-300"
+                                : isPremium
+                                    ? "border-amber-400/20 text-amber-300/60 hover:bg-amber-400/10 hover:text-amber-200"
+                                    : "border-white/[0.09] text-white/35 hover:bg-white/[0.05] hover:text-white/60"
                             }
                         `}
                     >
-                        {showAll
-                            ? "↑ Sembunyikan"
-                            : `Lihat ${group.members.length - INITIAL} member lainnya`}
+                        {showAll ? "↑ Sembunyikan" : `Lihat ${group.members.length - INITIAL} member lainnya`}
                     </button>
                 </div>
             )}
@@ -349,17 +416,18 @@ export default function PricelistPage() {
     const { groups, loading, error } = usePricelist(activeService.id);
     const { photoMap, ready: photosReady } = useMemberPhotos();
 
+    // Ambil fee dari group pertama untuk ditampilkan di banner
+    const promoFee = groups?.[0]?.fee ?? null;
+
     return (
         <div className="min-h-screen bg-[#06070A] text-white">
 
             {/* ── Hero ── */}
             <section className="relative overflow-hidden pt-24 pb-10">
-                {/* Background glows */}
                 <div className="absolute inset-0 pointer-events-none">
                     <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[500px] rounded-full bg-amber-400/12 blur-[120px]" />
                     <div className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-primary-600/8 blur-[100px]" />
                 </div>
-                {/* Dot grid */}
                 <div
                     className="absolute inset-0 opacity-[0.07] pointer-events-none"
                     style={{
@@ -415,6 +483,17 @@ export default function PricelistPage() {
                             >
                                 {s.icon}
                                 <span>{s.label}</span>
+                                {s.id === PROMO_SERVICE_ID && (
+                                    <span className={`
+                                        ml-0.5 text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-sm
+                                        ${activeService.id === s.id
+                                            ? "bg-red-600 text-white"
+                                            : "bg-orange-500/20 text-orange-400 border border-orange-500/30"
+                                        }
+                                    `}>
+                                        35K
+                                    </span>
+                                )}
                             </button>
                         ))}
                         <p className="hidden md:block ml-auto text-white/30 text-xs flex-shrink-0 pl-4">
@@ -428,10 +507,12 @@ export default function PricelistPage() {
             <section className="pb-24 pt-8">
                 <div className="container mx-auto px-4 max-w-5xl">
 
-                    {/* Mobile service description */}
                     <p className="md:hidden text-center text-white/35 text-xs mb-6">
                         {activeService.description}
                     </p>
+
+                    {/* Promo Banner */}
+                    {activeService.id === PROMO_SERVICE_ID && <PromoBanner fee={promoFee} />}
 
                     {/* Loading state */}
                     {loading && (
