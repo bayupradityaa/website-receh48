@@ -1016,8 +1016,7 @@ export default function Home() {
                             className="w-full h-full object-cover cursor-pointer hover:scale-[1.03] transition-transform duration-300"
                             onClick={() => setLightboxImage(img)}
                             onError={(e) => {
-                              e.currentTarget.src =
-                                "https://via.placeholder.com/800x450/e5e7eb/6b7280?text=Image+Not+Available";
+                              e.currentTarget.style.display = 'none';
                             }}
                           />
                         </div>

@@ -11,6 +11,70 @@ const FOLDER = "members";
 
 const PROMO_SERVICE_ID = "vc";
 
+/* ─── Team Rosters ───────────────────────────────────────────────────────── */
+
+const TEAMS = [
+    {
+        id: "love",
+        name: "Team Love",
+        color: "from-pink-500 to-rose-500",
+        accent: "pink",
+        bg: "pink-500",
+        members: [
+            "Alya Amanda", "Anindya Ramadhani", "Aurellia", "Aurhel Alana",
+            "Cathleen Nixie", "Celline Thefani", "Cynthia Yaputera", "Fiony Alveria",
+            "Fritzy Rosmerian", "Grace Octaviani", "Hillary Abigail", "Indah Cahya",
+            "Jazzlyn Trisha", "Michelle Alexandra", "Nayla Suji",
+        ],
+    },
+    {
+        id: "dream",
+        name: "Team Dream",
+        color: "from-sky-500 to-blue-500",
+        accent: "sky",
+        bg: "sky-500",
+        members: [
+            "Adeline Wijaya", "Chelsea Davina", "Febriola Sinambela", "Freya Jayawardana",
+            "Gabriela Abigail", "Gendis Mayrannisa", "Gita Sekar Andarini", "Greesella Adhalia",
+            "Helisma Putri", "Jesslyn Elly", "Marsha Lenathea", "Nina Tutachia",
+            "Oline Manuel", "Shabilqis Naila",
+        ],
+    },
+    {
+        id: "passion",
+        name: "Team Passion",
+        color: "from-emerald-500 to-green-500",
+        accent: "emerald",
+        bg: "emerald-500",
+        members: [
+            "Abigail Rachel", "Angelina Christy", "Catherina Vallencia", "Cornelia Vanisa",
+            "Dena Natalia", "Desy Natalia", "Feni Fitriyanti", "Jessica Chandra",
+            "Kathrina Irene", "Lulu Salsabila", "Michelle Levia", "Mutiara Azzahra",
+            "Raisha Syifa", "Ribka Budiman", "Victoria Kimberly",
+        ],
+    },
+    {
+        id: "trainee",
+        name: "Trainee",
+        color: "from-violet-500 to-purple-500",
+        accent: "violet",
+        bg: "violet-500",
+        members: [
+            "Astrella Virgiananda", "Aulia Riza", "Bong Aprilli", "Hagia Sopia",
+            "Humaira Ramadhani", "Jacqueline Immanuela", "Jemima Evodie",
+            "Mikaela Kusjanto", "Nur Intan",
+            "Afera Thalia", "Carissa Dini", "Christabella Bonita", "Fahira Putri",
+            "Fatimah Azzahra", "Heidi Suyangga", "Maxine Faye",
+            "Putry Jazyta", "Ralyne Van Irwan", "Sona Kalyana",
+        ],
+    },
+];
+
+const TEAM_NOTES = {
+    dream: "Gendis Mayrannisa (suspended) · Chelsea Davina (graduated)",
+    passion: "Feni Fitriyanti (hiatus)",
+};
+
 /* ─── Service Types ──────────────────────────────────────────────────────── */
 
 const SERVICE_TYPES = [
@@ -409,12 +473,135 @@ function TierSection({ group, isPremium, photoMap, photosReady, serviceType }) {
     );
 }
 
+/* ─── TeamSection ─────────────────────────────────────────────────────── */
+
+function TeamSection({ team, allMembers, photoMap, photosReady, serviceType }) {
+    const teamMembers = allMembers
+        .filter((m) => {
+            const cleanName = m.name.replace(/ JKT48$/i, "").trim();
+            return team.members.some(
+                (tm) => cleanName.toLowerCase() === tm.toLowerCase()
+            );
+        })
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+    const colorMap = {
+        love: {
+            border: "border-pink-500/25",
+            borderHover: "hover:border-pink-400/50",
+            bg: "bg-pink-500/[0.06]",
+            bgHover: "hover:bg-pink-500/10",
+            badge: "bg-pink-500/15 border-pink-500/30 text-pink-300",
+            text: "text-pink-300",
+            textMuted: "text-pink-200/60",
+            glow: "bg-pink-500/10",
+            gradientFrom: "from-pink-950/40",
+            line: "bg-pink-500/30",
+            dot: "bg-pink-500",
+        },
+        dream: {
+            border: "border-sky-500/25",
+            borderHover: "hover:border-sky-400/50",
+            bg: "bg-sky-500/[0.06]",
+            bgHover: "hover:bg-sky-500/10",
+            badge: "bg-sky-500/15 border-sky-500/30 text-sky-300",
+            text: "text-sky-300",
+            textMuted: "text-sky-200/60",
+            glow: "bg-sky-500/10",
+            gradientFrom: "from-sky-950/40",
+            line: "bg-sky-500/30",
+            dot: "bg-sky-500",
+        },
+        passion: {
+            border: "border-emerald-500/25",
+            borderHover: "hover:border-emerald-400/50",
+            bg: "bg-emerald-500/[0.06]",
+            bgHover: "hover:bg-emerald-500/10",
+            badge: "bg-emerald-500/15 border-emerald-500/30 text-emerald-300",
+            text: "text-emerald-300",
+            textMuted: "text-emerald-200/60",
+            glow: "bg-emerald-500/10",
+            gradientFrom: "from-emerald-950/40",
+            line: "bg-emerald-500/30",
+            dot: "bg-emerald-500",
+        },
+        trainee: {
+            border: "border-violet-500/25",
+            borderHover: "hover:border-violet-400/50",
+            bg: "bg-violet-500/[0.06]",
+            bgHover: "hover:bg-violet-500/10",
+            badge: "bg-violet-500/15 border-violet-500/30 text-violet-300",
+            text: "text-violet-300",
+            textMuted: "text-violet-200/60",
+            glow: "bg-violet-500/10",
+            gradientFrom: "from-violet-950/40",
+            line: "bg-violet-500/30",
+            dot: "bg-violet-500",
+        },
+    };
+    const c = colorMap[team.id];
+    const note = TEAM_NOTES[team.id];
+
+    return (
+        <div className="mb-10">
+            {/* Team header */}
+            <div className="flex items-center gap-3 mb-4 flex-wrap">
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border ${c.badge}`}>
+                    <span className={`w-2 h-2 rounded-full ${c.dot}`} />
+                    {team.name}
+                </span>
+                <div className={`flex-1 h-px ${c.line} hidden sm:block`} />
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${c.badge}`}>
+                    {teamMembers.length} member
+                </span>
+            </div>
+
+            {note && (
+                <p className="text-[10px] text-white/30 mb-3 ml-1 italic">📌 {note}</p>
+            )}
+
+            {/* Cards grid */}
+            {!photosReady ? (
+                <SkeletonGrid />
+            ) : teamMembers.length === 0 ? (
+                <p className="text-white/30 text-xs py-6 text-center">Belum ada member {team.name} di layanan ini</p>
+            ) : (
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
+                    {teamMembers.map((m) => {
+                        const memberFee = m._fee ?? 0;
+                        return (
+                            <MemberCard
+                                key={m.id}
+                                member={m}
+                                fee={memberFee}
+                                isPremium={memberFee > 35000}
+                                photoMap={photoMap}
+                                serviceType={serviceType}
+                                isPromo={serviceType === PROMO_SERVICE_ID}
+                            />
+                        );
+                    })}
+                </div>
+            )}
+        </div>
+    );
+}
+
 /* ─── PricelistPage ──────────────────────────────────────────────────────── */
 
 export default function PricelistPage() {
     const [activeService, setActiveService] = useState(SERVICE_TYPES[0]);
     const { groups, loading, error } = usePricelist(activeService.id);
     const { photoMap, ready: photosReady } = useMemberPhotos();
+
+    // Flatten all members with their fee for team view
+    const allMembersFlat = useMemo(() => {
+        const arr = [];
+        groups.forEach((g) => {
+            g.members.forEach((m) => arr.push({ ...m, _fee: g.fee }));
+        });
+        return arr;
+    }, [groups]);
 
     // Ambil fee dari group pertama untuk ditampilkan di banner
     const promoFee = groups?.[0]?.fee ?? null;
@@ -511,6 +698,7 @@ export default function PricelistPage() {
                         {activeService.description}
                     </p>
 
+
                     {/* Promo Banner */}
                     {activeService.id === PROMO_SERVICE_ID && <PromoBanner fee={promoFee} />}
 
@@ -554,42 +742,44 @@ export default function PricelistPage() {
                         </div>
                     )}
 
-                    {/* Tier sections */}
+                    {/* Team view */}
                     {!loading && !error && groups.length > 0 && (
                         <>
-                            {groups.map((group, i) => (
-                                <TierSection
-                                    key={group.id}
-                                    group={group}
-                                    isPremium={i === 0}
+                            {TEAMS.map((team) => (
+                                <TeamSection
+                                    key={team.id}
+                                    team={team}
+                                    allMembers={allMembersFlat}
                                     photoMap={photoMap}
                                     photosReady={photosReady}
                                     serviceType={activeService.id}
                                 />
                             ))}
-
-                            {/* CTA */}
-                            <div className="mt-6 flex flex-col items-center gap-4">
-                                <Link
-                                    to={activeService.formPath}
-                                    className="
-                                        inline-flex items-center gap-2.5 px-8 py-3.5 rounded-2xl font-bold text-sm
-                                        bg-gradient-to-r from-amber-300 to-yellow-200 text-black
-                                        shadow-[0_8px_30px_-8px_rgba(255,200,50,0.5)]
-                                        hover:shadow-[0_12px_40px_-8px_rgba(255,200,50,0.7)]
-                                        hover:brightness-105 transition-all duration-200
-                                    "
-                                >
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                                    </svg>
-                                    Pesan {activeService.label} Sekarang
-                                </Link>
-                                <p className="text-white/30 text-xs text-center max-w-xs leading-relaxed">
-                                    Bayar <span className="text-amber-200/50 font-semibold">setelah tiket berhasil</span> · Fast response · 100% aman
-                                </p>
-                            </div>
                         </>
+                    )}
+
+                    {/* CTA */}
+                    {!loading && !error && groups.length > 0 && (
+                        <div className="mt-6 flex flex-col items-center gap-4">
+                            <Link
+                                to={activeService.formPath}
+                                className="
+                                    inline-flex items-center gap-2.5 px-8 py-3.5 rounded-2xl font-bold text-sm
+                                    bg-gradient-to-r from-amber-300 to-yellow-200 text-black
+                                    shadow-[0_8px_30px_-8px_rgba(255,200,50,0.5)]
+                                    hover:shadow-[0_12px_40px_-8px_rgba(255,200,50,0.7)]
+                                    hover:brightness-105 transition-all duration-200
+                                "
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                </svg>
+                                Pesan {activeService.label} Sekarang
+                            </Link>
+                            <p className="text-white/30 text-xs text-center max-w-xs leading-relaxed">
+                                Bayar <span className="text-amber-200/50 font-semibold">setelah tiket berhasil</span> · Fast response · 100% aman
+                            </p>
+                        </div>
                     )}
 
                 </div>
