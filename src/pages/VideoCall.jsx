@@ -341,11 +341,11 @@ export default function VideoCall() {
           </p>
         </div>
 
-        <div className="max-w-7xl mx-auto mb-6 anim-fade-up anim-d2">
+        <div className="max-w-6xl mx-auto mb-6 anim-fade-up anim-d2">
           <ServiceStatusBanner serviceKey="video_call" />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 max-w-6xl mx-auto">
           {/* LEFT */}
           <div className="lg:col-span-2 space-y-4 md:space-y-6 anim-fade-up anim-d3">
             <div className={`bg-[#12161F] rounded-2xl border border-gray-800 overflow-hidden transition-opacity ${!isOpen ? "opacity-60 pointer-events-none select-none" : ""}`}>

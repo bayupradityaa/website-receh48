@@ -1,5 +1,13 @@
+import { useLocation } from "react-router-dom";
+
 export function Footer() {
+  const location = useLocation();
   const currentYear = new Date().getFullYear();
+
+  // Hide public website footer on all admin pages.
+  // Admin dashboard already has its own full-screen layout.
+  const isAdminPage = location.pathname.startsWith("/admin");
+  if (isAdminPage) return null;
 
   return (
     <footer className="bg-dark-900 text-white mt-auto">
@@ -11,20 +19,28 @@ export function Footer() {
               Layanan joki video call terpercaya untuk fans JKT48. Aman, cepat, dan profesional.
             </p>
           </div>
+
           <div>
             <h4 className="font-semibold mb-3">Layanan</h4>
             <ul className="space-y-2 text-sm text-dark-300">
               <li>
-                <a href="/video-call" className="hover:text-white transition-colors">Joki Video Call</a>
+                <a href="/video-call" className="hover:text-white transition-colors">
+                  Joki Video Call
+                </a>
               </li>
               <li>
-                <a href="/meet-greet" className="hover:text-white transition-colors">Joki Meet N Greet</a>
+                <a href="/meet-greet" className="hover:text-white transition-colors">
+                  Joki Meet N Greet
+                </a>
               </li>
               <li>
-                <a href="/twoshot" className="hover:text-white transition-colors">Joki 2Shoot</a>
+                <a href="/twoshot" className="hover:text-white transition-colors">
+                  Joki 2Shoot
+                </a>
               </li>
             </ul>
           </div>
+
           <div>
             <h4 className="font-semibold mb-3">Kontak</h4>
             <ul className="space-y-2 text-sm text-dark-300">
@@ -33,6 +49,7 @@ export function Footer() {
             </ul>
           </div>
         </div>
+
         <div className="border-t border-dark-800 mt-8 pt-8 text-center text-sm text-dark-400">
           <p>&copy; {currentYear} Receh48. All rights reserved.</p>
         </div>

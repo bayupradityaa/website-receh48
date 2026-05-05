@@ -354,11 +354,11 @@ export default function TwoShot() {
           </p>
         </div>
 
-        <div className="max-w-7xl mx-auto mb-6 anim-fade-up anim-d2">
+        <div className="max-w-6xl mx-auto mb-6 anim-fade-up anim-d2">
           <ServiceStatusBanner serviceKey="two_shot" />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 max-w-6xl mx-auto">
           {/* LEFT */}
           <div className="lg:col-span-2 space-y-4 md:space-y-6 anim-fade-up anim-d3">
             <div

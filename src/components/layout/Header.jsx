@@ -9,10 +9,15 @@ export function Header() {
   const { user, profile, signOut } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  // Hide public website navbar on all admin pages.
+  // Admin pages already have their own sidebar/header inside Dashboard.jsx.
+  const isAdminPage = location.pathname.startsWith("/admin");
+  if (isAdminPage) return null;
+
   const isActive = (path) => location.pathname === path;
 
   const navClass = (active) =>
-    `px-4 py-2 rounded-xl font-semibold transition-all ${active
+    `px-3 py-2 rounded-xl text-sm font-semibold transition-all ${active
       ? "bg-white/10 text-amber-200 border border-white/15 shadow-[0_12px_40px_-25px_rgba(255,215,130,0.6)]"
       : "text-white/70 hover:text-white hover:bg-white/10"
     }`;
@@ -44,9 +49,8 @@ export function Header() {
       </div>
 
       <div className="container mx-auto px-4 relative">
-        {/* ── Main bar ── */}
+        {/* Main bar */}
         <div className="flex items-center justify-between h-16">
-
           {/* Brand */}
           <Link to="/" className="flex items-center gap-3 group" onClick={() => setMobileOpen(false)}>
             <div className="relative w-10 h-10 flex-shrink-0">
@@ -69,7 +73,7 @@ export function Header() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-2">
+          <nav className="hidden lg:flex items-center gap-1">
             {navLinks.map((l) => (
               <Link key={l.to} to={l.to} className={navClass(isActive(l.to))}>
                 {l.label}
@@ -111,9 +115,9 @@ export function Header() {
               </>
             ) : null}
 
-            {/* Hamburger — mobile only */}
+            {/* Hamburger - mobile only */}
             <button
-              className="md:hidden flex items-center justify-center w-9 h-9 rounded-xl bg-white/10 border border-white/15 text-white transition-colors hover:bg-white/20"
+              className="lg:hidden flex items-center justify-center w-9 h-9 rounded-xl bg-white/10 border border-white/15 text-white transition-colors hover:bg-white/20"
               onClick={() => setMobileOpen((v) => !v)}
               aria-label="Toggle menu"
             >
@@ -122,9 +126,9 @@ export function Header() {
           </div>
         </div>
 
-        {/* ── Mobile dropdown ── */}
+        {/* Mobile dropdown */}
         {mobileOpen && (
-          <div className="md:hidden pb-4 space-y-1 border-t border-white/10 pt-3">
+          <div className="lg:hidden pb-4 space-y-1 border-t border-white/10 pt-3">
             {navLinks.map((l) => (
               <Link
                 key={l.to}
