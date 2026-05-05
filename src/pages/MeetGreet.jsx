@@ -327,7 +327,7 @@ export default function MeetGreet() {
     <div className="min-h-screen bg-[#0A0E17] text-white">
       <div className="container mx-auto px-4 py-8 md:py-12">
         {/* Header */}
-        <div className="text-center mb-8 md:mb-12">
+        <div className="text-center mb-8 md:mb-12 anim-fade-up">
           <h1 className="text-3xl md:text-5xl font-bold mb-3 md:mb-4 flex items-center justify-center gap-3">
             <Users className="w-8 h-8 md:w-10 md:h-10 text-primary-500" />
             Joki Meet &amp; Greet <span className="text-primary-500">JKT48</span>
@@ -337,13 +337,13 @@ export default function MeetGreet() {
           </p>
         </div>
 
-        <div className="max-w-7xl mx-auto mb-6">
+        <div className="max-w-7xl mx-auto mb-6 anim-fade-up anim-d2">
           <ServiceStatusBanner serviceKey="meet_greet" />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 max-w-7xl mx-auto">
           {/* LEFT */}
-          <div className="lg:col-span-2 space-y-4 md:space-y-6">
+          <div className="lg:col-span-2 space-y-4 md:space-y-6 anim-fade-up anim-d3">
             <div className={`bg-[#12161F] rounded-2xl border border-gray-800 overflow-hidden transition-opacity ${!isOpen ? "opacity-60 pointer-events-none select-none" : ""}`}>
               <div className="p-4 md:p-6 border-b border-gray-800">
                 <h2 className="text-lg md:text-xl font-bold mb-3 md:mb-4">Pilih Member</h2>
@@ -536,7 +536,7 @@ export default function MeetGreet() {
           </div>
 
           {/* RIGHT */}
-          <div className="lg:col-span-1 space-y-4 md:space-y-6">
+          <div className="lg:col-span-1 space-y-4 md:space-y-6 anim-slide-l anim-d4">
             {/* Cart */}
             <div className={`bg-[#12161F] rounded-2xl border border-gray-800 transition-opacity ${!isOpen ? "opacity-60 pointer-events-none select-none" : ""}`}>
               <div className="p-4 md:p-6 border-b border-gray-800">

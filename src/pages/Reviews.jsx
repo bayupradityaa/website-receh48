@@ -199,7 +199,7 @@ export default function Reviews() {
       <div className="container mx-auto px-4 py-16">
         {/* Header */}
         <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10 anim-fade-up">
             <div>
               <h1 className="text-4xl md:text-5xl font-black text-dark-900">
                 Semua <span className="text-primary-600">Review</span>
@@ -226,7 +226,7 @@ export default function Reviews() {
           </div>
 
           {/* Filters */}
-          <div className="bg-white/80 backdrop-blur rounded-2xl border border-dark-100 shadow-lg p-5 md:p-6 mb-10">
+          <div className="bg-white/80 backdrop-blur rounded-2xl border border-dark-100 shadow-lg p-5 md:p-6 mb-10 anim-fade-up anim-d2">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="text-sm font-bold text-dark-700">Cari review</label>
@@ -302,7 +302,7 @@ export default function Reviews() {
               <p className="text-dark-600 mt-2">Coba ubah kata kunci atau filter layanan.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 anim-fade-up anim-d3">
               {items.map((r) => (
                 <ReviewCard key={r.id} r={r} />
               ))}

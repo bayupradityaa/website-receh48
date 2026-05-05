@@ -210,25 +210,25 @@ export default function CekPesanan() {
         </div>
 
         <div className="relative container mx-auto px-4 pt-16 pb-10 text-center">
-          <div className="inline-flex items-center gap-2 bg-amber-400/10 border border-amber-400/20 rounded-full px-4 py-1.5 text-amber-300 text-sm font-medium mb-6">
+          <div className="inline-flex items-center gap-2 bg-amber-400/10 border border-amber-400/20 rounded-full px-4 py-1.5 text-amber-300 text-sm font-medium mb-6 anim-fade-up">
             <Search className="w-3.5 h-3.5" />
             Cek Status Pesanan
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-white mb-3 tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-white mb-3 tracking-tight anim-fade-up anim-d2">
             Lacak Pesanan<br />
             <span className="bg-gradient-to-r from-amber-200 via-yellow-200 to-amber-400 bg-clip-text text-transparent">
               Kamu
             </span>
           </h1>
-          <p className="text-gray-400 text-base max-w-sm mx-auto leading-relaxed">
+          <p className="text-gray-400 text-base max-w-sm mx-auto leading-relaxed anim-fade-up anim-d3">
             Masukkan email JKT48 yang kamu gunakan saat memesan untuk melihat status pesananmu.
           </p>
         </div>
       </div>
 
       {/* ── Search form ── */}
-      <div className="container mx-auto px-4 max-w-lg pb-6">
+      <div className="container mx-auto px-4 max-w-lg pb-6 anim-fade-up anim-d4">
         <form onSubmit={handleSearch} className="flex gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
@@ -265,7 +265,7 @@ export default function CekPesanan() {
       </div>
 
       {/* ── Results ── */}
-      <div className="container mx-auto px-4 max-w-lg pb-16">
+      <div className="container mx-auto px-4 max-w-lg pb-16 anim-fade anim-d5">
 
         {/* Loading skeleton */}
         {loading && (

@@ -133,13 +133,13 @@ export default function ReviewPage() {
     <div className="min-h-screen bg-[#0A0E17] text-white py-16">
       <div className="container mx-auto px-4">
         <div className="max-w-2xl mx-auto">
-          <div className="mb-6">
+          <div className="mb-6 anim-slide-r">
             <Link to="/" className="text-primary-400 hover:text-primary-300 font-semibold">
               ← Kembali ke Home
             </Link>
           </div>
 
-          <Card className="p-8 rounded-3xl border border-gray-800 bg-[#12161F] shadow-2xl">
+          <Card className="p-8 rounded-3xl border border-gray-800 bg-[#12161F] shadow-2xl anim-fade-up anim-d2">
             <h1 className="text-3xl font-bold text-white mb-2">Tulis Review</h1>
             <p className="text-sm text-gray-400 mb-6">
               Review kamu akan tampil setelah di-approve admin.

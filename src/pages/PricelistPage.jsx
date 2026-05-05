@@ -1,7 +1,72 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { usePricelist } from "../hooks/usePricelist";
+
+/* ─── Animation keyframes ────────────────────────────────────────────────── */
+
+const motionStyles = `
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes slideRight {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideLeft {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes heroGlow {
+  0%, 100% { opacity: 0.12; transform: scale(1); }
+  50%      { opacity: 0.22; transform: scale(1.08); }
+}
+@keyframes bounceIn {
+  0%   { opacity: 0; transform: scale(0.85) translateY(16px); }
+  60%  { opacity: 1; transform: scale(1.03) translateY(-4px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes lineDraw {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+`;
+
+/* ─── useInView hook ─────────────────────────────────────────────────────── */
+
+function useInView(options = {}) {
+    const ref = useRef(null);
+    const [inView, setInView] = useState(false);
+
+    useEffect(() => {
+        const el = ref.current;
+        if (!el) return;
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setInView(true);
+                    observer.unobserve(el);
+                }
+            },
+            { threshold: 0.1, rootMargin: "0px 0px -40px 0px", ...options }
+        );
+
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, []);
+
+    return [ref, inView];
+}
 
 /* ─── Config ─────────────────────────────────────────────────────────────── */
 
@@ -223,7 +288,7 @@ function PromoBanner({ fee }) {
 
 /* ─── MemberCard ─────────────────────────────────────────────────────────── */
 
-function MemberCard({ member, fee, isPremium, photoMap, serviceType, isPromo }) {
+function MemberCard({ member, fee, isPremium, photoMap, serviceType, isPromo, animDelay = 0 }) {
     const [imgFailed, setImgFailed] = useState(false);
 
     const isFullSlot = useMemo(() => {
@@ -251,6 +316,11 @@ function MemberCard({ member, fee, isPremium, photoMap, serviceType, isPromo }) 
     const showPhoto = photoUrl && !imgFailed;
 
     return (
+        <div
+            style={{
+                animation: `scaleIn 0.4s cubic-bezier(0.16,1,0.3,1) ${animDelay}ms both`,
+            }}
+        >
         <div
             className={`
                 flex flex-col rounded-2xl overflow-hidden border transition-all duration-200
@@ -355,6 +425,7 @@ function MemberCard({ member, fee, isPremium, photoMap, serviceType, isPromo }) 
 
                 {isFullSlot && <p className="text-[9px] text-red-400/70 mt-0.5">Tidak tersedia</p>}
             </div>
+        </div>
         </div>
     );
 }
@@ -541,16 +612,28 @@ function TeamSection({ team, allMembers, photoMap, photosReady, serviceType }) {
     };
     const c = colorMap[team.id];
     const note = TEAM_NOTES[team.id];
+    const [sectionRef, sectionInView] = useInView();
 
     return (
-        <div className="mb-10">
+        <div ref={sectionRef} className="mb-10">
             {/* Team header */}
-            <div className="flex items-center gap-3 mb-4 flex-wrap">
+            <div
+                className="flex items-center gap-3 mb-4 flex-wrap"
+                style={{
+                    animation: sectionInView ? `slideRight 0.5s cubic-bezier(0.16,1,0.3,1) both` : 'none',
+                    opacity: sectionInView ? undefined : 0,
+                }}
+            >
                 <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border ${c.badge}`}>
                     <span className={`w-2 h-2 rounded-full ${c.dot}`} />
                     {team.name}
                 </span>
-                <div className={`flex-1 h-px ${c.line} hidden sm:block`} />
+                <div
+                    className={`flex-1 h-px ${c.line} hidden sm:block origin-left`}
+                    style={{
+                        animation: sectionInView ? `lineDraw 0.6s cubic-bezier(0.16,1,0.3,1) 0.2s both` : 'none',
+                    }}
+                />
                 <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${c.badge}`}>
                     {teamMembers.length} member
                 </span>
@@ -567,7 +650,7 @@ function TeamSection({ team, allMembers, photoMap, photosReady, serviceType }) {
                 <p className="text-white/30 text-xs py-6 text-center">Belum ada member {team.name} di layanan ini</p>
             ) : (
                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
-                    {teamMembers.map((m) => {
+                    {teamMembers.map((m, idx) => {
                         const memberFee = m._fee ?? 0;
                         return (
                             <MemberCard
@@ -578,6 +661,7 @@ function TeamSection({ team, allMembers, photoMap, photosReady, serviceType }) {
                                 photoMap={photoMap}
                                 serviceType={serviceType}
                                 isPromo={serviceType === PROMO_SERVICE_ID}
+                                animDelay={sectionInView ? idx * 40 : 0}
                             />
                         );
                     })}
@@ -608,12 +692,19 @@ export default function PricelistPage() {
 
     return (
         <div className="min-h-screen bg-[#06070A] text-white">
+            <style>{motionStyles}</style>
 
             {/* ── Hero ── */}
             <section className="relative overflow-hidden pt-24 pb-10">
                 <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[500px] rounded-full bg-amber-400/12 blur-[120px]" />
-                    <div className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-primary-600/8 blur-[100px]" />
+                    <div
+                        className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[500px] rounded-full bg-amber-400/12 blur-[120px]"
+                        style={{ animation: 'heroGlow 6s ease-in-out infinite' }}
+                    />
+                    <div
+                        className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-primary-600/8 blur-[100px]"
+                        style={{ animation: 'heroGlow 8s ease-in-out infinite 2s' }}
+                    />
                 </div>
                 <div
                     className="absolute inset-0 opacity-[0.07] pointer-events-none"
@@ -624,25 +715,37 @@ export default function PricelistPage() {
                 />
 
                 <div className="container mx-auto px-4 relative z-10 max-w-2xl text-center">
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-300/10 border border-amber-300/20 text-amber-200/80 text-[11px] font-bold mb-4 tracking-widest uppercase">
+                    <div
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-300/10 border border-amber-300/20 text-amber-200/80 text-[11px] font-bold mb-4 tracking-widest uppercase"
+                        style={{ animation: 'fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) 0.1s both' }}
+                    >
                         <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clipRule="evenodd" />
                         </svg>
                         Harga Fee Joki
                     </div>
 
-                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-black leading-tight tracking-tight mb-3">
+                    <h1
+                        className="text-3xl sm:text-4xl md:text-5xl font-display font-black leading-tight tracking-tight mb-3"
+                        style={{ animation: 'fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.25s both' }}
+                    >
                         Pricelist{" "}
                         <span className="bg-gradient-to-r from-amber-200 via-yellow-100 to-amber-400 bg-clip-text text-transparent">
                             Receh48
                         </span>
                     </h1>
 
-                    <p className="text-white/50 text-sm sm:text-base max-w-sm mx-auto mb-6">
+                    <p
+                        className="text-white/50 text-sm sm:text-base max-w-sm mx-auto mb-6"
+                        style={{ animation: 'fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) 0.4s both' }}
+                    >
                         <span className="text-amber-200/70 font-semibold">Bayar setelah tiket berhasil!</span>
                     </p>
 
-                    <div className="flex flex-wrap justify-center gap-2">
+                    <div
+                        className="flex flex-wrap justify-center gap-2"
+                        style={{ animation: 'fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) 0.55s both' }}
+                    >
                         {["Fast Response", "98% Kepuasan", "100% Aman"].map((t) => (
                             <span key={t} className="px-3 py-1 rounded-full bg-white/[0.05] border border-white/[0.08] text-white/50 text-xs font-medium">
                                 {t}
@@ -760,7 +863,10 @@ export default function PricelistPage() {
 
                     {/* CTA */}
                     {!loading && !error && groups.length > 0 && (
-                        <div className="mt-6 flex flex-col items-center gap-4">
+                        <div
+                            className="mt-6 flex flex-col items-center gap-4"
+                            style={{ animation: 'bounceIn 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.3s both' }}
+                        >
                             <Link
                                 to={activeService.formPath}
                                 className="

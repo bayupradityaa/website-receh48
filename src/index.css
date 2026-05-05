@@ -53,6 +53,51 @@ body {
   }
 }
 
+/* ─── Page Entrance Animations ─────────────────────────────────────────── */
+
+@keyframes pageUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pageScale {
+  from { opacity: 0; transform: scale(0.93); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes pageSlideR {
+  from { opacity: 0; transform: translateX(-24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes pageSlideL {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes pageBounce {
+  0%   { opacity: 0; transform: scale(0.85) translateY(20px); }
+  60%  { opacity: 1; transform: scale(1.04) translateY(-4px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes pageFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.anim-fade-up   { animation: pageUp    0.6s cubic-bezier(0.16,1,0.3,1) both; }
+.anim-scale-in  { animation: pageScale 0.5s cubic-bezier(0.16,1,0.3,1) both; }
+.anim-slide-r   { animation: pageSlideR 0.5s cubic-bezier(0.16,1,0.3,1) both; }
+.anim-slide-l   { animation: pageSlideL 0.5s cubic-bezier(0.16,1,0.3,1) both; }
+.anim-bounce-in { animation: pageBounce 0.6s cubic-bezier(0.34,1.56,0.64,1) both; }
+.anim-fade      { animation: pageFade  0.5s ease both; }
+
+/* Stagger delays */
+.anim-d1 { animation-delay: 0.08s; }
+.anim-d2 { animation-delay: 0.16s; }
+.anim-d3 { animation-delay: 0.24s; }
+.anim-d4 { animation-delay: 0.32s; }
+.anim-d5 { animation-delay: 0.40s; }
+.anim-d6 { animation-delay: 0.50s; }
+.anim-d7 { animation-delay: 0.60s; }
+.anim-d8 { animation-delay: 0.70s; }
+
 /* Chrome, Edge, Safari */
 ::-webkit-scrollbar {
   width: 10px;

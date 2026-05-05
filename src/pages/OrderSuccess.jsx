@@ -21,7 +21,7 @@ export default function OrderSuccess({ order: orderProp, inModal = false, onClos
     <div className={inModal ? "" : "min-h-screen bg-[#0A0E17] text-white py-12"}>
       <div className={inModal ? "w-full" : "container mx-auto px-4 max-w-2xl"}>
         {/* Header */}
-        <div className="text-center mb-8 animate-scale-in">
+        <div className="text-center mb-8 anim-bounce-in">
           <div className="w-20 h-20 mx-auto mb-4 bg-emerald-500/15 border border-emerald-500/20 rounded-full flex items-center justify-center">
             <svg className="w-10 h-10 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -34,7 +34,7 @@ export default function OrderSuccess({ order: orderProp, inModal = false, onClos
           <p className="text-gray-400">Terima kasih telah memesan. Berikut detail pesanan Anda:</p>
         </div>
 
-        <Card variant="elevated" className="animate-slide-up bg-[#12161F] border border-gray-800">
+        <Card variant="elevated" className="anim-fade-up anim-d3 bg-[#12161F] border border-gray-800">
           <CardHeader className="border-b border-gray-800">
             <div className="flex justify-between items-start gap-3">
               <div>
