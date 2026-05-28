@@ -4,7 +4,7 @@ import RecapFilters from './components/RecapFilters';
 import RecapSummaryCards from './components/RecapSummaryCards';
 import RecapTable from './components/RecapTable';
 import RecapChart from './components/RecapChart';
-import { Download, RefreshCw, Plus } from 'lucide-react';
+import { Download, Plus } from 'lucide-react';
 import { formatCurrency } from '../../../lib/utils';
 import RecapFormModal from './components/RecapFormModal';
 import ConfirmDeleteModal from '../shared/ConfirmDeleteModal';
@@ -97,14 +97,6 @@ export default function RecapManagement() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                    <button
-                        onClick={fetchRecaps}
-                        className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium bg-[#1A1F2E] hover:bg-[#252B3B] border border-gray-700 text-white transition-colors"
-                    >
-                        <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-                        Refresh
-                    </button>
-
                     <button
                         onClick={() => exportCSV(filteredRecaps)}
                         disabled={!filteredRecaps.length}

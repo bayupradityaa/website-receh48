@@ -50,6 +50,36 @@ function AccountTypeBadge({ accountType }) {
   );
 }
 
+function getTourTags(note) {
+  if (!note) return [];
+  const tags = [];
+  
+  // War tags
+  if (note.includes("War 15 Juni")) {
+    tags.push({ label: "War 15 Jun", className: "bg-rose-500/15 text-rose-400 border border-rose-500/30 shadow-sm" });
+  } else if (note.includes("War 22 Juni")) {
+    tags.push({ label: "War 22 Jun", className: "bg-amber-500/15 text-amber-400 border border-amber-500/30 shadow-sm" });
+  }
+  
+  // City tags
+  if (note.toLowerCase().includes("yogyakarta")) {
+    tags.push({ label: "Jogja", className: "bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 shadow-sm" });
+  } else if (note.toLowerCase().includes("surabaya")) {
+    tags.push({ label: "Sby", className: "bg-teal-500/15 text-teal-400 border border-teal-500/30 shadow-sm" });
+  }
+  
+  // Team tags
+  if (note.toLowerCase().includes("passion")) {
+    tags.push({ label: "Passion", className: "bg-orange-500/15 text-orange-400 border border-orange-500/30 shadow-sm" });
+  } else if (note.toLowerCase().includes("love")) {
+    tags.push({ label: "Love", className: "bg-pink-500/15 text-pink-400 border border-pink-500/30 shadow-sm" });
+  } else if (note.toLowerCase().includes("dream")) {
+    tags.push({ label: "Dream", className: "bg-sky-500/15 text-sky-400 border border-sky-500/30 shadow-sm" });
+  }
+  
+  return tags;
+}
+
 export default function OrdersTable({
   orders,
   onOrderClick,
@@ -151,8 +181,17 @@ export default function OrdersTable({
 
                   <td className="px-4 py-4 text-sm">
                     <div className="font-medium text-white">{order.customer_name || '-'}</div>
+                    {getTourTags(order.note).length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {getTourTags(order.note).map((tag, idx) => (
+                          <span key={idx} className={`text-[9px] px-1.5 py-0.5 rounded font-black uppercase tracking-wider ${tag.className}`}>
+                            {tag.label}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                     {order.note && (
-                      <div className="text-xs text-gray-500 line-clamp-1 max-w-[200px] mt-0.5">
+                      <div className="text-xs text-gray-500 line-clamp-1 max-w-[200px] mt-1">
                         {order.note}
                       </div>
                     )}

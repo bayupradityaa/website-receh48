@@ -42,7 +42,7 @@ const orderSchema = z
     }),
   })
   .refine((data) => data.contact_twitter || data.contact_line, {
-    message: "Minimal salah satu dari Twitter atau LINE harus diisi",
+    message: "Minimal salah satu dari Twitter atau No. WhatsApp harus diisi",
     path: ["contact_twitter"],
   });
 
@@ -687,9 +687,9 @@ export default function VideoCall() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">ID LINE</label>
-                    <input type="text" {...register("contact_line")} disabled={!isOpen} className="w-full px-4 py-3 bg-[#0A0E17] border border-gray-700 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:cursor-not-allowed" placeholder="line_id" />
-                    <p className="text-xs text-gray-500 mt-1">Minimal isi salah satu: Twitter atau LINE</p>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">No. WhatsApp Aktif</label>
+                    <input type="text" {...register("contact_line")} disabled={!isOpen} className="w-full px-4 py-3 bg-[#0A0E17] border border-gray-700 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:cursor-not-allowed" placeholder="Contoh: 08123456789" />
+                    <p className="text-xs text-gray-500 mt-1">Minimal isi salah satu: Twitter atau WhatsApp</p>
                     {errors.contact_twitter && <p className="text-sm text-red-400 mt-1 flex items-center gap-1"><AlertCircle className="w-4 h-4" />{errors.contact_twitter.message}</p>}
                   </div>
 

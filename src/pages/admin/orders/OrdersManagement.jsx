@@ -47,6 +47,7 @@ export default function OrdersManagement() {
   const [statusFilter, setStatusFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   const [assignedToFilter, setAssignedToFilter] = useState('');
+  const [tourFilter, setTourFilter] = useState('');
 
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -101,9 +102,18 @@ export default function OrdersManagement() {
       const matchStatus = !statusFilter || order.status === statusFilter;
       const matchType = !typeFilter || (order.order_type || 'vc') === typeFilter;
       const matchAssigned = !assignedToFilter || order.assigned_to === assignedToFilter;
-      return matchSearch && matchStatus && matchType && matchAssigned;
+      const matchTour = !tourFilter || (
+        tourFilter === "war_15" ? order.note?.includes("War 15 Juni") :
+        tourFilter === "war_22" ? order.note?.includes("War 22 Juni") :
+        tourFilter === "jogja" ? order.note?.toLowerCase().includes("yogyakarta") :
+        tourFilter === "sby" ? order.note?.toLowerCase().includes("surabaya") :
+        tourFilter === "passion" ? order.note?.toLowerCase().includes("passion") :
+        tourFilter === "love" ? order.note?.toLowerCase().includes("love") :
+        tourFilter === "dream" ? order.note?.toLowerCase().includes("dream") : true
+      );
+      return matchSearch && matchStatus && matchType && matchAssigned && matchTour;
     });
-  }, [orders, searchTerm, statusFilter, typeFilter, assignedToFilter]);
+  }, [orders, searchTerm, statusFilter, typeFilter, assignedToFilter, tourFilter]);
 
   const allSelected = useMemo(
     () => filteredOrders.length > 0 && filteredOrders.every((o) => selectedIds.has(o.id)),
@@ -220,7 +230,8 @@ export default function OrdersManagement() {
         filterStatus={statusFilter} onFilterChange={setStatusFilter}
         filterOrderType={typeFilter} onOrderTypeChange={setTypeFilter}
         filterAssignedTo={assignedToFilter} onAssignedToChange={setAssignedToFilter}
-        adminsList={adminsList} onRefresh={fetchOrders}
+        filterTour={tourFilter} onTourChange={setTourFilter}
+        adminsList={adminsList}
       />
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm text-gray-400">

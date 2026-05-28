@@ -66,10 +66,9 @@ export default function OrderSuccess({ order: orderProp, inModal = false, onClos
                     <span className="font-medium text-white text-right">{order.contact_twitter}</span>
                   </div>
                 )}
-
-                {order.contact_line && (
+                 {order.contact_line && (
                   <div className="flex justify-between gap-3">
-                    <span className="text-gray-400">LINE:</span>
+                    <span className="text-gray-400">WhatsApp:</span>
                     <span className="font-medium text-white text-right">{order.contact_line}</span>
                   </div>
                 )}
@@ -130,8 +129,8 @@ export default function OrderSuccess({ order: orderProp, inModal = false, onClos
               <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
                 <h4 className="font-semibold text-blue-100 mb-2">Langkah Selanjutnya:</h4>
                 <ol className="list-decimal list-inside space-y-1 text-sm text-blue-100/80">
-                  <li>Kami akan menghubungi Anda via DM X atau Line untuk konfirmasi</li>
-                  <li>Pastikan Akun X atau Line kaian bisa dihubungi</li>
+                  <li>Kami akan menghubungi Anda via DM X atau WhatsApp untuk konfirmasi</li>
+                  <li>Pastikan Akun X atau WhatsApp kalian bisa dihubungi</li>
                   <li>Pembayaran fee joki setelah kalian mendapatkan tiket</li>
                   <li>Kami akan beritahu segera mengenai dapat atau tidak nya tiket kalian</li>
                 </ol>

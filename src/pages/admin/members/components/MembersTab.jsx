@@ -6,7 +6,7 @@ import { Input } from '../../../../components/ui/Input';
 import MembersTable from './MembersTable';
 import MemberModal from './MemberModal';
 import MembersStats from './MembersStats';
-import { Plus, RefreshCw } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 // ─── Konstanta bucket Supabase Storage ───────────────────────────────────────
 const STORAGE_BUCKET = 'member-photos';
@@ -502,16 +502,6 @@ export default function MembersTab() {
           <option value="active">Active</option>
           <option value="inactive">Inactive</option>
         </select>
-
-        <Button
-          onClick={fetchMembers}
-          variant="outline"
-          size="sm"
-          className="border-gray-800 text-gray-200 hover:bg-white/5"
-        >
-          <RefreshCw className="w-4 h-4 mr-2" />
-          Refresh
-        </Button>
 
         <Button
           onClick={handleAddMember}

@@ -6,162 +6,18 @@ import { LoadingSpinner } from "../components/shared/LoadingSpinner";
 import { ErrorMessage } from "../components/shared/ErrorMessage";
 
 /* =========================
-   Reviews Slider (Supabase)
+   KATAMEREKA Reviews Section (Supabase)
    ========================= */
-function ReviewsSlider({ reviews }) {
-  const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
-
-  useEffect(() => {
-    if (!reviews || reviews.length <= 1) return;
-    if (paused) return;
-
-    const t = setInterval(() => {
-      setActive((p) => (p + 1) % reviews.length);
-    }, 3500);
-
-    return () => clearInterval(t);
-  }, [paused, reviews]);
-
-  if (!reviews || reviews.length === 0) return null;
-
-  const safeActive = Math.min(active, reviews.length - 1);
-  const r = reviews[safeActive];
-
-  const next = () => setActive((p) => (p + 1) % reviews.length);
-  const prev = () => setActive((p) => (p - 1 + reviews.length) % reviews.length);
-
-  return (
-    <div
-      className="relative max-w-5xl mx-auto"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-    >
-      <div className="relative overflow-hidden rounded-3xl shadow-2xl bg-gradient-to-br from-primary-50 to-primary-100 p-1">
-        <div className="bg-white rounded-3xl p-8 md:p-10">
-          {/* Header */}
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-700 text-white flex items-center justify-center font-bold shadow-lg">
-                W
-              </div>
-
-              <div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <p className="text-dark-900 font-bold text-lg">
-                    Warga #staywithreceh
-                  </p>
-                  <span className="inline-flex items-center text-xs font-bold px-2 py-1 rounded-full bg-primary-100 text-primary-700">
-                    {r.service_type || "Layanan"}
-                  </span>
-                </div>
-
-                <p className="text-dark-500 text-sm">
-                  {r.created_at
-                    ? new Date(r.created_at).toLocaleDateString("id-ID", {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    })
-                    : ""}
-                </p>
-              </div>
-            </div>
-
-            {/* Rating */}
-            <div className="flex items-center gap-1">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <svg
-                  key={i}
-                  className={`w-5 h-5 ${i < (r.rating || 0) ? "text-yellow-400" : "text-dark-200"
-                    }`}
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              ))}
-            </div>
-          </div>
-
-          {/* Message */}
-          <div className="mt-7 relative">
-            <div className="absolute -top-8 -left-2 text-7xl font-bold text-primary-100 select-none">
-              "
-            </div>
-
-            <div
-              key={index}
-              className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-[carouselIn_420ms_cubic-bezier(0.2,0.8,0.2,1)]"
-            >
-              {items.map((r) => (
-                <ReviewCard key={r.id} r={r} />
-              ))}
-            </div>
-
-            <style>{`
-              @keyframes carouselIn {
-                from { opacity: 0; transform: translateX(26px) scale(0.985) rotate(0.2deg); }
-                to   { opacity: 1; transform: translateX(0) scale(1) rotate(0deg); }
-              }
-            `}</style>
-          </div>
-
-          {/* Controls */}
-          <div className="mt-8 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              {reviews.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActive(i)}
-                  className={`h-3 rounded-full transition-all ${i === safeActive
-                    ? "bg-primary-600 w-8"
-                    : "bg-primary-200 w-3 hover:bg-primary-300"
-                    }`}
-                />
-              ))}
-            </div>
-
-            {reviews.length > 1 && (
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={prev}
-                  className="w-10 h-10 rounded-full bg-dark-50 hover:bg-dark-100 border border-dark-200 flex items-center justify-center"
-                >
-                  <svg className="w-5 h-5 text-dark-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-                <button
-                  onClick={next}
-                  className="w-10 h-10 rounded-full bg-dark-50 hover:bg-dark-100 border border-dark-200 flex items-center justify-center"
-                >
-                  <svg className="w-5 h-5 text-dark-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              </div>
-            )}
-          </div>
-
-          <div className="mt-5 text-sm text-dark-500">
-            Menampilkan {safeActive + 1} dari {reviews.length} review
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function Stars({ rating = 0 }) {
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-1" aria-label={`${rating} dari 5 bintang`}>
       {Array.from({ length: 5 }).map((_, i) => (
         <svg
           key={i}
-          className={`w-5 h-5 ${i < rating ? "text-yellow-400" : "text-dark-200"}`}
+          className={`w-4 h-4 ${i < rating ? "text-yellow-300" : "text-white/15"}`}
           fill="currentColor"
           viewBox="0 0 20 20"
+          aria-hidden="true"
         >
           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
         </svg>
@@ -173,497 +29,306 @@ function Stars({ rating = 0 }) {
 function ReviewCard({ r }) {
   const dateText = r.created_at
     ? new Date(r.created_at).toLocaleDateString("id-ID", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    })
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      })
     : "";
 
   return (
-    <div className="relative group">
-      {/* Strong shadow + lift */}
-      <div className="absolute inset-0 rounded-[26px] bg-black/5 blur-xl translate-y-6 group-hover:translate-y-8 transition-transform duration-300" />
+    <article className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.07] p-[1px] shadow-[0_30px_100px_-70px_rgba(255,215,130,0.55)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-amber-300/30 hover:bg-white/[0.10]">
+      <div className="absolute -right-20 -top-20 h-44 w-44 rounded-full bg-amber-300/10 blur-3xl transition-opacity group-hover:opacity-100" />
+      <div className="absolute -bottom-24 -left-24 h-48 w-48 rounded-full bg-primary-600/12 blur-3xl" />
 
-      {/* Gradient border */}
-      <div className="absolute inset-0 rounded-[26px] p-[2px] bg-gradient-to-br from-primary-600 via-pink-500 to-yellow-300">
-        <div className="h-full w-full rounded-[24px] bg-white/95" />
-      </div>
-
-      {/* Card */}
-      <div className="relative rounded-[24px] bg-white/92 backdrop-blur-xl overflow-hidden border border-white/60 shadow-[0_25px_80px_-45px_rgba(0,0,0,0.55)] group-hover:shadow-[0_35px_100px_-55px_rgba(0,0,0,0.65)] transition-all duration-300">
-
-        {/* Accent stripe (brand) */}
-        <div className="absolute left-0 top-0 h-full w-[10px] bg-gradient-to-b from-primary-600 via-pink-500 to-yellow-300" />
-
-        {/* Subtle top highlight */}
-        <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-primary-100/60 to-transparent" />
-
-        {/* Content */}
-        <div className="relative p-7 md:p-8 pl-9">
-          {/* Top row */}
-          <div className="flex items-start justify-between gap-4">
-            <Stars rating={r.rating || 0} />
-
-            <div className="flex items-center gap-2">
-              <div className="px-3 py-1 rounded-full bg-dark-900 text-white text-xs font-bold shadow">
-                {(r.rating || 0).toFixed(1)}
-              </div>
-              <p className="text-sm text-dark-500 font-medium">{dateText}</p>
-            </div>
-          </div>
-
-          {/* Quote + message */}
-          <div className="mt-6 relative">
-            <div className="absolute -top-7 -left-3 text-6xl font-black text-primary-200/60 select-none">
-              "
-            </div>
-            <p className="relative text-dark-900 leading-relaxed text-[15px] md:text-base font-semibold">
-              {r.message}
-            </p>
-          </div>
-
-          {/* Footer */}
-          <div className="mt-8 flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary-600 to-primary-800 text-white flex items-center justify-center font-extrabold shadow-md">
-                W
-              </div>
-              <div>
-                <p className="font-extrabold text-dark-900 leading-tight">
-                  Warga #staywithreceh
-                </p>
-                <p className="text-sm text-dark-600">
-                  {r.service_type || "Layanan"}
-                </p>
-              </div>
-            </div>
-
-            {/* Badge */}
-            <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-bold border border-green-200">
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.121 8.707a1 1 0 10-1.414 1.414l2.5 2.5a1 1 0 001.414 0l4.086-4.086z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              Verified
-            </div>
-          </div>
+      <div className="relative h-full rounded-[27px] p-6 md:p-7">
+        <div className="mb-6 flex items-center justify-between gap-4">
+          <Stars rating={r.rating || 0} />
+          <span className="rounded-full border border-amber-200/20 bg-amber-300/10 px-3 py-1 text-xs font-extrabold text-amber-100">
+            {(r.rating || 0).toFixed(1)}
+          </span>
         </div>
 
-        {/* Shimmer */}
-        <div className="absolute -left-48 top-0 h-full w-48 bg-gradient-to-r from-transparent via-white/70 to-transparent rotate-12 opacity-0 group-hover:opacity-100 group-hover:translate-x-[680px] transition-all duration-700 pointer-events-none" />
+        <div className="relative">
+          <span className="absolute -left-2 -top-7 select-none text-7xl font-black leading-none text-amber-200/10">
+            “
+          </span>
+          <p className="relative min-h-[120px] text-[15px] font-semibold leading-relaxed text-white/85">
+            {r.message}
+          </p>
+        </div>
+
+        <div className="mt-7 flex items-center justify-between gap-4 border-t border-white/10 pt-5">
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-300 via-yellow-200 to-primary-500 text-base font-black text-black shadow-[0_15px_60px_-30px_rgba(255,215,130,0.9)]">
+              W
+            </div>
+            <div>
+              <p className="font-extrabold leading-tight text-white">Warga #staywithreceh</p>
+              <p className="mt-0.5 text-sm font-medium text-white/45">
+                {r.service_type || "Layanan Receh48"}
+              </p>
+            </div>
+          </div>
+
+          <div className="hidden text-right sm:block">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/25">Verified</p>
+            <p className="mt-1 text-xs text-white/45">{dateText}</p>
+          </div>
+        </div>
       </div>
-    </div>
+    </article>
   );
 }
 
-
-function ReviewsCarousel({ reviews = [] }) {
-  const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
-
-  const pages = Math.max(1, Math.ceil(reviews.length / 2));
-
-  const prev = () => setIndex((p) => (p - 1 + pages) % pages);
-  const next = () => setIndex((p) => (p + 1) % pages);
-
-  useEffect(() => {
-    if (paused) return;
-    if (reviews.length <= 2) return;
-
-    const t = setInterval(() => {
-      setIndex((p) => (p + 1) % pages);
-    }, 4500);
-
-    return () => clearInterval(t);
-  }, [paused, reviews.length, pages]);
-
+function TestimonialsColumn({ reviews, className = "", duration = 18, reverse = false }) {
   if (!reviews.length) return null;
 
-  const start = index * 2;
-  const items = reviews.slice(start, start + 2);
-
   return (
-    <div
-      className="relative max-w-6xl mx-auto"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-    >
-      {/* Arrows */}
-      {reviews.length > 2 && (
-        <>
-          <button
-            onClick={prev}
-            className="hidden md:flex absolute -left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white shadow-lg border border-dark-100 items-center justify-center hover:scale-105 transition"
-            aria-label="Prev"
-          >
-            <svg className="w-6 h-6 text-dark-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-
-          <button
-            onClick={next}
-            className="hidden md:flex absolute -right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white shadow-lg border border-dark-100 items-center justify-center hover:scale-105 transition"
-            aria-label="Next"
-          >
-            <svg className="w-6 h-6 text-dark-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </>
-      )}
-
-      {/* Cards */}
-      <div className="overflow-hidden">
-        <div
-          key={index}
-          className="grid grid-cols-1 md:grid-cols-2 gap-7 md:gap-8 animate-[slideIn_350ms_ease-out]"
-        >
-          {items.map((r) => (
-            <ReviewCard key={r.id} r={r} />
-          ))}
-        </div>
-
-        <style>{`
-          @keyframes slideIn {
-            from { opacity: 0; transform: translateX(16px); }
-            to { opacity: 1; transform: translateX(0); }
-          }
-        `}</style>
+    <div className={`min-w-0 flex-1 ${className}`}>
+      <div
+        className="flex flex-col gap-6 pb-6 will-change-transform hover:[animation-play-state:paused]"
+        style={{ animation: `${reverse ? "katamerekaDown" : "katamerekaUp"} ${duration}s linear infinite` }}
+      >
+        {[0, 1].map((repeatIndex) => (
+          <div key={repeatIndex} className="flex flex-col gap-6" aria-hidden={repeatIndex === 1}>
+            {reviews.map((review) => (
+              <ReviewCard key={`${repeatIndex}-${review.id}`} r={review} />
+            ))}
+          </div>
+        ))}
       </div>
-
-      {/* Dots */}
-      {pages > 1 && (
-        <div className="mt-8 flex items-center justify-center gap-2">
-          {Array.from({ length: pages }).map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setIndex(i)}
-              className={`h-3 rounded-full transition-all ${i === index ? "bg-primary-600 w-8" : "bg-primary-200 w-3 hover:bg-primary-300"
-                }`}
-              aria-label={`Go to page ${i + 1}`}
-            />
-          ))}
-        </div>
-      )}
-
-      {/* Mobile buttons */}
-      {reviews.length > 2 && (
-        <div className="mt-6 flex md:hidden items-center justify-center gap-3">
-          <button
-            onClick={prev}
-            className="w-11 h-11 rounded-full bg-white shadow border border-dark-100 flex items-center justify-center"
-          >
-            <svg className="w-6 h-6 text-dark-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <button
-            onClick={next}
-            className="w-11 h-11 rounded-full bg-white shadow border border-dark-100 flex items-center justify-center"
-          >
-            <svg className="w-6 h-6 text-dark-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
-      )}
     </div>
   );
 }
 
+function KataMerekaReviews({ reviews = [] }) {
+  const columns = [
+    reviews.filter((_, i) => i % 3 === 0),
+    reviews.filter((_, i) => i % 3 === 1),
+    reviews.filter((_, i) => i % 3 === 2),
+  ];
+
+  return (
+    <div className="relative mx-auto max-w-7xl">
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-28 bg-gradient-to-b from-[#06070A] to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-28 bg-gradient-to-t from-[#06070A] to-transparent" />
+
+      <div
+        className="grid max-h-[760px] grid-cols-1 gap-6 overflow-hidden md:grid-cols-2 lg:grid-cols-3"
+        role="region"
+        aria-label="KATAMEREKA review pelanggan Receh48"
+      >
+        <TestimonialsColumn reviews={columns[0].length ? columns[0] : reviews} duration={18} />
+        <TestimonialsColumn reviews={columns[1].length ? columns[1] : reviews} className="hidden md:block" duration={23} reverse />
+        <TestimonialsColumn reviews={columns[2].length ? columns[2] : reviews} className="hidden lg:block" duration={20} />
+      </div>
+
+      <style>{`
+        @keyframes katamerekaUp {
+          from { transform: translateY(0); }
+          to { transform: translateY(-50%); }
+        }
+        @keyframes katamerekaDown {
+          from { transform: translateY(-50%); }
+          to { transform: translateY(0); }
+        }
+      `}</style>
+    </div>
+  );
+}
 
 /* =========================
-   FAQ Section
+   TANYA RECEH FAQ Section
    ========================= */
 const faqData = [
   {
     q: "Apa itu layanan Joki Tiket Receh48?",
     a: "Receh48 adalah layanan joki tiket terpercaya untuk event JKT48, mulai dari Video Call, Meet & Greet, 2-Shot, hingga Konser. Kami hadir buat kamu yang mau beli slot tapi terbatas waktu, takut kehabisan, atau butuh bantuan prosesnya dari awal sampai selesai.",
-    emoji: "🎟️",
     tag: "Tentang Kami",
   },
   {
     q: "Apakah layanan ini aman dan terpercaya?",
     a: "100% aman! Receh48 sudah melayani 500+ pesanan dengan tingkat kepuasan 98%. Semua transaksi terdokumentasi dan kami berkomitmen penuh menjaga kepercayaan setiap pelanggan. Cek thread review kami di X untuk bukti nyata.",
-    emoji: "🔒",
+
     tag: "Keamanan",
   },
   {
     q: "Bagaimana cara memesan layanan Joki di Receh48?",
     a: "Klik tombol 'Form Pemesanan' → pilih tipe joki → isi form dengan detail pesanan kamu → tim kami segera menghubungi kamu via DM atau kontak yang kamu cantumkan. Fast response dijamin! ⚡",
-    emoji: "📋",
+
     tag: "Cara Pesan",
   },
   {
     q: "Berapa lama proses setelah pemesanan?",
     a: "Tim kami merespons dalam waktu kurang dari beberapa menit selama jam operasional. Proses joki dilakukan sesuai jadwal event. Kamu dapat update real-time selama proses berlangsung.",
-    emoji: "⏱️",
+
     tag: "Proses",
   },
   {
     q: "Metode pembayaran apa yang tersedia?",
     a: "Transfer bank, e-wallet (GoPay, Dana), dan QRIS. Detail pembayaran diberikan saat konfirmasi pembayaran pesanan.",
-    emoji: "💳",
+
     tag: "Pembayaran",
   },
   {
     q: "Pembayarannya setelah atau sebelum joki?",
     a: "Bayar belakangan! Kamu melakukan pembayaran fee joki setelah menerima email tiket yang dipesan. Jadi kamu hanya bayar setelah tiket berhasil di tangan.",
-    emoji: "🛡️",
+
     tag: "Pembayaran",
   },
   {
     q: "Bisa request member JKT48 tertentu?",
     a: "Bisa! Kamu bebas request member favorit kamu (oshi). Saat mengisi form pemesanan ada kolom khusus untuk memilih member yang diinginkan sesuai ketersediaan slot.",
-    emoji: "⭐",
+
     tag: "Request",
   },
 ];
 
 function FAQSection() {
-  const [open, setOpen] = useState(null);
-  const toggle = (i) => setOpen(open === i ? null : i);
+  const [expanded, setExpanded] = useState([0]);
+
+  const toggle = (index) => {
+    setExpanded((current) =>
+      current.includes(index) ? current.filter((item) => item !== index) : [index]
+    );
+  };
 
   return (
-    <section id="faq" className="relative overflow-hidden py-28 text-white">
-      {/* ── Background ── */}
+    <section id="faq" className="relative overflow-hidden py-24 text-white md:py-32">
+      {/* Background */}
       <div className="absolute inset-0 bg-[#06070A]" />
 
-      {/* Glow blobs */}
+      {/* Brand glow */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] rounded-full bg-amber-400/8 blur-[130px]" />
-        <div className="absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full bg-primary-600/8 blur-[120px]" />
+        <div className="absolute -top-64 left-1/2 h-[720px] w-[920px] -translate-x-1/2 rounded-full bg-amber-400/12 blur-[140px]" />
+        <div className="absolute -bottom-72 -left-56 h-[760px] w-[760px] rounded-full bg-primary-600/12 blur-[150px]" />
+        <div className="absolute bottom-0 right-0 h-[520px] w-[520px] rounded-full bg-yellow-300/8 blur-[130px]" />
       </div>
 
-      {/* Dot grid */}
+      {/* Grid texture */}
       <div
-        className="absolute inset-0 opacity-[0.12] pointer-events-none"
+        className="absolute inset-0 opacity-[0.10] pointer-events-none"
         style={{
-          backgroundImage: "radial-gradient(circle, rgba(255,215,130,0.35) 1px, transparent 1px)",
-          backgroundSize: "36px 36px",
+          backgroundImage:
+            "linear-gradient(to right, rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.08) 1px, transparent 1px)",
+          backgroundSize: "56px 56px",
         }}
       />
 
-      <div className="container mx-auto px-4 relative z-10 max-w-6xl">
+      <div className="container relative z-10 mx-auto max-w-6xl px-4">
+        {/* Header */}
+        <div className="mx-auto mb-14 max-w-3xl text-center md:mb-16">
 
-        {/* ── Title ── */}
-        <div className="text-center mb-20">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-300/10 border border-amber-300/20 text-amber-200 text-xs font-bold mb-5 tracking-[0.15em] uppercase">
-            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-            </svg>
+          <div className="inline-flex items-center gap-2 rounded-full border border-amber-300/20 bg-amber-300/10 px-4 py-1.5 text-xs font-black uppercase tracking-[0.18em] text-amber-200">
             Pertanyaan Umum
           </div>
 
-          <h2 className="text-4xl md:text-6xl font-display font-black leading-[1.05] tracking-tight">
-            Semua yang Perlu{" "}
-            <br className="hidden sm:block" />
+          <h2 className="mt-6 text-4xl font-display font-black leading-[1.02] tracking-tight md:text-6xl">
+            Tanya{" "}
             <span className="bg-gradient-to-r from-amber-200 via-yellow-200 to-amber-400 bg-clip-text text-transparent">
-              Kamu Tahu
+              Receh
             </span>
           </h2>
 
-          <p className="text-white/50 mt-5 text-base max-w-md mx-auto leading-relaxed">
-            Jawaban lengkap untuk semua pertanyaanmu tentang layanan Receh48
+          <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-white/55 md:text-lg">
+            Jawaban singkat untuk hal yang paling sering ditanyain sebelum pakai layanan Receh48.
           </p>
         </div>
 
-        {/* ── FAQ Layout: big featured card + grid ── */}
-        <div className="space-y-4">
+        {/* FAQ shell */}
+        <div className="mx-auto max-w-4xl rounded-[34px] border border-white/10 bg-white/[0.045] p-2 shadow-[0_40px_140px_-80px_rgba(255,215,130,0.45)] backdrop-blur-xl">
+          <div className="overflow-hidden rounded-[28px] border border-white/10 bg-black/20">
+            {faqData.map((faq, index) => {
+              const isOpen = expanded.includes(index);
 
-          {/* ── Row 1: Full-width featured item (first FAQ) ── */}
-          <FeaturedCard faq={faqData[0]} index={0} open={open} toggle={toggle} />
+              return (
+                <div
+                  key={faq.q}
+                  className={`relative border-b border-white/10 last:border-b-0 transition-colors duration-300 ${
+                    isOpen ? "bg-amber-300/[0.055]" : "hover:bg-white/[0.035]"
+                  }`}
+                >
+                  {isOpen && (
+                    <div className="absolute left-0 top-0 h-full w-[3px] bg-gradient-to-b from-amber-300 via-yellow-200 to-primary-500" />
+                  )}
 
-          {/* ── Row 2: Two columns ── */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <NormalCard faq={faqData[1]} index={1} open={open} toggle={toggle} />
-            <NormalCard faq={faqData[2]} index={2} open={open} toggle={toggle} />
+                  <button
+                    type="button"
+                    onClick={() => toggle(index)}
+                    className="flex w-full items-center justify-between gap-4 px-5 py-5 text-left md:px-7 md:py-6"
+                    aria-expanded={isOpen}
+                    aria-controls={`faq-answer-${index}`}
+                  >
+                    <span className="flex min-w-0 items-start gap-4">
+
+                      <span className="min-w-0">
+                        <span
+                          className={`mb-1.5 block text-[10px] font-black uppercase tracking-[0.16em] transition-colors ${
+                            isOpen ? "text-amber-300" : "text-white/30"
+                          }`}
+                        >
+                          {faq.tag}
+                        </span>
+                        <span className={`block text-base font-extrabold leading-snug md:text-lg ${isOpen ? "text-amber-50" : "text-white/90"}`}>
+                          {faq.q}
+                        </span>
+                      </span>
+                    </span>
+
+                    <span
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-all duration-300 ${
+                        isOpen
+                          ? "rotate-180 border-amber-300/25 bg-amber-300/15 text-amber-200"
+                          : "border-white/10 bg-white/[0.055] text-white/45"
+                      }`}
+                    >
+                      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </span>
+                  </button>
+
+                  <div
+                    id={`faq-answer-${index}`}
+                    className={`overflow-hidden transition-all duration-300 ease-out ${
+                      isOpen ? "max-h-64 opacity-100" : "max-h-0 opacity-0"
+                    }`}
+                  >
+                    <div className="px-5 pb-6 pl-[84px] pr-6 md:px-7 md:pb-7 md:pl-[100px]">
+                      <p className="max-w-2xl text-sm font-medium leading-relaxed text-white/60 md:text-[15px]">
+                        {faq.a}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-
-          {/* ── Row 3: Three columns ── */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <NormalCard faq={faqData[3]} index={3} open={open} toggle={toggle} />
-            <NormalCard faq={faqData[4]} index={4} open={open} toggle={toggle} />
-            <NormalCard faq={faqData[5]} index={5} open={open} toggle={toggle} />
-          </div>
-
-          {/* ── Row 4: Full-width last ── */}
-          <FeaturedCard faq={faqData[6]} index={6} open={open} toggle={toggle} accent />
         </div>
 
-        {/* ── CTA ── */}
-        <div className="mt-20 relative">
-          {/* Glow behind CTA */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="w-96 h-24 bg-amber-400/10 blur-3xl rounded-full" />
+        {/* CTA */}
+        <div className="mx-auto mt-10 flex max-w-4xl flex-col items-center justify-between gap-5 rounded-3xl border border-white/10 bg-white/[0.04] px-6 py-5 backdrop-blur-xl sm:flex-row md:px-8">
+          <div>
+            <p className="text-center text-lg font-extrabold text-white sm:text-left">Masih bingung atau mau tanya slot?</p>
+            <p className="mt-1 text-center text-sm font-medium text-white/40 sm:text-left">
+              Langsung DM admin Receh48, nanti dibantu dari awal sampai selesai.
+            </p>
           </div>
 
-          <div className="relative flex flex-col sm:flex-row items-center justify-between gap-6
-                          bg-gradient-to-r from-white/[0.04] to-white/[0.02]
-                          border border-white/10 rounded-3xl px-8 py-6">
-            <div>
-              <p className="text-white font-bold text-lg">Masih ada pertanyaan lain?</p>
-              <p className="text-white/40 text-sm mt-0.5">Tim kami siap membantu kamu kapan saja</p>
-            </div>
-
-            <a
-              href="https://x.com/receh_48"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-shrink-0 inline-flex items-center gap-2.5 px-7 py-3.5 rounded-2xl font-bold text-sm
-                         bg-gradient-to-r from-amber-300 to-yellow-200 text-black
-                         shadow-[0_0_40px_-10px_rgba(255,215,130,0.5)]
-                         hover:shadow-[0_0_60px_-10px_rgba(255,215,130,0.7)]
-                         hover:brightness-105 transition-all duration-200"
-            >
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-              </svg>
-              DM di X (Twitter)
-            </a>
-          </div>
+          <a
+            href="https://x.com/receh_48"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex shrink-0 items-center justify-center gap-2.5 rounded-2xl bg-gradient-to-r from-amber-300 to-yellow-200 px-6 py-3 text-sm font-black text-black shadow-[0_0_50px_-18px_rgba(255,215,130,0.75)] transition-all duration-200 hover:-translate-y-0.5 hover:brightness-105"
+          >
+            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+            </svg>
+            Tanya Admin
+          </a>
         </div>
-
       </div>
     </section>
-  );
-}
-
-/* ── Featured Card (full-width, more visual weight) ─────────────────────── */
-function FeaturedCard({ faq, index, open, toggle, accent = false }) {
-  const isOpen = open === index;
-
-  return (
-    <div
-      className={`relative rounded-3xl border transition-all duration-300 overflow-hidden cursor-pointer
-        ${isOpen
-          ? "border-amber-400/40 bg-gradient-to-br from-amber-400/8 via-yellow-300/4 to-transparent shadow-[0_0_80px_-30px_rgba(255,215,130,0.25)]"
-          : "border-white/[0.08] bg-white/[0.03] hover:border-amber-400/20 hover:bg-white/[0.05]"
-        }`}
-      onClick={() => toggle(index)}
-    >
-      {/* Decorative number watermark */}
-      <span className="absolute right-6 top-1/2 -translate-y-1/2 text-[120px] font-black text-white/[0.025] select-none leading-none pointer-events-none">
-        {String(index + 1).padStart(2, "0")}
-      </span>
-
-      {/* Gold left bar when open */}
-      {isOpen && (
-        <div className="absolute left-0 inset-y-0 w-[3px] bg-gradient-to-b from-amber-300 via-yellow-200 to-amber-400 rounded-r-full" />
-      )}
-
-      <div className="flex items-start gap-5 px-8 py-7">
-        {/* Emoji */}
-        <div className={`flex-shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center text-2xl
-          transition-all duration-300
-          ${isOpen
-            ? "bg-amber-400/20 border border-amber-400/30"
-            : "bg-white/[0.06] border border-white/[0.08]"}`}
-        >
-          {faq.emoji}
-        </div>
-
-        <div className="flex-1 min-w-0">
-          {/* Tag */}
-          <span className={`inline-block text-[10px] font-bold uppercase tracking-[0.15em] mb-2
-            ${isOpen ? "text-amber-400" : "text-white/30"}`}>
-            {faq.tag}
-          </span>
-
-          {/* Question */}
-          <p className={`font-bold text-lg md:text-xl leading-snug transition-colors duration-200
-            ${isOpen ? "text-amber-100" : "text-white/90"}`}>
-            {faq.q}
-          </p>
-
-          {/* Answer */}
-          <div className={`overflow-hidden transition-all duration-300 ease-in-out
-            ${isOpen ? "max-h-48 opacity-100 mt-4" : "max-h-0 opacity-0"}`}>
-            <p className="text-white/60 leading-relaxed text-[15px] md:text-base">{faq.a}</p>
-          </div>
-        </div>
-
-        {/* Toggle icon */}
-        <div className={`flex-shrink-0 w-9 h-9 mt-1 rounded-full flex items-center justify-center
-          border transition-all duration-300
-          ${isOpen
-            ? "bg-amber-400/20 border-amber-400/30 rotate-45"
-            : "bg-white/[0.06] border-white/[0.08]"}`}
-        >
-          <svg className={`w-4 h-4 transition-colors ${isOpen ? "text-amber-300" : "text-white/40"}`}
-            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-          </svg>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ── Normal Card (grid item) ──────────────────────────────────────────────── */
-function NormalCard({ faq, index, open, toggle }) {
-  const isOpen = open === index;
-
-  return (
-    <div
-      className={`relative rounded-2xl border transition-all duration-300 overflow-hidden cursor-pointer
-        ${isOpen
-          ? "border-amber-400/35 bg-gradient-to-br from-amber-400/8 to-transparent shadow-[0_0_50px_-20px_rgba(255,215,130,0.2)]"
-          : "border-white/[0.08] bg-white/[0.03] hover:border-amber-400/20 hover:bg-white/[0.05]"
-        }`}
-      onClick={() => toggle(index)}
-    >
-      {/* Gold left bar when open */}
-      {isOpen && (
-        <div className="absolute left-0 inset-y-0 w-[3px] bg-gradient-to-b from-amber-300 to-amber-500 rounded-r-full" />
-      )}
-
-      <div className="px-6 py-5">
-        {/* Top row: emoji + tag + toggle */}
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2.5">
-            <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-lg
-              transition-all duration-200
-              ${isOpen ? "bg-amber-400/20 border border-amber-400/30" : "bg-white/[0.06] border border-white/[0.08]"}`}>
-              {faq.emoji}
-            </div>
-            <span className={`text-[10px] font-bold uppercase tracking-[0.15em]
-              ${isOpen ? "text-amber-400" : "text-white/30"}`}>
-              {faq.tag}
-            </span>
-          </div>
-
-          <div className={`w-7 h-7 rounded-full flex items-center justify-center border
-            transition-all duration-300
-            ${isOpen
-              ? "bg-amber-400/20 border-amber-400/30 rotate-45"
-              : "bg-white/[0.06] border-white/[0.08]"}`}>
-            <svg className={`w-3.5 h-3.5 transition-colors ${isOpen ? "text-amber-300" : "text-white/40"}`}
-              fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-            </svg>
-          </div>
-        </div>
-
-        {/* Question */}
-        <p className={`font-bold text-[15px] leading-snug transition-colors duration-200
-          ${isOpen ? "text-amber-100" : "text-white/85"}`}>
-          {faq.q}
-        </p>
-
-        {/* Answer */}
-        <div className={`overflow-hidden transition-all duration-300 ease-in-out
-          ${isOpen ? "max-h-60 opacity-100 mt-3" : "max-h-0 opacity-0"}`}>
-          <div className="pt-3 border-t border-white/[0.07]">
-            <p className="text-white/55 leading-relaxed text-sm">{faq.a}</p>
-          </div>
-        </div>
-      </div>
-    </div>
   );
 }
 
@@ -1237,19 +902,17 @@ export default function Home() {
 
 
       {/* ========================
-          Testimoni Section (Supabase)
+          KATAMEREKA Section (Supabase)
           ======================== */}
-      <section id="testi" className="relative overflow-hidden py-20 text-white">
-        {/* base */}
+      <section id="testi" className="relative overflow-hidden py-24 text-white">
         <div className="absolute inset-0 bg-[#06070A]" />
 
-        {/* glow */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -top-56 -left-56 w-[820px] h-[820px] rounded-full bg-primary-600/12 blur-[140px]" />
-          <div className="absolute -bottom-72 -right-52 w-[860px] h-[860px] rounded-full bg-amber-400/12 blur-[150px]" />
+          <div className="absolute -top-56 left-1/2 h-[760px] w-[980px] -translate-x-1/2 rounded-full bg-amber-400/14 blur-[140px]" />
+          <div className="absolute -bottom-80 -left-52 h-[780px] w-[780px] rounded-full bg-primary-600/16 blur-[150px]" />
+          <div className="absolute -bottom-72 -right-52 h-[760px] w-[760px] rounded-full bg-yellow-300/10 blur-[150px]" />
         </div>
 
-        {/* grid */}
         <div
           className="absolute inset-0 opacity-[0.10] pointer-events-none"
           style={{
@@ -1259,84 +922,74 @@ export default function Home() {
           }}
         />
 
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-6xl mx-auto">
-            {/* Title */}
-            <div className="text-center mb-12">
-              <h3 className="text-4xl md:text-5xl font-extrabold">
-                Testimoni{" "}
-                <span className="bg-gradient-to-r from-amber-200 via-yellow-200 to-amber-400 bg-clip-text text-transparent">
-                  Mereka
-                </span>
-              </h3>
-
-              <p className="text-white/70 text-lg max-w-2xl mx-auto mt-3">
-                Ini kata mereka setelah pakai layanan Receh48 💖
-              </p>
-
-              {/* Buttons */}
-              <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-                <Link
-                  to="/review"
-                  className="inline-flex items-center justify-center gap-2 px-7 py-3 rounded-xl font-semibold
-                    bg-gradient-to-r from-amber-300 to-yellow-200 text-black hover:brightness-95
-                    shadow-[0_20px_80px_-45px_rgba(255,215,130,0.55)] transition-all"
-                >
-                  Tulis Review
-                </Link>
-
-                <Link
-                  to="/reviews"
-                  className="inline-flex items-center justify-center gap-2 px-7 py-3 rounded-xl font-semibold
-                    bg-white/10 hover:bg-white/15 border border-white/15 text-white shadow-lg transition-all"
-                >
-                  View All
-                </Link>
-
-                <a
-                  href="https://x.com/receh_48/status/1818337639571112436"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 px-7 py-3 rounded-xl font-semibold
-                    bg-white/10 hover:bg-white/15 border border-white/15 text-white shadow-lg transition-all"
-                >
-                  Lihat Thread X
-                </a>
-              </div>
+        <div className="container relative z-10 mx-auto px-4">
+          <div className="mx-auto mb-16 max-w-3xl text-center">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-amber-300/20 bg-amber-300/10 px-4 py-1.5 text-xs font-black uppercase tracking-[0.22em] text-amber-100">
+              ⭐ Testimoni
             </div>
 
-            {/* Reviews content */}
-            {reviewsLoading ? (
-              <div className="rounded-3xl bg-white/5 backdrop-blur border border-white/10 shadow-2xl p-12 flex items-center justify-center">
-                <LoadingSpinner size="lg" />
-              </div>
-            ) : reviewsError ? (
-              <div className="rounded-3xl bg-white/5 backdrop-blur border border-white/10 shadow-2xl p-8">
-                <ErrorMessage message={reviewsError} />
-              </div>
-            ) : reviews.length === 0 ? (
-              <div className="rounded-3xl bg-white/5 backdrop-blur border border-white/10 shadow-2xl p-12 text-center">
-                <p className="text-white font-extrabold text-lg">
-                  Belum ada review yang tampil 😢
-                </p>
-                <p className="text-white/70 mt-2">
-                  Jadi yang pertama yuk, biar makin ramai #staywithreceh 💖
-                </p>
+            <h2 className="font-display text-5xl font-black leading-[0.95] tracking-tight md:text-7xl">
+              KATA
+              <span className="block bg-gradient-to-r from-amber-200 via-yellow-200 to-amber-400 bg-clip-text text-transparent">
+                MEREKA
+              </span>
+            </h2>
 
-                <div className="mt-6">
-                  <Link
-                    to="/review"
-                    className="inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold
-                      bg-gradient-to-r from-amber-300 to-yellow-200 text-black hover:brightness-95 transition-all"
-                  >
-                    Tulis Review Sekarang
-                  </Link>
-                </div>
-              </div>
-            ) : (
-              <ReviewsCarousel reviews={reviews} />
-            )}
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-white/62 md:text-lg">
+              Review asli dari warga #staywithreceh setelah pakai layanan Receh48.
+            </p>
+
+            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+              <Link
+                to="/review"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-300 to-yellow-200 px-7 py-3.5 text-sm font-extrabold text-black shadow-[0_20px_80px_-45px_rgba(255,215,130,0.75)] transition-all hover:brightness-105"
+              >
+                Tulis Review
+              </Link>
+
+              <Link
+                to="/reviews"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-7 py-3.5 text-sm font-extrabold text-white shadow-lg transition-all hover:bg-white/15"
+              >
+                Lihat Semua Review
+              </Link>
+
+              <a
+                href="https://x.com/receh_48/status/1818337639571112436"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-7 py-3.5 text-sm font-extrabold text-white shadow-lg transition-all hover:bg-white/15"
+              >
+                Thread X
+              </a>
+            </div>
           </div>
+
+          {reviewsLoading ? (
+            <div className="mx-auto flex max-w-5xl items-center justify-center rounded-3xl border border-white/10 bg-white/5 p-12 shadow-2xl backdrop-blur">
+              <LoadingSpinner size="lg" />
+            </div>
+          ) : reviewsError ? (
+            <div className="mx-auto max-w-5xl rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur">
+              <ErrorMessage message={reviewsError} />
+            </div>
+          ) : reviews.length === 0 ? (
+            <div className="mx-auto max-w-4xl rounded-3xl border border-white/10 bg-white/5 p-12 text-center shadow-2xl backdrop-blur">
+              <p className="text-lg font-extrabold text-white">Belum ada review yang tampil 😢</p>
+              <p className="mt-2 text-white/70">Jadi yang pertama yuk, biar makin ramai #staywithreceh 💖</p>
+
+              <div className="mt-6">
+                <Link
+                  to="/review"
+                  className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-amber-300 to-yellow-200 px-6 py-3 font-semibold text-black transition-all hover:brightness-95"
+                >
+                  Tulis Review Sekarang
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <KataMerekaReviews reviews={reviews} />
+          )}
         </div>
       </section>
 

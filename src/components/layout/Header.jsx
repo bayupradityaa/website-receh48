@@ -3,6 +3,51 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { Button } from "../ui/Button";
 import { Menu, X } from "lucide-react";
+import NavBar from "../ui/navbar";
+
+const menus = [
+  {
+    id: 1,
+    title: "Home",
+    url: "/",
+    dropdown: false,
+  },
+  {
+    id: 2,
+    title: "Pricelist",
+    url: "/pricelist",
+    dropdown: false,
+  },
+  {
+    id: 3,
+    title: "Layanan Joki",
+    url: "#",
+    dropdown: true,
+    items: [
+      {
+        id: 31,
+        title: "Joki Video Call",
+        url: "/video-call",
+      },
+      {
+        id: 32,
+        title: "Joki Meet & Greet",
+        url: "/meet-greet",
+      },
+      {
+        id: 33,
+        title: "Joki Two-Shot",
+        url: "/twoshot",
+      },
+    ],
+  },
+  {
+    id: 4,
+    title: "Cek Pesanan",
+    url: "/cek-pesanan",
+    dropdown: false,
+  },
+];
 
 export function Header() {
   const location = useLocation();
@@ -73,13 +118,9 @@ export function Header() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-1">
-            {navLinks.map((l) => (
-              <Link key={l.to} to={l.to} className={navClass(isActive(l.to))}>
-                {l.label}
-              </Link>
-            ))}
-          </nav>
+          <div className="hidden lg:flex items-center gap-1">
+            <NavBar list={menus} />
+          </div>
 
           {/* Right side */}
           <div className="flex items-center gap-2">

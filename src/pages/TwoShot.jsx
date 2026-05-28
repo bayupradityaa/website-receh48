@@ -27,6 +27,122 @@ import {
 const ORDER_TYPE = "twoshot";
 const TERMS_KEY = "terms_twoshot";
 
+const TOUR_EVENTS = [
+  { id: "jogja_27_passion", war: "war_15", date: "Yogyakarta, 27 Juni 2026 (Passion)", label: "Yogyakarta - 27 Juni 2026 (Passion) [War 15 Juni]" },
+  { id: "sby_28_love", war: "war_15", date: "Surabaya, 28 Juni 2026 (Love)", label: "Surabaya - 28 Juni 2026 (Love) [War 15 Juni]" },
+  { id: "sby_02_dream", war: "war_15", date: "Surabaya, 2 Juli 2026 (Dream)", label: "Surabaya - 02 Juli 2026 (Dream) [War 15 Juni]" },
+  { id: "jogja_04_love", war: "war_22", date: "Yogyakarta, 4 Juli 2026 (Love)", label: "Yogyakarta - 4 Juli 2026 (Love) [War 22 Juni]" },
+  { id: "jogja_05_dream", war: "war_22", date: "Yogyakarta, 5 Juli 2026 (Dream)", label: "Yogyakarta - 05 Juli 2026 (Dream) [War 22 Juni]" },
+  { id: "sby_09_passion", war: "war_22", date: "Surabaya, 9 Juli 2026 (Passion)", label: "Surabaya - 09 Juli 2026 (Passion) [War 22 Juni]" }
+];
+
+const TEAMS = [
+  {
+    id: "love",
+    name: "Team Love",
+    badgeClass: "bg-pink-600 text-white border border-pink-500/30 shadow-sm",
+    order: 1,
+    members: [
+      "Alya Amanda", "Anindya Ramadhani", "Aurellia", "Aurhel Alana",
+      "Cathleen Nixie", "Celline Thefani", "Cynthia Yaputera", "Fiony Alveria",
+      "Fritzy Rosmerian", "Grace Octaviani", "Hillary Abigail", "Indah Cahya",
+      "Jazzlyn Trisha", "Michelle Alexandra", "Nayla Suji"
+    ]
+  },
+  {
+    id: "dream",
+    name: "Team Dream",
+    badgeClass: "bg-sky-600 text-white border border-sky-500/30 shadow-sm",
+    order: 2,
+    members: [
+      "Adeline Wijaya", "Chelsea Davina", "Febriola Sinambela", "Freya Jayawardana",
+      "Gabriela Abigail", "Gendis Mayrannisa", "Gita Sekar Andarini", "Greesella Adhalia",
+      "Helisma Putri", "Jesslyn Elly", "Marsha Lenathea", "Nina Tutachia",
+      "Oline Manuel", "Shabilqis Naila"
+    ]
+  },
+  {
+    id: "passion",
+    name: "Team Passion",
+    badgeClass: "bg-emerald-600 text-white border border-emerald-500/30 shadow-sm",
+    order: 3,
+    members: [
+      "Abigail Rachel", "Angelina Christy", "Catherina Vallencia", "Cornelia Vanisa",
+      "Dena Natalia", "Desy Natalia", "Feni Fitriyanti", "Jessica Chandra",
+      "Kathrina Irene", "Lulu Salsabila", "Michelle Levia", "Mutiara Azzahra",
+      "Raisha Syifa", "Ribka Budiman", "Victoria Kimberly"
+    ]
+  },
+  {
+    id: "trainee",
+    name: "Trainee",
+    badgeClass: "bg-purple-600 text-white border border-purple-500/30 shadow-sm",
+    order: 4,
+    members: [
+      "Astrella Virgiananda", "Aulia Riza", "Bong Aprilli", "Hagia Sopia",
+      "Humaira Ramadhani", "Jacqueline Immanuela", "Jemima Evodie",
+      "Mikaela Kusjanto", "Nur Intan",
+      "Afera Thalia", "Carissa Dini", "Christabella Bonita", "Fahira Putri",
+      "Fatimah Azzahra", "Heidi Suyangga", "Maxine Faye",
+      "Putry Jazyta", "Ralyne Van Irwan", "Sona Kalyana"
+    ]
+  }
+];
+
+function getMemberTeamDetails(memberName) {
+  const cleanName = memberName.replace(/ JKT48$/i, "").trim().toLowerCase();
+  const team = TEAMS.find(t =>
+    t.members.some(tm => tm.trim().toLowerCase() === cleanName)
+  );
+  if (team) {
+    let rowBg = "bg-[#12161F]";
+    let rowHover = "hover:bg-[#1A1F2E]";
+    let mobileBg = "bg-[#0A0E17]";
+    let mobileBorder = "border-gray-700";
+
+    if (team.id === "love") {
+      rowBg = "bg-pink-500/[0.04]";
+      rowHover = "hover:bg-pink-500/[0.09]";
+      mobileBg = "bg-pink-500/[0.03]";
+      mobileBorder = "border-pink-500/25 hover:border-pink-500/40";
+    } else if (team.id === "dream") {
+      rowBg = "bg-sky-500/[0.04]";
+      rowHover = "hover:bg-sky-500/[0.09]";
+      mobileBg = "bg-sky-500/[0.03]";
+      mobileBorder = "border-sky-500/25 hover:border-sky-500/40";
+    } else if (team.id === "passion") {
+      rowBg = "bg-emerald-500/[0.04]";
+      rowHover = "hover:bg-emerald-500/[0.09]";
+      mobileBg = "bg-emerald-500/[0.03]";
+      mobileBorder = "border-emerald-500/25 hover:border-emerald-500/40";
+    } else if (team.id === "trainee") {
+      rowBg = "bg-purple-500/[0.04]";
+      rowHover = "hover:bg-purple-500/[0.09]";
+      mobileBg = "bg-purple-500/[0.03]";
+      mobileBorder = "border-purple-500/25 hover:border-purple-500/40";
+    }
+
+    return {
+      name: team.name,
+      badgeClass: team.badgeClass,
+      order: team.order,
+      rowBg,
+      rowHover,
+      mobileBg,
+      mobileBorder
+    };
+  }
+  return {
+    name: "Trainee / Lainnya",
+    badgeClass: "bg-purple-950/40 text-purple-400 border border-purple-700/30",
+    order: 4,
+    rowBg: "bg-purple-500/[0.04]",
+    rowHover: "hover:bg-purple-500/[0.09]",
+    mobileBg: "bg-purple-500/[0.03]",
+    mobileBorder: "border-purple-500/25 hover:border-purple-500/40"
+  };
+}
+
 const orderSchema = z
   .object({
     customer_name: z.string().min(3, "Nama minimal 3 karakter"),
@@ -42,7 +158,7 @@ const orderSchema = z
     }),
   })
   .refine((data) => data.contact_twitter || data.contact_line, {
-    message: "Minimal salah satu dari Twitter atau LINE harus diisi",
+    message: "Minimal salah satu dari Twitter atau No. WhatsApp harus diisi",
     path: ["contact_twitter"],
   });
 
@@ -57,6 +173,377 @@ function isFullSlot(member, serviceType) {
   return fullSlots.includes(serviceType);
 }
 
+const teamColors = {
+  Dream: "bg-violet-500/15 text-violet-300 border-violet-500/30",
+  Love: "bg-pink-500/15 text-pink-300 border-pink-500/30",
+  Passion: "bg-orange-500/15 text-orange-300 border-orange-500/30",
+  Trainee: "bg-slate-500/15 text-slate-300 border-slate-500/30"
+};
+
+function TeamBadge({ teamName }) {
+  let key = "Trainee";
+  if (teamName.includes("Dream")) key = "Dream";
+  else if (teamName.includes("Love")) key = "Love";
+  else if (teamName.includes("Passion")) key = "Passion";
+
+  const colorClass = teamColors[key] || teamColors.Trainee;
+
+  return (
+    <span className={`text-[10px] px-2.5 py-0.5 rounded-full border font-bold align-middle shrink-0 ${colorClass}`}>
+      {teamName}
+    </span>
+  );
+}
+
+function TeamFilterChips({ selectedTeam, setSelectedTeam }) {
+  const teams = ["Semua", "Dream", "Love", "Passion", "Trainee"];
+
+  const activeStyles = {
+    Semua: "bg-amber-500 text-slate-950 border-amber-400 shadow-lg shadow-amber-500/20",
+    Dream: "bg-violet-500 text-white border-violet-400 shadow-lg shadow-violet-500/20",
+    Love: "bg-pink-500 text-white border-pink-400 shadow-lg shadow-pink-500/20",
+    Passion: "bg-orange-500 text-slate-950 border-orange-400 shadow-lg shadow-orange-500/20",
+    Trainee: "bg-slate-500 text-white border-slate-400 shadow-lg shadow-slate-500/20"
+  };
+
+  const hoverStyles = {
+    Semua: "hover:border-amber-500/50 hover:text-amber-300",
+    Dream: "hover:border-violet-500/50 hover:text-violet-300",
+    Love: "hover:border-pink-500/50 hover:text-pink-300",
+    Passion: "hover:border-orange-500/50 hover:text-orange-300",
+    Trainee: "hover:border-slate-500/50 hover:text-slate-300"
+  };
+
+  return (
+    <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none -mx-4 px-4 md:mx-0 md:px-0">
+      {teams.map((team) => {
+        const isActive = selectedTeam === team;
+        return (
+          <button
+            key={team}
+            type="button"
+            onClick={() => setSelectedTeam(team)}
+            className={`px-4 py-2 text-xs md:text-sm font-semibold rounded-full border transition-all shrink-0 ${isActive
+                ? activeStyles[team]
+                : `bg-[#0A0E17] text-gray-400 border-gray-800 ${hoverStyles[team]}`
+              }`}
+          >
+            {team}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function MemberSearch({ searchQuery, setSearchQuery, isOpen }) {
+  return (
+    <div className="relative">
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+      <input
+        type="text"
+        placeholder="Cari nama member..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        disabled={!isOpen}
+        className="w-full pl-10 pr-4 py-2.5 bg-[#0A0E17] border border-gray-700 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent disabled:cursor-not-allowed text-sm"
+      />
+    </div>
+  );
+}
+
+function MemberTable({
+  filteredMembers,
+  isOpen,
+  cart,
+  addToCart,
+  orderType,
+  isFullSlot,
+  getFeeByType,
+  getMemberTeamDetails
+}) {
+  return (
+    <div className="overflow-x-auto">
+      <div className="max-h-[520px] overflow-y-auto">
+        <table className="w-full">
+          <thead className="sticky top-0 bg-[#1A1F2E] z-10">
+            <tr className="border-b border-gray-800">
+              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Member</th>
+              <th className="px-6 py-4 text-right text-sm font-semibold text-gray-300">
+                {orderType === "mng" ? "Harga Meet & Greet" : "Harga TwoShot"}
+              </th>
+              <th className="px-6 py-4 text-center text-sm font-semibold text-gray-300">Aksi</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-800">
+            {filteredMembers.map((m) => {
+              const fg = getFeeByType(m, orderType);
+              const price = fg?.fee || 0;
+              const full = isFullSlot(m, orderType);
+              const teamDetails = getMemberTeamDetails(m.name);
+              const inCart = cart.some((item) => item.member_id === m.id);
+
+              return (
+                <tr
+                  key={m.id}
+                  className={[
+                    'transition-all duration-200',
+                    full ? 'opacity-50 bg-red-950/10' : `${teamDetails.rowBg} ${teamDetails.rowHover}`
+                  ].join(' ')}
+                >
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={m.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=3B82F6&color=fff`}
+                        alt={m.name}
+                        className="w-12 h-12 rounded-full object-cover border-2 border-gray-700"
+                        loading="lazy"
+                        onError={(e) => { e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=3B82F6&color=fff`; }}
+                      />
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-medium text-white">{m.name}</span>
+                          <TeamBadge teamName={teamDetails.name} />
+                          {full && (
+                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 border border-red-500/30 font-bold align-middle">
+                              FULLSLOT
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <span className="font-semibold text-amber-500">{formatCurrency(price)}</span>
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    <button
+                      onClick={() => addToCart(m)}
+                      disabled={!isOpen || full}
+                      title={full ? 'Member ini sedang fullslot' : ''}
+                      className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-all font-medium text-sm w-36 ${full
+                          ? "bg-gray-700 text-gray-500 cursor-not-allowed border border-gray-600"
+                          : inCart
+                            ? "bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20"
+                            : "bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 shadow-md shadow-amber-500/10"
+                        }`}
+                    >
+                      {full ? (
+                        'Fullslot'
+                      ) : inCart ? (
+                        <span>✓ Ditambahkan</span>
+                      ) : (
+                        <>
+                          <Plus className="w-4 h-4" />
+                          <span>Tambah</span>
+                        </>
+                      )}
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function MemberMobileCard({
+  member,
+  isOpen,
+  cart,
+  addToCart,
+  orderType,
+  isFullSlot,
+  getFeeByType,
+  getMemberTeamDetails
+}) {
+  const fg = getFeeByType(member, orderType);
+  const price = fg?.fee || 0;
+  const full = isFullSlot(member, orderType);
+  const teamDetails = getMemberTeamDetails(member.name);
+  const inCart = cart.some((item) => item.member_id === member.id);
+
+  return (
+    <div
+      className={[
+        'border rounded-xl p-4 flex flex-col gap-4 transition-all duration-200 justify-between',
+        full
+          ? 'opacity-60 bg-red-950/10 border-red-800/50'
+          : `${teamDetails.mobileBg} ${teamDetails.mobileBorder}`
+      ].join(' ')}
+    >
+      <div className="flex items-center gap-3">
+        <div className="relative shrink-0">
+          <img
+            src={member.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=3B82F6&color=fff`}
+            alt={member.name}
+            className={[
+              'w-12 h-12 rounded-full object-cover border',
+              full ? 'border-red-500/50 grayscale' : 'border-gray-700'
+            ].join(' ')}
+            loading="lazy"
+            onError={(e) => { e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=3B82F6&color=fff`; }}
+          />
+          {full && (
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+          )}
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className={`font-bold text-base truncate ${full ? 'text-gray-400' : 'text-white'}`}>
+            {member.name}
+          </p>
+          <div className="mt-1">
+            <TeamBadge teamName={teamDetails.name} />
+          </div>
+        </div>
+      </div>
+
+      <div className="border-t border-gray-800/60 pt-3 flex items-center justify-between">
+        <div className="flex flex-col">
+          <span className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">
+            {orderType === "mng" ? "Meet & Greet" : "TwoShot"}
+          </span>
+          <span className={`text-base font-bold ${full ? 'text-gray-500' : 'text-amber-500'}`}>
+            {formatCurrency(price)}
+          </span>
+        </div>
+        {full && (
+          <span className="text-[9px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 border border-red-500/30 font-bold shrink-0">
+            FULLSLOT
+          </span>
+        )}
+      </div>
+
+      <button
+        onClick={() => addToCart(member)}
+        disabled={!isOpen || full}
+        className={`w-full h-11 flex items-center justify-center gap-2 rounded-lg transition-all font-semibold text-sm ${full
+            ? "bg-gray-700 text-gray-500 cursor-not-allowed border border-gray-600"
+            : inCart
+              ? "bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20"
+              : "bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 shadow-md shadow-amber-500/10"
+          }`}
+      >
+        {full ? (
+          'Fullslot'
+        ) : inCart ? (
+          <span>✓ Ditambahkan</span>
+        ) : (
+          <>
+            <Plus className="w-4.5 h-4.5" />
+            <span>Tambah</span>
+          </>
+        )}
+      </button>
+    </div>
+  );
+}
+
+function EmptyState() {
+  return (
+    <div className="text-center py-12 px-4 flex flex-col items-center justify-center animate-fadeIn">
+      <div className="w-12 h-12 rounded-full bg-gray-800/50 flex items-center justify-center mb-3">
+        <Search className="w-5 h-5 text-gray-500" />
+      </div>
+      <h3 className="text-base font-semibold text-white mb-1">Member tidak ditemukan</h3>
+      <p className="text-xs text-gray-400 max-w-xs">
+        Coba gunakan kata kunci lain atau ubah filter team.
+      </p>
+    </div>
+  );
+}
+
+function MemberSection({
+  filteredMembers,
+  isOpen,
+  cart,
+  addToCart,
+  orderType,
+  isFullSlot,
+  getFeeByType,
+  getMemberTeamDetails,
+  searchQuery,
+  setSearchQuery,
+  selectedTeam,
+  setSelectedTeam,
+  sortBy,
+  setSortBy
+}) {
+  return (
+    <div className={`bg-[#12161F] rounded-2xl border border-gray-800 overflow-hidden transition-opacity ${!isOpen ? "opacity-60 pointer-events-none select-none" : ""}`}>
+      <div className="p-4 md:p-6 border-b border-gray-800 space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <h2 className="text-lg md:text-xl font-bold shrink-0">Pilih Member</h2>
+          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto md:flex-1 md:justify-end max-w-xl">
+            <div className="flex-1 min-w-[200px]">
+              <MemberSearch searchQuery={searchQuery} setSearchQuery={setSearchQuery} isOpen={isOpen} />
+            </div>
+            <div className="shrink-0">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                disabled={!isOpen}
+                className="w-full sm:w-44 px-3 py-2.5 bg-[#0A0E17] border border-gray-700 rounded-lg text-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm focus:border-transparent cursor-pointer disabled:cursor-not-allowed"
+              >
+                <option value="default">Urutkan: Default</option>
+                <option value="name_asc">Nama A-Z</option>
+                <option value="price_asc">Harga Termurah</option>
+                <option value="price_desc">Harga Tertinggi</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <TeamFilterChips selectedTeam={selectedTeam} setSelectedTeam={setSelectedTeam} />
+      </div>
+
+      {/* Desktop view */}
+      <div className="hidden md:block">
+        {filteredMembers.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <MemberTable
+            filteredMembers={filteredMembers}
+            isOpen={isOpen}
+            cart={cart}
+            addToCart={addToCart}
+            orderType={orderType}
+            isFullSlot={isFullSlot}
+            getFeeByType={getFeeByType}
+            getMemberTeamDetails={getMemberTeamDetails}
+          />
+        )}
+      </div>
+
+      {/* Mobile view */}
+      <div className="md:hidden p-4">
+        {filteredMembers.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <div className="grid grid-cols-1 gap-3 max-h-[520px] overflow-y-auto pr-1">
+            {filteredMembers.map((m) => (
+              <MemberMobileCard
+                key={m.id}
+                member={m}
+                isOpen={isOpen}
+                cart={cart}
+                addToCart={addToCart}
+                orderType={orderType}
+                isFullSlot={isFullSlot}
+                getFeeByType={getFeeByType}
+                getMemberTeamDetails={getMemberTeamDetails}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function TwoShot() {
   const { user } = useAuth(); // eslint-disable-line no-unused-vars
   const { showToast } = useToast();
@@ -65,7 +552,6 @@ export default function TwoShot() {
 
   const [successOpen, setSuccessOpen] = useState(false);
   const [createdOrder, setCreatedOrder] = useState(null);
-
   const [members, setMembers] = useState([]);
   const [terms, setTerms] = useState("");
   const [loading, setLoading] = useState(true);
@@ -74,13 +560,15 @@ export default function TwoShot() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showTerms, setShowTerms] = useState(false);
   const [cart, setCart] = useState([]);
+  const [targetWar, setTargetWar] = useState("all");
+  const [selectedTeam, setSelectedTeam] = useState("Semua");
+  const [sortBy, setSortBy] = useState("default");
 
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
-    reset, // eslint-disable-line no-unused-vars
   } = useForm({
     resolver: zodResolver(orderSchema),
     defaultValues: {
@@ -98,7 +586,6 @@ export default function TwoShot() {
 
   useEffect(() => {
     fetchData();
-    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -114,7 +601,6 @@ export default function TwoShot() {
         (payload) => {
           console.log('Realtime update member:', payload.new.name, 'full_slots:', payload.new.full_slots);
 
-          // Update state members
           setMembers(prev =>
             prev.map(m =>
               m.id === payload.new.id
@@ -123,7 +609,6 @@ export default function TwoShot() {
             )
           );
 
-          // Optional: Hapus dari cart jika member yang sudah di cart menjadi fullslot
           setCart(prev =>
             prev.filter(item => {
               if (item.member_id === payload.new.id && isFullSlot(payload.new, ORDER_TYPE)) {
@@ -144,7 +629,7 @@ export default function TwoShot() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [members, ORDER_TYPE]);
+  }, [members]);
 
   useEffect(() => {
     document.body.style.overflow = successOpen ? "hidden" : "";
@@ -160,15 +645,13 @@ export default function TwoShot() {
 
       const { data: membersData, error: membersError } = await supabase
         .from("members")
-        .select(
-          `
-          id, name, is_active, photo_url,full_slots,
+        .select(`
+          id, name, is_active, photo_url, full_slots,
           member_fees (
             id, fee_type, fee_group_id,
             fee_groups ( id, name, fee, description, fee_type, is_active )
           )
-        `
-        )
+        `)
         .eq("is_active", true);
 
       if (membersError) throw membersError;
@@ -183,10 +666,11 @@ export default function TwoShot() {
         return !!fg?.id && (fg?.is_active ?? true);
       });
 
+      // Sort by JKT48 Team order and alphabetically inside
       const sortedMembers = onlyWithFee.sort((a, b) => {
-        const feeA = getFeeByType(a, ORDER_TYPE)?.fee ?? 0;
-        const feeB = getFeeByType(b, ORDER_TYPE)?.fee ?? 0;
-        if (feeB !== feeA) return feeB - feeA;
+        const teamA = getMemberTeamDetails(a.name);
+        const teamB = getMemberTeamDetails(b.name);
+        if (teamA.order !== teamB.order) return teamA.order - teamB.order;
         return (a.name || "").localeCompare(b.name || "");
       });
 
@@ -202,10 +686,7 @@ export default function TwoShot() {
       setTerms(termsData?.value || "");
     } catch (err) {
       setError(err?.message || "Gagal memuat data.");
-      showToast(
-        "Gagal memuat data: " + (err?.message || "unknown error"),
-        "error"
-      );
+      showToast("Gagal memuat data: " + (err?.message || "unknown error"), "error");
     } finally {
       setLoading(false);
     }
@@ -213,18 +694,55 @@ export default function TwoShot() {
 
   const filteredMembers = useMemo(() => {
     const q = (searchQuery || "").toLowerCase();
-    return members.filter((m) => (m.name || "").toLowerCase().includes(q));
-  }, [members, searchQuery]);
+
+    // 1. Filter
+    const filtered = members.filter((m) => {
+      const matchesSearch = (m.name || "").toLowerCase().includes(q);
+      const teamDetails = getMemberTeamDetails(m.name);
+      const matchesTeam = selectedTeam === "Semua" ||
+        (selectedTeam === "Dream" && teamDetails.name === "Team Dream") ||
+        (selectedTeam === "Love" && teamDetails.name === "Team Love") ||
+        (selectedTeam === "Passion" && teamDetails.name === "Team Passion") ||
+        (selectedTeam === "Trainee" && (teamDetails.name === "Trainee" || teamDetails.name === "Trainee / Lainnya"));
+      return matchesSearch && matchesTeam;
+    });
+
+    // 2. Sort
+    return [...filtered].sort((a, b) => {
+      if (sortBy === "name_asc") {
+        return (a.name || "").localeCompare(b.name || "");
+      }
+      if (sortBy === "price_asc") {
+        const priceA = getFeeByType(a, ORDER_TYPE)?.fee || 0;
+        const priceB = getFeeByType(b, ORDER_TYPE)?.fee || 0;
+        return priceA - priceB;
+      }
+      if (sortBy === "price_desc") {
+        const priceA = getFeeByType(a, ORDER_TYPE)?.fee || 0;
+        const priceB = getFeeByType(b, ORDER_TYPE)?.fee || 0;
+        return priceB - priceA;
+      }
+      // Default: team order and alphabetical inside
+      const teamA = getMemberTeamDetails(a.name);
+      const teamB = getMemberTeamDetails(b.name);
+      if (teamA.order !== teamB.order) return teamA.order - teamB.order;
+      return (a.name || "").localeCompare(b.name || "");
+    });
+  }, [members, searchQuery, selectedTeam, sortBy]);
 
   const addToCart = (member) => {
     if (!isOpen) return;
 
-    // Cek fullslot
     if (isFullSlot(member, ORDER_TYPE)) {
       showToast(`${member.name} sedang fullslot untuk layanan ini`, 'error');
       return;
     }
     const fg = getFeeByType(member, ORDER_TYPE);
+
+    // Auto-pick default event date based on filtered targetWar
+    const activeEvents = TOUR_EVENTS.filter((x) => targetWar === "all" || x.war === targetWar);
+    const defaultEvent = activeEvents.length > 0 ? activeEvents[0] : null;
+
     setCart((prev) => [
       ...prev,
       {
@@ -234,10 +752,12 @@ export default function TwoShot() {
         member_name: member.name,
         fee_group_id: fg?.id || null,
         fee: fg?.fee || 0,
-        date: "",
+        eventId: defaultEvent ? defaultEvent.id : "",
+        date: defaultEvent ? defaultEvent.date : "",
         session: "",
         backup_id: "",
         backup_name: "",
+        backup_eventId: "",
         backup_date: "",
         backup_session: "",
       },
@@ -259,8 +779,60 @@ export default function TwoShot() {
 
   const updateBackupMember = (itemId, memberId) => {
     const member = members.find((m) => String(m.id) === String(memberId));
-    updateCartItem(itemId, "backup_id", memberId);
-    updateCartItem(itemId, "backup_name", member?.name || "");
+    const activeEvents = TOUR_EVENTS.filter((x) => targetWar === "all" || x.war === targetWar);
+    const defaultEvent = activeEvents.length > 0 ? activeEvents[0] : null;
+
+    setCart((prev) =>
+      prev.map((item) =>
+        item.id === itemId
+          ? {
+            ...item,
+            backup_id: memberId,
+            backup_name: member?.name || "",
+            backup_eventId: memberId ? (defaultEvent ? defaultEvent.id : "") : "",
+            backup_date: memberId ? (defaultEvent ? defaultEvent.date : "") : "",
+          }
+          : item
+      )
+    );
+  };
+
+  const handleEventChange = (itemId, eventId) => {
+    if (eventId === "custom") {
+      setCart((prev) =>
+        prev.map((item) =>
+          item.id === itemId ? { ...item, eventId: "custom", date: "" } : item
+        )
+      );
+    } else {
+      const ev = TOUR_EVENTS.find((x) => x.id === eventId);
+      setCart((prev) =>
+        prev.map((item) =>
+          item.id === itemId
+            ? { ...item, eventId: eventId, date: ev ? ev.date : "" }
+            : item
+        )
+      );
+    }
+  };
+
+  const handleBackupEventChange = (itemId, eventId) => {
+    if (eventId === "custom") {
+      setCart((prev) =>
+        prev.map((item) =>
+          item.id === itemId ? { ...item, backup_eventId: "custom", backup_date: "" } : item
+        )
+      );
+    } else {
+      const ev = TOUR_EVENTS.find((x) => x.id === eventId);
+      setCart((prev) =>
+        prev.map((item) =>
+          item.id === itemId
+            ? { ...item, backup_eventId: eventId, backup_date: ev ? ev.date : "" }
+            : item
+        )
+      );
+    }
   };
 
   const getAvailableBackupMembers = () => members;
@@ -269,6 +841,10 @@ export default function TwoShot() {
     () => cart.reduce((sum, item) => sum + (Number(item.fee) || 0), 0),
     [cart]
   );
+
+  const filteredEvents = useMemo(() => {
+    return TOUR_EVENTS.filter((x) => targetWar === "all" || x.war === targetWar);
+  }, [targetWar]);
 
   async function onSubmit(data) {
     if (!isOpen) return;
@@ -304,11 +880,30 @@ export default function TwoShot() {
       setSubmitting(true);
 
       const noteLines = cart.map((item, idx) => {
-        const main = `${item.date} | ${item.session} | ${item.member_name}`;
-        if (item.backup_name && item.backup_date && item.backup_session) {
-          return `${idx + 1}. ${main} | backup: ${item.backup_name} (${item.backup_date} | ${item.backup_session})`;
+        let dateStr = item.date;
+        if (item.eventId && item.eventId !== "custom") {
+          const ev = TOUR_EVENTS.find((x) => x.id === item.eventId);
+          if (ev) {
+            const warLbl = ev.war === "war_15" ? "War 15 Juni" : "War 22 Juni";
+            dateStr = `${ev.date} [${warLbl}]`;
+          }
         }
-        return `${idx + 1}. ${main}`;
+
+        let backupStr = "";
+        if (item.backup_name && item.backup_date && item.backup_session) {
+          let backupDateStr = item.backup_date;
+          if (item.backup_eventId && item.backup_eventId !== "custom") {
+            const ev = TOUR_EVENTS.find((x) => x.id === item.backup_eventId);
+            if (ev) {
+              const warLbl = ev.war === "war_15" ? "War 15 Juni" : "War 22 Juni";
+              backupDateStr = `${ev.date} [${warLbl}]`;
+            }
+          }
+          backupStr = ` | backup: ${item.backup_name} (${backupDateStr} | ${item.backup_session})`;
+        }
+
+        const main = `${dateStr} | ${item.session} | ${item.member_name}`;
+        return `${idx + 1}. ${main}${backupStr}`;
       });
 
       const payload = {
@@ -358,184 +953,59 @@ export default function TwoShot() {
           <ServiceStatusBanner serviceKey="two_shot" />
         </div>
 
+        {/* War Tour Selection Banner */}
+        <div className="max-w-6xl mx-auto mb-6 bg-[#12161F] border border-gray-800 rounded-2xl p-4 md:p-6 shadow-xl anim-fade-up anim-d2">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div>
+              <h3 className="text-base md:text-lg font-bold flex items-center gap-2 text-white">
+                <Calendar className="w-5 h-5 text-amber-500" />
+                Target Jadwal War Teater Sementara (Tour Yogyakarta &amp; Surabaya)
+              </h3>
+              <p className="text-xs text-gray-400 mt-1">
+                Pilih target jadwal war untuk menyaring pilihan event dan mempermudah pengisian formulir.
+              </p>
+            </div>
+            <div className="flex gap-2 flex-wrap">
+              {[
+                { id: "all", label: "Semua Event" },
+                { id: "war_15", label: "War 15 Juni" },
+                { id: "war_22", label: "War 22 Juni" }
+              ].map((btn) => (
+                <button
+                  key={btn.id}
+                  type="button"
+                  onClick={() => setTargetWar(btn.id)}
+                  className={`px-4 py-2 text-xs md:text-sm font-semibold rounded-lg border transition-all ${targetWar === btn.id
+                      ? "bg-amber-500 text-slate-950 border-amber-400 shadow-lg shadow-amber-500/20"
+                      : "bg-[#0A0E17] text-gray-300 border-gray-700 hover:border-gray-500 hover:text-white"
+                    }`}
+                >
+                  {btn.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 max-w-6xl mx-auto">
           {/* LEFT */}
           <div className="lg:col-span-2 space-y-4 md:space-y-6 anim-fade-up anim-d3">
-            <div
-              className={`bg-[#12161F] rounded-2xl border border-gray-800 overflow-hidden transition-opacity ${!isOpen ? "opacity-60 pointer-events-none select-none" : ""
-                }`}
-            >
-              <div className="p-4 md:p-6 border-b border-gray-800">
-                <h2 className="text-lg md:text-xl font-bold mb-3 md:mb-4">Pilih Member</h2>
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                  <input
-                    type="text"
-                    placeholder="Cari nama member..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    disabled={!isOpen}
-                    className="w-full pl-10 pr-4 py-3 bg-[#0A0E17] border border-gray-700 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:cursor-not-allowed"
-                  />
-                </div>
-              </div>
-
-              {/* Desktop: Table */}
-              <div className="hidden md:block">
-                <div className="overflow-x-auto">
-                  <div className="max-h-[520px] overflow-y-auto">
-                    <table className="w-full">
-                      <thead className="sticky top-0 bg-[#1A1F2E] z-10">
-                        <tr className="border-b border-gray-800">
-                          <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Member</th>
-                          <th className="px-6 py-4 text-right text-sm font-semibold text-gray-300">Harga TwoShot</th>
-                          <th className="px-6 py-4 text-center text-sm font-semibold text-gray-300">Aksi</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-800">
-                        {filteredMembers.map((m) => {
-                          const fg = getFeeByType(m, ORDER_TYPE);
-                          const price = fg?.fee || 0;
-                          const full = isFullSlot(m, ORDER_TYPE);
-                          return (
-                            <tr
-                              key={m.id}
-                              className={[
-                                'transition-colors',
-                                full ? 'opacity-50 bg-red-950/10' : 'hover:bg-[#1A1F2E]'
-                              ].join(' ')}
-                            >
-                              <td className="px-6 py-4">
-                                <div className="flex items-center gap-3">
-                                  <img
-                                    src={m.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=3B82F6&color=fff`}
-                                    alt={m.name}
-                                    className="w-12 h-12 rounded-full object-cover border-2 border-gray-700"
-                                    loading="lazy"
-                                    onError={(e) => { e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=3B82F6&color=fff`; }}
-                                  />
-                                  <div>
-                                    <span className="font-medium text-white">{m.name}</span>
-                                    {full && (
-                                      <span className="ml-2 text-[10px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 border border-red-500/30 font-bold align-middle">
-                                        FULLSLOT
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
-                              </td>
-                              <td className="px-6 py-4 text-right">
-                                <span className="font-semibold text-primary-400">{formatCurrency(price)}</span>
-                              </td>
-                              <td className="px-6 py-4 text-center">
-                                <button
-                                  onClick={() => addToCart(m)}
-                                  disabled={!isOpen || full}
-                                  title={full ? 'Member ini sedang fullslot' : ''}
-                                  className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed text-white rounded-lg transition-colors font-medium text-sm"
-                                >
-                                  <Plus className="w-4 h-4" />
-                                  {full ? 'Fullslot' : 'Tambah'}
-                                </button>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                    {filteredMembers.length === 0 && (
-                      <div className="text-center py-12 text-gray-500">
-                        <p>Tidak ada member yang ditemukan.</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Mobile */}
-              <div className="md:hidden p-4">
-                {filteredMembers.length === 0 ? (
-                  <div className="text-center py-10 text-gray-500">
-                    <p>Tidak ada member yang ditemukan.</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3 max-h-[520px] overflow-y-auto pr-1">
-                    {filteredMembers.map((m) => {
-                      const fg = getFeeByType(m, ORDER_TYPE);
-                      const price = fg?.fee || 0;
-                      const full = isFullSlot(m, ORDER_TYPE);
-                      return (
-                        <div
-                          key={m.id}
-                          className={[
-                            'bg-[#0A0E17] border rounded-xl p-3 flex items-center justify-between gap-3 transition-all',
-                            full
-                              ? 'opacity-60 bg-red-950/10 border-red-800/50'
-                              : 'border-gray-700'
-                          ].join(' ')}
-                        >
-                          <div className="flex items-center gap-3 min-w-0">
-                            <div className="relative">
-                              <img
-                                src={m.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=3B82F6&color=fff`}
-                                alt={m.name}
-                                className={[
-                                  'w-11 h-11 rounded-full object-cover border',
-                                  full ? 'border-red-500/50 grayscale' : 'border-gray-700'
-                                ].join(' ')}
-                                loading="lazy"
-                                onError={(e) => { e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=3B82F6&color=fff`; }}
-                              />
-                              {full && (
-                                <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-                              )}
-                            </div>
-                            <div className="min-w-0">
-                              <div className="flex items-center gap-1.5 flex-wrap">
-                                <p className={[
-                                  'font-semibold truncate',
-                                  full ? 'text-gray-400' : 'text-white'
-                                ].join(' ')}>
-                                  {m.name}
-                                </p>
-                                {full && (
-                                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 border border-red-500/30 font-bold shrink-0">
-                                    FULLSLOT
-                                  </span>
-                                )}
-                              </div>
-                              <p className={[
-                                'text-sm font-semibold',
-                                full ? 'text-gray-500' : 'text-primary-400'
-                              ].join(' ')}>
-                                {formatCurrency(price)}
-                              </p>
-                              {full && (
-                                <p className="text-[10px] text-red-400/70 mt-0.5">Tidak tersedia</p>
-                              )}
-                            </div>
-                          </div>
-                          <button
-                            onClick={() => addToCart(m)}
-                            disabled={!isOpen || full}
-                            title={full ? 'Member ini sedang fullslot' : ''}
-                            className={[
-                              'inline-flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors font-medium text-sm flex-shrink-0',
-                              full
-                                ? 'bg-gray-700/50 text-gray-500 cursor-not-allowed border border-gray-600'
-                                : 'bg-primary-600 hover:bg-primary-700 text-white'
-                            ].join(' ')}
-                          >
-                            <Plus className="w-4 h-4" />
-                            {full ? 'Full' : 'Tambah'}
-                          </button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            </div>
+            <MemberSection
+              filteredMembers={filteredMembers}
+              isOpen={isOpen}
+              cart={cart}
+              addToCart={addToCart}
+              orderType={ORDER_TYPE}
+              isFullSlot={isFullSlot}
+              getFeeByType={getFeeByType}
+              getMemberTeamDetails={getMemberTeamDetails}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              selectedTeam={selectedTeam}
+              setSelectedTeam={setSelectedTeam}
+              sortBy={sortBy}
+              setSortBy={setSortBy}
+            />
 
             {/* Terms */}
             <div className="bg-[#12161F] rounded-2xl border border-gray-800 p-4 md:p-6">
@@ -544,16 +1014,12 @@ export default function TwoShot() {
               {showTerms ? (
                 <div className="bg-[#0A0E17] border border-gray-700 rounded-lg p-4 max-h-80 overflow-y-auto">
                   <pre className="whitespace-pre-wrap text-sm text-gray-300 font-sans">{terms}</pre>
-                  <button onClick={() => setShowTerms(false)} className="mt-4 text-primary-400 hover:text-primary-300 font-medium text-sm">
-                    ← Tutup
-                  </button>
+                  <button onClick={() => setShowTerms(false)} className="mt-4 text-primary-400 hover:text-primary-300 font-medium text-sm">← Tutup</button>
                 </div>
               ) : (
                 <div className="bg-[#0A0E17] border border-gray-700 rounded-lg p-4">
                   <p className="text-gray-400 mb-3 text-sm">Dengan melakukan pemesanan, Anda menyetujui syarat dan ketentuan yang berlaku...</p>
-                  <button onClick={() => setShowTerms(true)} className="text-primary-400 hover:text-primary-300 font-medium text-sm">
-                    Baca Selengkapnya →
-                  </button>
+                  <button onClick={() => setShowTerms(true)} className="text-primary-400 hover:text-primary-300 font-medium text-sm">Baca Selengkapnya →</button>
                 </div>
               )}
             </div>
@@ -570,9 +1036,7 @@ export default function TwoShot() {
                     Keranjang ({cart.length})
                   </h3>
                   {cart.length > 0 && (
-                    <button onClick={() => setCart([])} className="text-sm text-red-400 hover:text-red-300 font-medium">
-                      Kosongkan
-                    </button>
+                    <button onClick={() => setCart([])} className="text-sm text-red-400 hover:text-red-300 font-medium">Kosongkan</button>
                   )}
                 </div>
               </div>
@@ -600,19 +1064,33 @@ export default function TwoShot() {
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <div>
+                          <div className={item.eventId === "custom" ? "sm:col-span-2" : "sm:col-span-1"}>
                             <label className="text-xs text-gray-300 mb-1 flex items-center gap-1">
-                              <Calendar className="w-3 h-3 text-gray-300" /> Tanggal
+                              <Calendar className="w-3 h-3 text-amber-400" /> Pilih Event / Tanggal
                             </label>
-                            <input
-                              type="date"
-                              value={item.date}
-                              onChange={(e) => updateCartItem(item.id, "date", e.target.value)}
-                              className="w-full px-3 py-2 text-sm bg-[#12161F] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+                            <select
+                              value={item.eventId || ""}
+                              onChange={(e) => handleEventChange(item.id, e.target.value)}
+                              className="w-full px-3 py-2 text-sm bg-[#12161F] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
                               required
-                            />
+                            >
+                              <option value="">-- Pilih Event --</option>
+                              {filteredEvents.map((ev) => (
+                                <option key={ev.id} value={ev.id}>{ev.label}</option>
+                              ))}
+                              <option value="custom">Input Manual / Tanggal Lain</option>
+                            </select>
+                            {item.eventId === "custom" && (
+                              <input
+                                type="date"
+                                value={item.date}
+                                onChange={(e) => updateCartItem(item.id, "date", e.target.value)}
+                                className="w-full mt-2 px-3 py-2 text-sm bg-[#0A0E17] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                required
+                              />
+                            )}
                           </div>
-                          <div>
+                          <div className={item.eventId === "custom" ? "sm:col-span-2" : "sm:col-span-1"}>
                             <label className="text-xs text-gray-300 mb-1 flex items-center gap-1">
                               <Clock className="w-3 h-3 text-gray-300" /> Sesi
                             </label>
@@ -657,19 +1135,33 @@ export default function TwoShot() {
                           {item.backup_id && (
                             <>
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <div>
+                                <div className={item.backup_eventId === "custom" ? "sm:col-span-2" : "sm:col-span-1"}>
                                   <label className="text-xs text-gray-300 mb-1 flex items-center gap-1">
-                                    <Calendar className="w-3 h-3 text-gray-300" /> Tanggal Cadangan
+                                    <Calendar className="w-3 h-3 text-amber-400" /> Event Cadangan
                                   </label>
-                                  <input
-                                    type="date"
-                                    value={item.backup_date}
-                                    onChange={(e) => updateCartItem(item.id, "backup_date", e.target.value)}
-                                    className="w-full px-3 py-2 text-sm bg-[#12161F] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                  <select
+                                    value={item.backup_eventId || ""}
+                                    onChange={(e) => handleBackupEventChange(item.id, e.target.value)}
+                                    className="w-full px-3 py-2 text-sm bg-[#12161F] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
                                     required
-                                  />
+                                  >
+                                    <option value="">-- Pilih Event --</option>
+                                    {filteredEvents.map((ev) => (
+                                      <option key={ev.id} value={ev.id}>{ev.label}</option>
+                                    ))}
+                                    <option value="custom">Input Manual / Tanggal Lain</option>
+                                  </select>
+                                  {item.backup_eventId === "custom" && (
+                                    <input
+                                      type="date"
+                                      value={item.backup_date}
+                                      onChange={(e) => updateCartItem(item.id, "backup_date", e.target.value)}
+                                      className="w-full mt-2 px-3 py-2 text-sm bg-[#0A0E17] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                      required
+                                    />
+                                  )}
                                 </div>
-                                <div>
+                                <div className={item.backup_eventId === "custom" ? "sm:col-span-2" : "sm:col-span-1"}>
                                   <label className="text-xs text-gray-300 mb-1 flex items-center gap-1">
                                     <Clock className="w-3 h-3 text-gray-300" /> Sesi Cadangan
                                   </label>
@@ -691,15 +1183,6 @@ export default function TwoShot() {
                                   </select>
                                 </div>
                               </div>
-                              {item.backup_name && item.backup_date && item.backup_session && (
-                                <div className="bg-[#12161F] border border-green-900/30 rounded p-2 text-xs">
-                                  <p className="text-green-400 font-medium mb-1">✓ Backup aktif</p>
-                                  <p className="text-gray-400">{item.backup_name} - {item.backup_date} - {item.backup_session}</p>
-                                  {item.backup_id === item.member_id && item.backup_date === item.date && item.backup_session === item.session && (
-                                    <p className="text-red-400 text-xs mt-1">⚠️ Member & tanggal sama, sesi harus berbeda!</p>
-                                  )}
-                                </div>
-                              )}
                             </>
                           )}
                         </div>
@@ -708,7 +1191,7 @@ export default function TwoShot() {
 
                     <div className="border-t border-gray-700 pt-4">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-gray-400">{cart.length} foto</span>
+                        <span className="text-sm text-gray-400">{cart.length} Sesi</span>
                         <span className="text-sm text-gray-400">Total:</span>
                       </div>
                       <div className="flex items-center justify-between">
@@ -758,15 +1241,15 @@ export default function TwoShot() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">ID LINE</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">No. WhatsApp Aktif</label>
                     <input
                       type="text"
                       {...register("contact_line")}
                       disabled={!isOpen}
                       className="w-full px-4 py-3 bg-[#0A0E17] border border-gray-700 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:cursor-not-allowed"
-                      placeholder="line_id"
+                      placeholder="Contoh: 08123456789"
                     />
-                    <p className="text-xs text-gray-500 mt-1">Minimal isi salah satu: Twitter atau LINE</p>
+                    <p className="text-xs text-gray-500 mt-1">Minimal isi salah satu: Twitter atau WhatsApp</p>
                     {errors.contact_twitter && (
                       <p className="text-sm text-red-400 mt-1 flex items-center gap-1">
                         <AlertCircle className="w-4 h-4" />{errors.contact_twitter.message}
@@ -817,8 +1300,8 @@ export default function TwoShot() {
                         <label
                           key={opt.value}
                           className={`flex flex-col gap-1 p-3 rounded-lg border-2 cursor-pointer transition-all select-none ${watchAccountType === opt.value
-                            ? "border-primary-500 bg-primary-900/20"
-                            : "border-gray-700 bg-[#0A0E17] hover:border-gray-500"
+                              ? "border-primary-500 bg-primary-900/20"
+                              : "border-gray-700 bg-[#0A0E17] hover:border-gray-500"
                             } ${!isOpen ? "cursor-not-allowed opacity-50" : ""}`}
                         >
                           <div className="flex items-center gap-2">

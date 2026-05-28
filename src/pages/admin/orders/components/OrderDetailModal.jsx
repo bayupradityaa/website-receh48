@@ -128,7 +128,7 @@ export default function OrderDetailModal({
           </div>
 
           <div>
-            <strong className="text-white">LINE:</strong>
+            <strong className="text-white">WhatsApp:</strong>
             <p className="text-dark-300 mt-1">{order.contact_line || '-'}</p>
           </div>
 
