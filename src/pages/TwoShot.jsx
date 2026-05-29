@@ -268,11 +268,11 @@ function MemberTable({
         <table className="w-full">
           <thead className="sticky top-0 bg-[#1A1F2E] z-10">
             <tr className="border-b border-gray-800">
-              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Member</th>
-              <th className="px-6 py-4 text-right text-sm font-semibold text-gray-300">
+              <th className="px-3 md:px-6 py-3 md:py-4 text-left text-sm font-semibold text-gray-300">Member</th>
+              <th className="px-3 md:px-6 py-3 md:py-4 text-right text-sm font-semibold text-gray-300">
                 {orderType === "mng" ? "Harga Meet & Greet" : "Harga TwoShot"}
               </th>
-              <th className="px-6 py-4 text-center text-sm font-semibold text-gray-300">Aksi</th>
+              <th className="px-3 md:px-6 py-3 md:py-4 text-center text-sm font-semibold text-gray-300">Aksi</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-800">
@@ -291,7 +291,7 @@ function MemberTable({
                     full ? 'opacity-50 bg-red-950/10' : `${teamDetails.rowBg} ${teamDetails.rowHover}`
                   ].join(' ')}
                 >
-                  <td className="px-6 py-4">
+                  <td className="px-3 md:px-6 py-3 md:py-4">
                     <div className="flex items-center gap-3">
                       <img
                         src={m.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=3B82F6&color=fff`}
@@ -313,10 +313,10 @@ function MemberTable({
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-right">
+                  <td className="px-3 md:px-6 py-3 md:py-4 text-right">
                     <span className="font-semibold text-amber-500">{formatCurrency(price)}</span>
                   </td>
-                  <td className="px-6 py-4 text-center">
+                  <td className="px-3 md:px-6 py-3 md:py-4 text-center">
                     <button
                       onClick={() => addToCart(m)}
                       disabled={!isOpen || full}
@@ -346,98 +346,6 @@ function MemberTable({
           </tbody>
         </table>
       </div>
-    </div>
-  );
-}
-
-function MemberMobileCard({
-  member,
-  isOpen,
-  cart,
-  addToCart,
-  orderType,
-  isFullSlot,
-  getFeeByType,
-  getMemberTeamDetails
-}) {
-  const fg = getFeeByType(member, orderType);
-  const price = fg?.fee || 0;
-  const full = isFullSlot(member, orderType);
-  const teamDetails = getMemberTeamDetails(member.name);
-  const inCart = cart.some((item) => item.member_id === member.id);
-
-  return (
-    <div
-      className={[
-        'border rounded-xl p-4 flex flex-col gap-4 transition-all duration-200 justify-between',
-        full
-          ? 'opacity-60 bg-red-950/10 border-red-800/50'
-          : `${teamDetails.mobileBg} ${teamDetails.mobileBorder}`
-      ].join(' ')}
-    >
-      <div className="flex items-center gap-3">
-        <div className="relative shrink-0">
-          <img
-            src={member.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=3B82F6&color=fff`}
-            alt={member.name}
-            className={[
-              'w-12 h-12 rounded-full object-cover border',
-              full ? 'border-red-500/50 grayscale' : 'border-gray-700'
-            ].join(' ')}
-            loading="lazy"
-            onError={(e) => { e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=3B82F6&color=fff`; }}
-          />
-          {full && (
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-          )}
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className={`font-bold text-base truncate ${full ? 'text-gray-400' : 'text-white'}`}>
-            {member.name}
-          </p>
-          <div className="mt-1">
-            <TeamBadge teamName={teamDetails.name} />
-          </div>
-        </div>
-      </div>
-
-      <div className="border-t border-gray-800/60 pt-3 flex items-center justify-between">
-        <div className="flex flex-col">
-          <span className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">
-            {orderType === "mng" ? "Meet & Greet" : "TwoShot"}
-          </span>
-          <span className={`text-base font-bold ${full ? 'text-gray-500' : 'text-amber-500'}`}>
-            {formatCurrency(price)}
-          </span>
-        </div>
-        {full && (
-          <span className="text-[9px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 border border-red-500/30 font-bold shrink-0">
-            FULLSLOT
-          </span>
-        )}
-      </div>
-
-      <button
-        onClick={() => addToCart(member)}
-        disabled={!isOpen || full}
-        className={`w-full h-11 flex items-center justify-center gap-2 rounded-lg transition-all font-semibold text-sm ${full
-          ? "bg-gray-700 text-gray-500 cursor-not-allowed border border-gray-600"
-          : inCart
-            ? "bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20"
-            : "bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 shadow-md shadow-amber-500/10"
-          }`}
-      >
-        {full ? (
-          'Fullslot'
-        ) : inCart ? (
-          <span>✓ Ditambahkan</span>
-        ) : (
-          <>
-            <Plus className="w-4.5 h-4.5" />
-            <span>Tambah</span>
-          </>
-        )}
-      </button>
     </div>
   );
 }
@@ -500,8 +408,7 @@ function MemberSection({
         <TeamFilterChips selectedTeam={selectedTeam} setSelectedTeam={setSelectedTeam} />
       </div>
 
-      {/* Desktop view */}
-      <div className="hidden md:block">
+      <div>
         {filteredMembers.length === 0 ? (
           <EmptyState />
         ) : (
@@ -515,29 +422,6 @@ function MemberSection({
             getFeeByType={getFeeByType}
             getMemberTeamDetails={getMemberTeamDetails}
           />
-        )}
-      </div>
-
-      {/* Mobile view */}
-      <div className="md:hidden p-4">
-        {filteredMembers.length === 0 ? (
-          <EmptyState />
-        ) : (
-          <div className="grid grid-cols-1 gap-3 max-h-[520px] overflow-y-auto pr-1">
-            {filteredMembers.map((m) => (
-              <MemberMobileCard
-                key={m.id}
-                member={m}
-                isOpen={isOpen}
-                cart={cart}
-                addToCart={addToCart}
-                orderType={orderType}
-                isFullSlot={isFullSlot}
-                getFeeByType={getFeeByType}
-                getMemberTeamDetails={getMemberTeamDetails}
-              />
-            ))}
-          </div>
         )}
       </div>
     </div>

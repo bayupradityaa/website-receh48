@@ -364,16 +364,15 @@ export default function VideoCall() {
                 </div>
               </div>
 
-              {/* Desktop */}
-              <div className="hidden md:block">
+              <div>
                 <div className="overflow-x-auto">
                   <div className="max-h-[520px] overflow-y-auto">
                     <table className="w-full">
                       <thead className="sticky top-0 bg-[#1A1F2E] z-10">
                         <tr className="border-b border-gray-800">
-                          <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Member</th>
-                          <th className="px-6 py-4 text-right text-sm font-semibold text-gray-300">Harga</th>
-                          <th className="px-6 py-4 text-center text-sm font-semibold text-gray-300">Aksi</th>
+                          <th className="px-3 md:px-6 py-3 md:py-4 text-left text-sm font-semibold text-gray-300">Member</th>
+                          <th className="px-3 md:px-6 py-3 md:py-4 text-right text-sm font-semibold text-gray-300">Harga</th>
+                          <th className="px-3 md:px-6 py-3 md:py-4 text-center text-sm font-semibold text-gray-300">Aksi</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-800">
@@ -389,7 +388,7 @@ export default function VideoCall() {
                                 full ? 'opacity-50 bg-red-950/10' : 'hover:bg-[#1A1F2E]'
                               ].join(' ')}
                             >
-                              <td className="px-6 py-4">
+                              <td className="px-3 md:px-6 py-3 md:py-4">
                                 <div className="flex items-center gap-3">
                                   <img
                                     src={m.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=3B82F6&color=fff`}
@@ -408,10 +407,10 @@ export default function VideoCall() {
                                   </div>
                                 </div>
                               </td>
-                              <td className="px-6 py-4 text-right">
+                              <td className="px-3 md:px-6 py-3 md:py-4 text-right">
                                 <span className="font-semibold text-primary-400">{formatCurrency(price)}</span>
                               </td>
-                              <td className="px-6 py-4 text-center">
+                              <td className="px-3 md:px-6 py-3 md:py-4 text-center">
                                 <button
                                   onClick={() => addToCart(m)}
                                   disabled={!isOpen || full}
@@ -434,90 +433,6 @@ export default function VideoCall() {
                     )}
                   </div>
                 </div>
-              </div>
-
-              {/* Mobile */}
-              <div className="md:hidden p-4">
-                {filteredMembers.length === 0 ? (
-                  <div className="text-center py-10 text-gray-500">
-                    <p>Tidak ada member yang ditemukan.</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3 max-h-[520px] overflow-y-auto pr-1">
-                    {filteredMembers.map((m) => {
-                      const fg = getFeeByType(m, ORDER_TYPE);
-                      const price = fg?.fee || 0;
-                      const full = isFullSlot(m, ORDER_TYPE);
-                      return (
-                        <div
-                          key={m.id}
-                          className={[
-                            'bg-[#0A0E17] border rounded-xl p-3 flex items-center justify-between gap-3 transition-all',
-                            full
-                              ? 'opacity-60 bg-red-950/10 border-red-800/50'
-                              : 'border-gray-700'
-                          ].join(' ')}
-                        >
-                          <div className="flex items-center gap-3 min-w-0">
-                            <div className="relative">
-                              <img
-                                src={m.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=3B82F6&color=fff`}
-                                alt={m.name}
-                                className={[
-                                  'w-11 h-11 rounded-full object-cover border',
-                                  full ? 'border-red-500/50 grayscale' : 'border-gray-700'
-                                ].join(' ')}
-                                loading="lazy"
-                                onError={(e) => { e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=3B82F6&color=fff`; }}
-                              />
-                              {full && (
-                                <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-                              )}
-                            </div>
-                            <div className="min-w-0">
-                              <div className="flex items-center gap-1.5 flex-wrap">
-                                <p className={[
-                                  'font-semibold truncate',
-                                  full ? 'text-gray-400' : 'text-white'
-                                ].join(' ')}>
-                                  {m.name}
-                                </p>
-                                {full && (
-                                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 border border-red-500/30 font-bold shrink-0">
-                                    FULLSLOT
-                                  </span>
-                                )}
-                              </div>
-                              <p className={[
-                                'text-sm font-semibold',
-                                full ? 'text-gray-500' : 'text-primary-400'
-                              ].join(' ')}>
-                                {formatCurrency(price)}
-                              </p>
-                              {full && (
-                                <p className="text-[10px] text-red-400/70 mt-0.5">Tidak tersedia</p>
-                              )}
-                            </div>
-                          </div>
-                          <button
-                            onClick={() => addToCart(m)}
-                            disabled={!isOpen || full}
-                            title={full ? 'Member ini sedang fullslot' : ''}
-                            className={[
-                              'inline-flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors font-medium text-sm flex-shrink-0',
-                              full
-                                ? 'bg-gray-700/50 text-gray-500 cursor-not-allowed border border-gray-600'
-                                : 'bg-primary-600 hover:bg-primary-700 text-white'
-                            ].join(' ')}
-                          >
-                            <Plus className="w-4 h-4" />
-                            {full ? 'Full' : 'Tambah'}
-                          </button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
               </div>
             </div>
 
