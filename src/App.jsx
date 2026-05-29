@@ -18,9 +18,9 @@ import Login from "./pages/auth/Login";
 import AdminDashboard from "./pages/admin/Dashboard.jsx";
 import PricelistPage from "./pages/PricelistPage";
 
-import { gsap } from "gsap-trial";
-import { ScrollTrigger } from "gsap-trial/ScrollTrigger";
-import { ScrollSmoother } from "gsap-trial/ScrollSmoother";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollSmoother } from "gsap/ScrollSmoother";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
