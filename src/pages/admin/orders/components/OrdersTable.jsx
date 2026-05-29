@@ -105,7 +105,7 @@ export default function OrdersTable({
 
   return (
     <div className="bg-[#12161F] rounded-2xl border border-gray-800 overflow-hidden">
-      <div className="overflow-x-auto">
+      <div className="tone-scroll">
         <table className="w-full min-w-[1380px]">
           <thead className="sticky top-0 z-10 bg-[#1A1F2E]">
             <tr className="border-b border-gray-800">
@@ -184,7 +184,7 @@ export default function OrdersTable({
                     {getTourTags(order.note).length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-1">
                         {getTourTags(order.note).map((tag, idx) => (
-                          <span key={idx} className={`text-[9px] px-1.5 py-0.5 rounded font-black uppercase tracking-wider ${tag.className}`}>
+                          <span key={idx} className={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider ${tag.className}`}>
                             {tag.label}
                           </span>
                         ))}

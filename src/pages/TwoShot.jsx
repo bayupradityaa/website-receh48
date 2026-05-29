@@ -224,8 +224,8 @@ function TeamFilterChips({ selectedTeam, setSelectedTeam }) {
             type="button"
             onClick={() => setSelectedTeam(team)}
             className={`px-4 py-2 text-xs md:text-sm font-semibold rounded-full border transition-all shrink-0 ${isActive
-                ? activeStyles[team]
-                : `bg-[#0A0E17] text-gray-400 border-gray-800 ${hoverStyles[team]}`
+              ? activeStyles[team]
+              : `bg-[#0A0E17] text-gray-400 border-gray-800 ${hoverStyles[team]}`
               }`}
           >
             {team}
@@ -322,10 +322,10 @@ function MemberTable({
                       disabled={!isOpen || full}
                       title={full ? 'Member ini sedang fullslot' : ''}
                       className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-all font-medium text-sm w-36 ${full
-                          ? "bg-gray-700 text-gray-500 cursor-not-allowed border border-gray-600"
-                          : inCart
-                            ? "bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20"
-                            : "bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 shadow-md shadow-amber-500/10"
+                        ? "bg-gray-700 text-gray-500 cursor-not-allowed border border-gray-600"
+                        : inCart
+                          ? "bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20"
+                          : "bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 shadow-md shadow-amber-500/10"
                         }`}
                     >
                       {full ? (
@@ -421,10 +421,10 @@ function MemberMobileCard({
         onClick={() => addToCart(member)}
         disabled={!isOpen || full}
         className={`w-full h-11 flex items-center justify-center gap-2 rounded-lg transition-all font-semibold text-sm ${full
-            ? "bg-gray-700 text-gray-500 cursor-not-allowed border border-gray-600"
-            : inCart
-              ? "bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20"
-              : "bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 shadow-md shadow-amber-500/10"
+          ? "bg-gray-700 text-gray-500 cursor-not-allowed border border-gray-600"
+          : inCart
+            ? "bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20"
+            : "bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 shadow-md shadow-amber-500/10"
           }`}
       >
         {full ? (
@@ -976,8 +976,8 @@ export default function TwoShot() {
                   type="button"
                   onClick={() => setTargetWar(btn.id)}
                   className={`px-4 py-2 text-xs md:text-sm font-semibold rounded-lg border transition-all ${targetWar === btn.id
-                      ? "bg-amber-500 text-slate-950 border-amber-400 shadow-lg shadow-amber-500/20"
-                      : "bg-[#0A0E17] text-gray-300 border-gray-700 hover:border-gray-500 hover:text-white"
+                    ? "bg-amber-500 text-slate-950 border-amber-400 shadow-lg shadow-amber-500/20"
+                    : "bg-[#0A0E17] text-gray-300 border-gray-700 hover:border-gray-500 hover:text-white"
                     }`}
                 >
                   {btn.label}
@@ -1300,8 +1300,8 @@ export default function TwoShot() {
                         <label
                           key={opt.value}
                           className={`flex flex-col gap-1 p-3 rounded-lg border-2 cursor-pointer transition-all select-none ${watchAccountType === opt.value
-                              ? "border-primary-500 bg-primary-900/20"
-                              : "border-gray-700 bg-[#0A0E17] hover:border-gray-500"
+                            ? "border-primary-500 bg-primary-900/20"
+                            : "border-gray-700 bg-[#0A0E17] hover:border-gray-500"
                             } ${!isOpen ? "cursor-not-allowed opacity-50" : ""}`}
                         >
                           <div className="flex items-center gap-2">

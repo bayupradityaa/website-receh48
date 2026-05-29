@@ -56,7 +56,7 @@ function ReviewCard({ r }) {
           </div>
 
           <div className="mt-6 relative">
-            <div className="absolute -top-7 -left-3 text-6xl font-black text-primary-200/60 select-none">
+            <div className="absolute -top-7 -left-3 text-6xl font-bold text-primary-200/60 select-none">
               “
             </div>
             <p className="relative text-dark-900 leading-relaxed text-[15px] md:text-base font-semibold">
@@ -66,11 +66,11 @@ function ReviewCard({ r }) {
 
           <div className="mt-8 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary-600 to-primary-800 text-white flex items-center justify-center font-extrabold shadow-md">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary-600 to-primary-800 text-white flex items-center justify-center font-bold shadow-md">
                 W
               </div>
               <div>
-                <p className="font-extrabold text-dark-900 leading-tight">
+                <p className="font-bold text-dark-900 leading-tight">
                   Warga #staywithreceh
                 </p>
                 <p className="text-sm text-dark-600">{r.service_type || "Layanan"}</p>
@@ -201,7 +201,7 @@ export default function Reviews() {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10 anim-fade-up">
             <div>
-              <h1 className="text-4xl md:text-5xl font-black text-dark-900">
+              <h1 className="text-4xl md:text-5xl font-bold text-dark-900">
                 Semua <span className="text-primary-600">Review</span>
               </h1>
               <p className="text-dark-600 mt-2">

@@ -4,6 +4,8 @@ import { supabase } from "../lib/supabase";
 import { Button } from "../components/ui/Button";
 import { LoadingSpinner } from "../components/shared/LoadingSpinner";
 import { ErrorMessage } from "../components/shared/ErrorMessage";
+import InteractiveHero from "../components/ui/hero-section-nexus";
+import { useServiceStatus } from "./admin/settings/hooks/useServiceStatus";
 
 /* =========================
    KATAMEREKA Reviews Section (Supabase)
@@ -29,10 +31,10 @@ function Stars({ rating = 0 }) {
 function ReviewCard({ r }) {
   const dateText = r.created_at
     ? new Date(r.created_at).toLocaleDateString("id-ID", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      })
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    })
     : "";
 
   return (
@@ -43,13 +45,13 @@ function ReviewCard({ r }) {
       <div className="relative h-full rounded-[27px] p-6 md:p-7">
         <div className="mb-6 flex items-center justify-between gap-4">
           <Stars rating={r.rating || 0} />
-          <span className="rounded-full border border-amber-200/20 bg-amber-300/10 px-3 py-1 text-xs font-extrabold text-amber-100">
+          <span className="rounded-full border border-amber-200/20 bg-amber-300/10 px-3 py-1 text-xs font-bold text-amber-100">
             {(r.rating || 0).toFixed(1)}
           </span>
         </div>
 
         <div className="relative">
-          <span className="absolute -left-2 -top-7 select-none text-7xl font-black leading-none text-amber-200/10">
+          <span className="absolute -left-2 -top-7 select-none text-7xl font-bold leading-none text-amber-200/10">
             “
           </span>
           <p className="relative min-h-[120px] text-[15px] font-semibold leading-relaxed text-white/85">
@@ -59,11 +61,11 @@ function ReviewCard({ r }) {
 
         <div className="mt-7 flex items-center justify-between gap-4 border-t border-white/10 pt-5">
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-300 via-yellow-200 to-primary-500 text-base font-black text-black shadow-[0_15px_60px_-30px_rgba(255,215,130,0.9)]">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-300 via-yellow-200 to-primary-500 text-base font-bold text-black shadow-[0_15px_60px_-30px_rgba(255,215,130,0.9)]">
               W
             </div>
             <div>
-              <p className="font-extrabold leading-tight text-white">Warga #staywithreceh</p>
+              <p className="font-bold leading-tight text-white">Warga #staywithreceh</p>
               <p className="mt-0.5 text-sm font-medium text-white/45">
                 {r.service_type || "Layanan Receh48"}
               </p>
@@ -219,11 +221,11 @@ function FAQSection() {
         {/* Header */}
         <div className="mx-auto mb-14 max-w-3xl text-center md:mb-16">
 
-          <div className="inline-flex items-center gap-2 rounded-full border border-amber-300/20 bg-amber-300/10 px-4 py-1.5 text-xs font-black uppercase tracking-[0.18em] text-amber-200">
+          <div className="inline-flex items-center gap-2 rounded-full border border-amber-300/20 bg-amber-300/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-amber-200">
             Pertanyaan Umum
           </div>
 
-          <h2 className="mt-6 text-4xl font-display font-black leading-[1.02] tracking-tight md:text-6xl">
+          <h2 className="mt-6 text-4xl font-display font-bold leading-[1.02] tracking-tight md:text-6xl">
             Tanya{" "}
             <span className="bg-gradient-to-r from-amber-200 via-yellow-200 to-amber-400 bg-clip-text text-transparent">
               Receh
@@ -244,9 +246,8 @@ function FAQSection() {
               return (
                 <div
                   key={faq.q}
-                  className={`relative border-b border-white/10 last:border-b-0 transition-colors duration-300 ${
-                    isOpen ? "bg-amber-300/[0.055]" : "hover:bg-white/[0.035]"
-                  }`}
+                  className={`relative border-b border-white/10 last:border-b-0 transition-colors duration-300 ${isOpen ? "bg-amber-300/[0.055]" : "hover:bg-white/[0.035]"
+                    }`}
                 >
                   {isOpen && (
                     <div className="absolute left-0 top-0 h-full w-[3px] bg-gradient-to-b from-amber-300 via-yellow-200 to-primary-500" />
@@ -263,24 +264,22 @@ function FAQSection() {
 
                       <span className="min-w-0">
                         <span
-                          className={`mb-1.5 block text-[10px] font-black uppercase tracking-[0.16em] transition-colors ${
-                            isOpen ? "text-amber-300" : "text-white/30"
-                          }`}
+                          className={`mb-1.5 block text-[10px] font-semibold uppercase tracking-[0.16em] transition-colors ${isOpen ? "text-amber-300" : "text-white/30"
+                            }`}
                         >
                           {faq.tag}
                         </span>
-                        <span className={`block text-base font-extrabold leading-snug md:text-lg ${isOpen ? "text-amber-50" : "text-white/90"}`}>
+                        <span className={`block text-base font-bold leading-snug md:text-lg ${isOpen ? "text-amber-50" : "text-white/90"}`}>
                           {faq.q}
                         </span>
                       </span>
                     </span>
 
                     <span
-                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-all duration-300 ${
-                        isOpen
-                          ? "rotate-180 border-amber-300/25 bg-amber-300/15 text-amber-200"
-                          : "border-white/10 bg-white/[0.055] text-white/45"
-                      }`}
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-all duration-300 ${isOpen
+                        ? "rotate-180 border-amber-300/25 bg-amber-300/15 text-amber-200"
+                        : "border-white/10 bg-white/[0.055] text-white/45"
+                        }`}
                     >
                       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
@@ -290,9 +289,8 @@ function FAQSection() {
 
                   <div
                     id={`faq-answer-${index}`}
-                    className={`overflow-hidden transition-all duration-300 ease-out ${
-                      isOpen ? "max-h-64 opacity-100" : "max-h-0 opacity-0"
-                    }`}
+                    className={`overflow-hidden transition-all duration-300 ease-out ${isOpen ? "max-h-64 opacity-100" : "max-h-0 opacity-0"
+                      }`}
                   >
                     <div className="px-5 pb-6 pl-[84px] pr-6 md:px-7 md:pb-7 md:pl-[100px]">
                       <p className="max-w-2xl text-sm font-medium leading-relaxed text-white/60 md:text-[15px]">
@@ -309,7 +307,7 @@ function FAQSection() {
         {/* CTA */}
         <div className="mx-auto mt-10 flex max-w-4xl flex-col items-center justify-between gap-5 rounded-3xl border border-white/10 bg-white/[0.04] px-6 py-5 backdrop-blur-xl sm:flex-row md:px-8">
           <div>
-            <p className="text-center text-lg font-extrabold text-white sm:text-left">Masih bingung atau mau tanya slot?</p>
+            <p className="text-center text-lg font-bold text-white sm:text-left">Masih bingung atau mau tanya slot?</p>
             <p className="mt-1 text-center text-sm font-medium text-white/40 sm:text-left">
               Langsung DM admin Receh48, nanti dibantu dari awal sampai selesai.
             </p>
@@ -319,7 +317,7 @@ function FAQSection() {
             href="https://x.com/receh_48"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex shrink-0 items-center justify-center gap-2.5 rounded-2xl bg-gradient-to-r from-amber-300 to-yellow-200 px-6 py-3 text-sm font-black text-black shadow-[0_0_50px_-18px_rgba(255,215,130,0.75)] transition-all duration-200 hover:-translate-y-0.5 hover:brightness-105"
+            className="inline-flex shrink-0 items-center justify-center gap-2.5 rounded-2xl bg-gradient-to-r from-amber-300 to-yellow-200 px-6 py-3 text-sm font-bold text-black shadow-[0_0_50px_-18px_rgba(255,215,130,0.75)] transition-all duration-200 hover:-translate-y-0.5 hover:brightness-105"
           >
             <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
               <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
@@ -332,10 +330,121 @@ function FAQSection() {
   );
 }
 
+/* =============================================
+   Helper fungsi untuk status ketersediaan layanan
+   ============================================= */
+function getStatusBadge(status) {
+  switch (status) {
+    case "OPEN":
+      return {
+        text: "Tersedia",
+        classes: "text-amber-300/80 bg-amber-400/10 border-amber-400/20"
+      };
+    case "CLOSED":
+      return {
+        text: "Ditutup",
+        classes: "text-red-400 bg-red-500/10 border-red-500/20"
+      };
+    case "FULL_SLOT":
+      return {
+        text: "Full Slot",
+        classes: "text-orange-400 bg-orange-500/10 border-orange-500/20"
+      };
+    case "COMING_SOON":
+      return {
+        text: "Soon",
+        classes: "text-blue-400 bg-blue-500/10 border-blue-500/20"
+      };
+    default:
+      return {
+        text: "Tersedia",
+        classes: "text-amber-300/80 bg-amber-400/10 border-amber-400/20"
+      };
+  }
+}
+
+function getStatusButton(status) {
+  switch (status) {
+    case "OPEN":
+      return "text-amber-300 group-hover:bg-amber-400 group-hover:border-amber-400 group-hover:text-slate-950 group-hover:shadow-[0_0_15px_rgba(251,191,36,0.4)]";
+    case "CLOSED":
+      return "text-red-400 group-hover:bg-red-500 group-hover:border-red-500 group-hover:text-white group-hover:shadow-[0_0_15px_rgba(239,68,68,0.4)]";
+    case "FULL_SLOT":
+      return "text-orange-400 group-hover:bg-orange-500 group-hover:border-orange-500 group-hover:text-slate-950 group-hover:shadow-[0_0_15px_rgba(249,115,22,0.4)]";
+    case "COMING_SOON":
+      return "text-blue-400 group-hover:bg-blue-500 group-hover:border-blue-500 group-hover:text-white group-hover:shadow-[0_0_15px_rgba(59,130,246,0.4)]";
+    default:
+      return "text-amber-300 group-hover:bg-amber-400 group-hover:border-amber-400 group-hover:text-slate-950 group-hover:shadow-[0_0_15px_rgba(251,191,36,0.4)]";
+  }
+}
+
+function getCardHoverStyles(status) {
+  switch (status) {
+    case "OPEN":
+      return "hover:border-amber-500/30 hover:shadow-[0_10px_30px_rgba(251,191,36,0.04)] hover:-translate-y-1.5";
+    case "CLOSED":
+      return "hover:border-red-500/30 hover:shadow-[0_10px_30px_rgba(239,68,68,0.04)] hover:-translate-y-1.5";
+    case "FULL_SLOT":
+      return "hover:border-orange-500/30 hover:shadow-[0_10px_30px_rgba(249,115,22,0.04)] hover:-translate-y-1.5";
+    case "COMING_SOON":
+      return "hover:border-blue-500/30 hover:shadow-[0_10px_30px_rgba(59,130,246,0.04)] hover:-translate-y-1.5";
+    default:
+      return "hover:border-amber-500/30 hover:shadow-[0_10px_30px_rgba(251,191,36,0.04)] hover:-translate-y-1.5";
+  }
+}
+
+function getStatusTextStyles(status) {
+  switch (status) {
+    case "OPEN":
+      return "group-hover:text-amber-300";
+    case "CLOSED":
+      return "group-hover:text-red-400";
+    case "FULL_SLOT":
+      return "group-hover:text-orange-400";
+    case "COMING_SOON":
+      return "group-hover:text-blue-400";
+    default:
+      return "group-hover:text-amber-300";
+  }
+}
+
+function getTabBorderStyles(status) {
+  switch (status) {
+    case "OPEN":
+      return "group-hover:text-amber-500/30";
+    case "CLOSED":
+      return "group-hover:text-red-500/30";
+    case "FULL_SLOT":
+      return "group-hover:text-orange-500/30";
+    case "COMING_SOON":
+      return "group-hover:text-blue-500/30";
+    default:
+      return "group-hover:text-amber-500/30";
+  }
+}
+
+function getIconContainerStyles(status) {
+  switch (status) {
+    case "OPEN":
+      return "bg-amber-400/10 border-amber-400/20 text-amber-300";
+    case "CLOSED":
+      return "bg-red-400/10 border-red-400/20 text-red-400";
+    case "FULL_SLOT":
+      return "bg-orange-400/10 border-orange-400/20 text-orange-400";
+    case "COMING_SOON":
+      return "bg-blue-400/10 border-blue-400/20 text-blue-400";
+    default:
+      return "bg-amber-400/10 border-amber-400/20 text-amber-300";
+  }
+}
+
 /* ==============
    Home Component
    ============== */
 export default function Home() {
+  // fetch service statuses for availability logic
+  const { getStatus } = useServiceStatus();
+
   // timetable images
   const [timetableImages, setTimetableImages] = useState([]);
   const [imagesLoading, setImagesLoading] = useState(true);
@@ -347,11 +456,6 @@ export default function Home() {
   const [reviewsError, setReviewsError] = useState(null);
 
   // UI
-  const words = ["Specialist Joki", "Fast Response", "Aman & Terpercaya", "#staywithreceh"];
-  const [animatedText, setAnimatedText] = useState("");
-  const [wordIndex, setWordIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [showFormDropdown, setShowFormDropdown] = useState(false);
   const [lightboxImage, setLightboxImage] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -409,36 +513,6 @@ export default function Home() {
     }
   }
 
-  /* ------- Typing effect ------- */
-  useEffect(() => {
-    const currentWord = words[wordIndex % words.length];
-
-    const typingSpeed = isDeleting ? 45 : 90;
-    const pauseBeforeDelete = 1200;
-    const pauseBeforeNext = 450;
-
-    const timeout = setTimeout(() => {
-      if (!isDeleting && animatedText === currentWord) {
-        setTimeout(() => setIsDeleting(true), pauseBeforeDelete);
-        return;
-      }
-
-      if (isDeleting && animatedText === "") {
-        setIsDeleting(false);
-        setWordIndex((p) => (p + 1) % words.length);
-        return;
-      }
-
-      const nextText = isDeleting
-        ? currentWord.substring(0, animatedText.length - 1)
-        : currentWord.substring(0, animatedText.length + 1);
-
-      setAnimatedText(nextText);
-    }, animatedText === currentWord && !isDeleting ? pauseBeforeDelete : typingSpeed);
-
-    return () => clearTimeout(timeout);
-  }, [animatedText, isDeleting, wordIndex]);
-
   /* ------- Auto slide timetable ------- */
   useEffect(() => {
     if (timetableImages.length <= 1) return;
@@ -450,173 +524,37 @@ export default function Home() {
 
   const hasTimetable = timetableImages.length > 0;
 
+  const vcStatus = getStatus("video_call")?.status || "OPEN";
+  const vcBadge = getStatusBadge(vcStatus);
+  const vcButtonClass = getStatusButton(vcStatus);
+  const vcCardHoverClass = getCardHoverStyles(vcStatus);
+  const vcTextClass = getStatusTextStyles(vcStatus);
+  const vcTabBorderClass = getTabBorderStyles(vcStatus);
+  const vcIconContainerClass = getIconContainerStyles(vcStatus);
+
+  const mgStatus = getStatus("meet_greet")?.status || "OPEN";
+  const mgBadge = getStatusBadge(mgStatus);
+  const mgButtonClass = getStatusButton(mgStatus);
+  const mgCardHoverClass = getCardHoverStyles(mgStatus);
+  const mgTextClass = getStatusTextStyles(mgStatus);
+  const mgTabBorderClass = getTabBorderStyles(mgStatus);
+  const mgIconContainerClass = getIconContainerStyles(mgStatus);
+
+  const tsStatus = getStatus("two_shot")?.status || "OPEN";
+  const tsBadge = getStatusBadge(tsStatus);
+  const tsButtonClass = getStatusButton(tsStatus);
+  const tsCardHoverClass = getCardHoverStyles(tsStatus);
+  const tsTextClass = getStatusTextStyles(tsStatus);
+  const tsTabBorderClass = getTabBorderStyles(tsStatus);
+  const tsIconContainerClass = getIconContainerStyles(tsStatus);
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
 
       {/* ========================
           Hero Section
           ======================== */}
-      <section
-        id="home"
-        className="relative min-h-screen overflow-hidden py-24 text-white"
-      >
-        {/* Background base */}
-        <div className="absolute inset-0 bg-[#06070A]" />
-
-        {/* Soft gold spotlight + red tint (brand) */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -top-56 left-1/2 -translate-x-1/2 w-[900px] h-[900px] rounded-full bg-amber-400/18 blur-[120px]" />
-          <div className="absolute -bottom-72 -left-48 w-[720px] h-[720px] rounded-full bg-primary-600/18 blur-[130px]" />
-          <div className="absolute -top-40 -right-40 w-[620px] h-[620px] rounded-full bg-yellow-300/10 blur-[120px]" />
-        </div>
-
-        {/* Subtle grid + noise */}
-        <div
-          className="absolute inset-0 opacity-[0.12] pointer-events-none"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.08) 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-          }}
-        />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.10),transparent_55%)] pointer-events-none" />
-
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-
-            {/* LEFT - Logo card */}
-            <div className="order-2 lg:order-1 lg:flex lg:justify-center">
-              <div className="relative w-[280px] h-[280px] sm:w-[340px] sm:h-[340px] mx-auto lg:mx-0">
-                {/* outer glow ring */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-400/60 via-primary-500/40 to-yellow-200/40 blur-2xl opacity-80" />
-                {/* ring */}
-                <div className="absolute inset-0 rounded-full p-[3px] bg-gradient-to-br from-amber-300 via-primary-500 to-yellow-200">
-                  <div className="w-full h-full rounded-full bg-black/60 backdrop-blur" />
-                </div>
-
-                {/* logo */}
-                <img
-                  src="https://pbs.twimg.com/profile_images/1810271835117981696/ypceIB66_400x400.jpg"
-                  alt="Receh48 Logo"
-                  className="absolute inset-[10px] rounded-full object-cover shadow-[0_30px_120px_-60px_rgba(255,210,120,0.55)]"
-                />
-
-                {/* floating badges */}
-                <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2">
-                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-white/10 border border-white/15 backdrop-blur">
-                    ⭐ Trusted
-                  </span>
-                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-300/15 text-amber-200 border border-amber-200/20 backdrop-blur">
-                    #staywithreceh
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* RIGHT - Content */}
-            <div className="order-1 lg:order-2 text-center lg:text-left">
-              <h1 className="mt-6 text-4xl sm:text-5xl lg:text-6xl font-display font-extrabold leading-tight">
-                Hi, Welcome
-                <span className="block mt-2">
-                  <span className="text-white">Receh48</span>{" "}
-                  <span className="bg-gradient-to-r from-amber-200 via-yellow-200 to-amber-400 bg-clip-text text-transparent">
-                    {animatedText}
-                  </span>
-                  <span className="ml-2 inline-block w-1 h-10 bg-amber-200/80 animate-pulse align-middle" />
-                </span>
-              </h1>
-
-              <p className="mt-5 text-lg sm:text-xl text-white/80 max-w-xl mx-auto lg:mx-0">
-                Specialist Joki Tiket VideoCall, Meet n Greet, 2-Shot, Konser JKT48.
-              </p>
-
-              {/* CTAs */}
-              <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-                <Button
-                  size="lg"
-                  className="bg-gradient-to-r from-amber-300 to-yellow-200 text-black hover:brightness-95 shadow-[0_20px_80px_-40px_rgba(255,215,130,0.70)]"
-                  onClick={() => setShowFormDropdown(!showFormDropdown)}
-                >
-                  <span className="flex items-center gap-2">
-                    Form Pemesanan
-                    <svg
-                      className={`w-4 h-4 transition-transform ${showFormDropdown ? "rotate-180" : ""}`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </span>
-                </Button>
-
-                <Link
-                  to="/pricelist"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold
-                    bg-white/10 hover:bg-white/15 border border-white/15 text-white shadow-lg transition-all"
-                >
-                  <svg className="w-4 h-4 text-amber-300" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clipRule="evenodd" />
-                  </svg>
-                  Cek Harga Joki
-                </Link>
-
-                <Link
-                  to="/reviews"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold
-                    bg-white/10 hover:bg-white/15 border border-white/15 text-white shadow-lg transition-all"
-                >
-                  ⭐ Lihat Review
-                </Link>
-              </div>
-
-              {/* Dropdown form */}
-              {showFormDropdown && (
-                <div className="relative mt-3 max-w-[240px] mx-auto lg:mx-0">
-                  <div className="absolute top-2 left-0 right-0 rounded-2xl bg-black/60 backdrop-blur border border-white/15 shadow-2xl overflow-hidden z-50">
-                    <Link
-                      to="/video-call"
-                      className="block px-6 py-3 text-white/90 hover:bg-white/10 transition-colors"
-                    >
-                      Form Joki Video Call
-                    </Link>
-                    <Link
-                      to="/twoshot"
-                      className="block px-6 py-3 text-white/90 hover:bg-white/10 transition-colors"
-                    >
-                      Form Joki 2-Shoot
-                    </Link>
-                    <Link
-                      to="/meet-greet"
-                      className="block px-6 py-3 text-white/90 hover:bg-white/10 transition-colors"
-                    >
-                      Form Meet And Greet
-                    </Link>
-                  </div>
-                </div>
-              )}
-
-              {/* Social */}
-              <div className="mt-10 flex flex-col items-center lg:items-start gap-4">
-                <p className="text-base font-semibold text-white/85">Contact Us</p>
-                <div className="flex items-center gap-4">
-                  <a
-                    href="https://x.com/receh_48"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 flex items-center justify-center transition-all hover:scale-110"
-                  >
-                    <svg className="w-6 h-6 text-white/90" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                    </svg>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <InteractiveHero />
 
 
       {/* ========================
@@ -758,127 +696,194 @@ export default function Home() {
         />
 
         <div className="container mx-auto px-4 relative z-10">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-5xl font-display font-extrabold">
-              Layanan{" "}
-              <span className="bg-gradient-to-r from-amber-200 via-yellow-200 to-amber-400 bg-clip-text text-transparent">
-                Kami
+          {/* Section Header styled after the screenshot */}
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-display font-bold mt-3 text-white">
+              Layanan Joki Terbaik Yang{" "}
+              <span className="bg-gradient-to-r from-amber-200 via-yellow-100 to-amber-400 bg-clip-text text-transparent">
+                Kami Sediakan
               </span>
             </h2>
-            <p className="text-white/70 text-lg mt-3">Pilih layanan joki yang Anda butuhkan</p>
+            <p className="text-white text-sm sm:text-base mt-4 max-w-lg mx-auto">
+              Pilih jenis layanan joki tiket JKT48 yang Anda butuhkan dengan garansi tepercaya dan aman.
+            </p>
           </div>
 
-          {/* cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
-            {/* VC */}
-            <Link to="/video-call">
-              <div className="group cursor-pointer">
-                <div className="rounded-3xl p-[2px] bg-gradient-to-br from-amber-300/50 via-primary-500/30 to-yellow-200/40">
-                  <div className="relative overflow-hidden rounded-[22px] bg-white/5 border border-white/10 backdrop-blur-xl shadow-2xl hover:shadow-[0_30px_120px_-70px_rgba(255,215,130,0.45)] transition-all duration-300">
-                    <div className="absolute -top-16 -right-16 w-56 h-56 bg-amber-400/18 rounded-full blur-3xl" />
-                    <div className="p-8 relative">
-                      <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform border border-white/10">
-                        <svg className="w-8 h-8 text-amber-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                      </div>
+          {/* Cards Grid with Top Tab Trapezoid Design */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-y-20 gap-x-8 max-w-6xl mx-auto mb-16 pt-10">
 
-                      <h3 className="text-2xl font-extrabold mb-3">Joki Video Call</h3>
-                      <p className="text-white/70 mb-5">
-                        Layanan joki untuk mengikuti sesi video call dengan member JKT48 pilihan Anda
-                      </p>
+            {/* VC Card */}
+            <Link to="/video-call" className="group">
+              <div className={`relative flex flex-col items-center text-center bg-[#12161F]/70 border border-slate-800 rounded-[28px] pt-16 pb-12 px-6 shadow-2xl transition-all duration-300 ${vcCardHoverClass} h-full`}>
 
-                      <div className="flex items-center gap-2 text-sm font-bold text-amber-200">
-                        <span>Pesan Sekarang</span>
-                        <svg className="w-4 h-4 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </div>
-                    </div>
+                {/* Top Trapezoid Tab containing the outline icon */}
+                <div className="absolute -top-[43px] left-1/2 -translate-x-1/2 w-[140px] h-[44px] pointer-events-none">
+                  <svg
+                    className={`absolute inset-0 w-full h-full text-slate-800 fill-[#12161F] transition-colors duration-300 ${vcTabBorderClass}`}
+                    viewBox="0 0 140 44"
+                    preserveAspectRatio="none"
+                  >
+                    <path
+                      d="M 0 44 C 18 44, 22 30, 26 18 C 30 5, 35 0, 45 0 L 95 0 C 105 0, 110 5, 114 18 C 118 30, 122 44, 140 44 Z"
+                      className="fill-[#12161F]/70 group-hover:fill-[#12161F]/90 transition-colors duration-300"
+                    />
+                    <path
+                      d="M 0 44 C 18 44, 22 30, 26 18 C 30 5, 35 0, 45 0 L 95 0 C 105 0, 110 5, 114 18 C 118 30, 122 44, 140 44"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1"
+                    />
+                  </svg>
 
-                    <div className="absolute top-4 right-4">
-                      <div className="bg-amber-300/15 text-amber-200 border border-amber-200/20 px-3 py-1 rounded-full text-xs font-extrabold backdrop-blur">
-                        TERSEDIA
-                      </div>
-                    </div>
+                  {/* Icon Container */}
+                  <div className={`absolute top-[8px] left-1/2 -translate-x-1/2 w-9 h-9 rounded-xl border flex items-center justify-center transition-all duration-300 group-hover:scale-110 ${vcIconContainerClass}`}>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
                   </div>
                 </div>
+
+                <div className="absolute top-4 right-4">
+                  <span className={`text-[9px] font-bold tracking-widest px-2 py-0.5 rounded-full uppercase border transition-colors ${vcBadge.classes}`}>
+                    {vcBadge.text}
+                  </span>
+                </div>
+
+                <h3 className={`text-xl font-bold text-white mb-3 mt-2 tracking-tight transition-colors ${vcTextClass}`}>
+                  Joki Video Call
+                </h3>
+
+                <p className="text-sm text-white/60 leading-relaxed mb-6 max-w-[240px]">
+                  Layanan joki untuk mengikuti sesi video call dengan member JKT48 pilihan Anda.
+                </p>
+
+                {/* Bottom Round Arrow Button Overlapping the border */}
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-20">
+                  <div className={`w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center shadow-lg transition-all duration-300 ${vcButtonClass}`}>
+                    <svg className="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+                  </div>
+                </div>
+
               </div>
             </Link>
 
-            {/* Joki Meet & Greet */}
-            <Link to="/meet-greet">
-              <div className="group cursor-pointer">
-                <div className="rounded-3xl p-[2px] bg-gradient-to-br from-amber-300/50 via-primary-500/30 to-yellow-200/40">
-                  <div className="relative overflow-hidden rounded-[22px] bg-white/5 border border-white/10 backdrop-blur-xl shadow-2xl hover:shadow-[0_30px_120px_-70px_rgba(255,215,130,0.45)] transition-all duration-300">
-                    <div className="absolute -top-16 -right-16 w-56 h-56 bg-amber-400/18 rounded-full blur-3xl" />
-                    <div className="p-8 relative">
-                      <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform border border-white/10">
-                        {/* icon Users */}
-                        <svg className="w-8 h-8 text-amber-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                      </div>
+            {/* Meet & Greet Card */}
+            <Link to="/meet-greet" className="group">
+              <div className={`relative flex flex-col items-center text-center bg-[#12161F]/70 border border-slate-800 rounded-[28px] pt-16 pb-12 px-6 shadow-2xl transition-all duration-300 ${mgCardHoverClass} h-full`}>
 
-                      <h3 className="text-2xl font-extrabold mb-3">Joki Meet &amp; Greet</h3>
-                      <p className="text-white/70 mb-5">
-                        Joki meet &amp; greet dengan member favorit Anda. Dapatkan kesempatan bertemu langsung!
-                      </p>
+                {/* Top Trapezoid Tab containing the outline icon */}
+                <div className="absolute -top-[43px] left-1/2 -translate-x-1/2 w-[140px] h-[44px] pointer-events-none">
+                  <svg
+                    className={`absolute inset-0 w-full h-full text-slate-800 fill-[#12161F] transition-colors duration-300 ${mgTabBorderClass}`}
+                    viewBox="0 0 140 44"
+                    preserveAspectRatio="none"
+                  >
+                    <path
+                      d="M 0 44 C 18 44, 22 30, 26 18 C 30 5, 35 0, 45 0 L 95 0 C 105 0, 110 5, 114 18 C 118 30, 122 44, 140 44 Z"
+                      className="fill-[#12161F]/70 group-hover:fill-[#12161F]/90 transition-colors duration-300"
+                    />
+                    <path
+                      d="M 0 44 C 18 44, 22 30, 26 18 C 30 5, 35 0, 45 0 L 95 0 C 105 0, 110 5, 114 18 C 118 30, 122 44, 140 44"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1"
+                    />
+                  </svg>
 
-                      <div className="flex items-center gap-2 text-sm font-bold text-amber-200">
-                        <span>Pesan Sekarang</span>
-                        <svg className="w-4 h-4 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </div>
-                    </div>
-
-                    <div className="absolute top-4 right-4">
-                      <div className="bg-amber-300/15 text-amber-200 border border-amber-200/20 px-3 py-1 rounded-full text-xs font-extrabold backdrop-blur">
-                        TERSEDIA
-                      </div>
-                    </div>
+                  {/* Icon Container */}
+                  <div className={`absolute top-[8px] left-1/2 -translate-x-1/2 w-9 h-9 rounded-xl border flex items-center justify-center transition-all duration-300 group-hover:scale-110 ${mgIconContainerClass}`}>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
                   </div>
                 </div>
+
+                <div className="absolute top-4 right-4">
+                  <span className={`text-[9px] font-bold tracking-widest px-2 py-0.5 rounded-full uppercase border transition-colors ${mgBadge.classes}`}>
+                    {mgBadge.text}
+                  </span>
+                </div>
+
+                <h3 className={`text-xl font-bold text-white mb-3 mt-2 tracking-tight transition-colors ${mgTextClass}`}>
+                  Joki Meet &amp; Greet
+                </h3>
+
+                <p className="text-sm text-white/60 leading-relaxed mb-6 max-w-[240px]">
+                  Joki meet &amp; greet dengan member favorit Anda. Dapatkan kesempatan bertemu langsung!
+                </p>
+
+                {/* Bottom Round Arrow Button Overlapping the border */}
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-20">
+                  <div className={`w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center shadow-lg transition-all duration-300 ${mgButtonClass}`}>
+                    <svg className="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+                  </div>
+                </div>
+
               </div>
             </Link>
 
-            {/* Joki 2-Shot */}
-            <Link to="/twoshot">
-              <div className="group cursor-pointer">
-                <div className="rounded-3xl p-[2px] bg-gradient-to-br from-amber-300/50 via-primary-500/30 to-yellow-200/40">
-                  <div className="relative overflow-hidden rounded-[22px] bg-white/5 border border-white/10 backdrop-blur-xl shadow-2xl hover:shadow-[0_30px_120px_-70px_rgba(255,215,130,0.45)] transition-all duration-300">
-                    <div className="absolute -top-16 -right-16 w-56 h-56 bg-amber-400/18 rounded-full blur-3xl" />
-                    <div className="p-8 relative">
-                      <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform border border-white/10">
-                        <svg className="w-8 h-8 text-amber-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                      </div>
+            {/* 2-Shot Card */}
+            <Link to="/twoshot" className="group">
+              <div className={`relative flex flex-col items-center text-center bg-[#12161F]/70 border border-slate-800 rounded-[28px] pt-16 pb-12 px-6 shadow-2xl transition-all duration-300 ${tsCardHoverClass} h-full`}>
 
-                      <h3 className="text-2xl font-extrabold mb-3">Joki 2-Shoot</h3>
-                      <p className="text-white/70 mb-5">
-                        Joki sesi foto bersama member JKT48. Abadikan momen berharga bersama oshi!
-                      </p>
+                {/* Top Trapezoid Tab containing the outline icon */}
+                <div className="absolute -top-[43px] left-1/2 -translate-x-1/2 w-[140px] h-[44px] pointer-events-none">
+                  <svg
+                    className={`absolute inset-0 w-full h-full text-slate-800 fill-[#12161F] transition-colors duration-300 ${tsTabBorderClass}`}
+                    viewBox="0 0 140 44"
+                    preserveAspectRatio="none"
+                  >
+                    <path
+                      d="M 0 44 C 18 44, 22 30, 26 18 C 30 5, 35 0, 45 0 L 95 0 C 105 0, 110 5, 114 18 C 118 30, 122 44, 140 44 Z"
+                      className="fill-[#12161F]/70 group-hover:fill-[#12161F]/90 transition-colors duration-300"
+                    />
+                    <path
+                      d="M 0 44 C 18 44, 22 30, 26 18 C 30 5, 35 0, 45 0 L 95 0 C 105 0, 110 5, 114 18 C 118 30, 122 44, 140 44"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1"
+                    />
+                  </svg>
 
-                      <div className="flex items-center gap-2 text-sm font-bold text-amber-200">
-                        <span>Pesan Sekarang</span>
-                        <svg className="w-4 h-4 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </div>
-                    </div>
-
-                    <div className="absolute top-4 right-4">
-                      <div className="bg-amber-300/15 text-amber-200 border border-amber-200/20 px-3 py-1 rounded-full text-xs font-extrabold backdrop-blur">
-                        TERSEDIA
-                      </div>
-                    </div>
+                  {/* Icon Container */}
+                  <div className={`absolute top-[8px] left-1/2 -translate-x-1/2 w-9 h-9 rounded-xl border flex items-center justify-center transition-all duration-300 group-hover:scale-110 ${tsIconContainerClass}`}>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
                   </div>
                 </div>
+
+                <div className="absolute top-4 right-4">
+                  <span className={`text-[9px] font-bold tracking-widest px-2 py-0.5 rounded-full uppercase border transition-colors ${tsBadge.classes}`}>
+                    {tsBadge.text}
+                  </span>
+                </div>
+
+                <h3 className={`text-xl font-bold text-white mb-3 mt-2 tracking-tight transition-colors ${tsTextClass}`}>
+                  Joki 2-Shot
+                </h3>
+
+                <p className="text-sm text-white/60 leading-relaxed mb-6 max-w-[240px]">
+                  Joki sesi foto bersama member JKT48. Abadikan momen berharga bersama oshi!
+                </p>
+
+                {/* Bottom Round Arrow Button Overlapping the border */}
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-20">
+                  <div className={`w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center shadow-lg transition-all duration-300 ${tsButtonClass}`}>
+                    <svg className="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+                  </div>
+                </div>
+
               </div>
             </Link>
+
           </div>
 
           {/* stats */}
@@ -924,11 +929,11 @@ export default function Home() {
 
         <div className="container relative z-10 mx-auto px-4">
           <div className="mx-auto mb-16 max-w-3xl text-center">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-amber-300/20 bg-amber-300/10 px-4 py-1.5 text-xs font-black uppercase tracking-[0.22em] text-amber-100">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-amber-300/20 bg-amber-300/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-amber-100">
               ⭐ Testimoni
             </div>
 
-            <h2 className="font-display text-5xl font-black leading-[0.95] tracking-tight md:text-7xl">
+            <h2 className="font-display text-5xl font-bold leading-[0.95] tracking-tight md:text-7xl">
               KATA
               <span className="block bg-gradient-to-r from-amber-200 via-yellow-200 to-amber-400 bg-clip-text text-transparent">
                 MEREKA
@@ -942,14 +947,14 @@ export default function Home() {
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
               <Link
                 to="/review"
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-300 to-yellow-200 px-7 py-3.5 text-sm font-extrabold text-black shadow-[0_20px_80px_-45px_rgba(255,215,130,0.75)] transition-all hover:brightness-105"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-300 to-yellow-200 px-7 py-3.5 text-sm font-bold text-black shadow-[0_20px_80px_-45px_rgba(255,215,130,0.75)] transition-all hover:brightness-105"
               >
                 Tulis Review
               </Link>
 
               <Link
                 to="/reviews"
-                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-7 py-3.5 text-sm font-extrabold text-white shadow-lg transition-all hover:bg-white/15"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-7 py-3.5 text-sm font-bold text-white shadow-lg transition-all hover:bg-white/15"
               >
                 Lihat Semua Review
               </Link>

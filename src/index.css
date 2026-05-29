@@ -8,6 +8,12 @@
   box-sizing: border-box;
 }
 
+@media (min-width: 1024px) {
+  html {
+    font-size: 80%;
+  }
+}
+
 body {
   font-family: 'Poppins', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -123,4 +129,18 @@ body {
 * {
   scrollbar-width: thin;
   scrollbar-color: #1F2937 #0A0E17;
+}
+
+@layer utilities {
+  @keyframes shine {
+    0% {
+      background-position: 100%;
+    }
+    100% {
+      background-position: -100%;
+    }
+  }
+  .animate-shine {
+    animation: shine 5s linear infinite;
+  }
 }

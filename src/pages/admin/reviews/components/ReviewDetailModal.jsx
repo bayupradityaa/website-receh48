@@ -17,7 +17,7 @@ export default function ReviewDetailModal({ open, onClose, review }) {
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h3 className="text-xl font-black text-white">Detail Review</h3>
+            <h3 className="text-xl font-bold text-white">Detail Review</h3>
             <p className="text-sm text-gray-400 mt-1">{dateText}</p>
           </div>
 

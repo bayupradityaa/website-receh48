@@ -253,11 +253,11 @@ function PromoBanner({ fee }) {
                 <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2 mb-0.5">
                         <div className="h-px w-6 bg-orange-500/60" />
-                        <span className="text-orange-400/80 text-[9px] font-black uppercase tracking-[0.2em]">
+                        <span className="text-orange-400/80 text-[9px] font-bold uppercase tracking-[0.16em]">
                             Penawaran Terbatas
                         </span>
                     </div>
-                    <p className="text-white font-black text-lg sm:text-xl leading-tight tracking-tight">
+                    <p className="text-white font-bold text-lg sm:text-xl leading-tight tracking-tight">
                         Harga Spesial{" "}
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-300 via-amber-200 to-orange-400">
                             Bulan Ini
@@ -272,7 +272,7 @@ function PromoBanner({ fee }) {
                     <div className="relative">
                         <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 blur-md opacity-40" />
                         <div className="relative px-5 py-2 rounded-xl bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-500/30">
-                            <span className="text-2xl font-black text-white tracking-tight">
+                            <span className="text-2xl font-bold text-white tracking-tight">
                                 {fee ? formatRupiah(fee) : "Rp 35.000"}
                             </span>
                             <span className="text-orange-300/60 text-[10px] font-bold ml-1.5">/ sesi</span>
@@ -349,7 +349,7 @@ function MemberCard({ member, fee, isPremium, photoMap, serviceType, isPromo, an
                     />
                 ) : (
                     <div className={`
-                        w-full h-full flex items-center justify-center text-2xl font-black tracking-tight select-none
+                        w-full h-full flex items-center justify-center text-2xl font-bold tracking-tight select-none
                         ${isFullSlot ? "text-red-500/30" : isPremium ? "text-amber-400/30" : "text-white/20"}
                     `}>
                         {initials}
@@ -366,7 +366,7 @@ function MemberCard({ member, fee, isPremium, photoMap, serviceType, isPromo, an
                                 boxShadow: "0 1px 6px rgba(234,88,12,0.5)",
                             }}
                         >
-                            <span className="text-[7px] font-black text-white uppercase tracking-widest">
+                             <span className="text-[7px] font-bold text-white uppercase tracking-[0.15em]">
                                 PROMO
                             </span>
                         </div>
@@ -386,7 +386,7 @@ function MemberCard({ member, fee, isPremium, photoMap, serviceType, isPromo, an
                 {isFullSlot && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
                         <div className="bg-red-900/90 border border-red-500/40 rounded-lg px-2 py-1 transform -rotate-6 shadow-lg">
-                            <span className="text-[10px] font-black text-red-200 uppercase tracking-widest">FULLSLOT</span>
+                            <span className="text-[10px] font-bold text-red-200 uppercase tracking-[0.15em]">FULLSLOT</span>
                         </div>
                     </div>
                 )}
@@ -410,7 +410,7 @@ function MemberCard({ member, fee, isPremium, photoMap, serviceType, isPromo, an
                 </p>
 
                 <p className={`
-                    text-sm font-extrabold leading-none mt-0.5
+                    text-sm font-bold leading-none mt-0.5
                     ${isFullSlot
                         ? "text-gray-600 line-through"
                         : isPromo
@@ -468,7 +468,7 @@ function TierSection({ group, isPremium, photoMap, photosReady, serviceType }) {
             {/* Tier header */}
             <div className="flex items-center gap-3 mb-4 flex-wrap">
                 {isPromo ? (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border bg-orange-500/10 border-orange-500/25 text-orange-300">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-[0.15em] border bg-orange-500/10 border-orange-500/25 text-orange-300">
                         <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
                         </svg>
@@ -476,7 +476,7 @@ function TierSection({ group, isPremium, photoMap, photosReady, serviceType }) {
                     </span>
                 ) : (
                     <span className={`
-                        inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border
+                        inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-[0.15em] border
                         ${isPremium ? "bg-amber-400/15 border-amber-400/25 text-amber-200" : "bg-white/[0.05] border-white/[0.09] text-white/35"}
                     `}>
                         {isPremium && (
@@ -498,7 +498,7 @@ function TierSection({ group, isPremium, photoMap, photosReady, serviceType }) {
                     {nonFullslotCount} / {group.members.length} member
                 </span>
 
-                <p className={`text-sm font-extrabold ${isPromo ? "text-orange-400" : isPremium ? "text-amber-300" : "text-white/50"}`}>
+                <p className={`text-sm font-bold ${isPromo ? "text-orange-400" : isPremium ? "text-amber-300" : "text-white/50"}`}>
                     {formatRupiah(group.fee)}
                 </p>
             </div>
@@ -624,7 +624,7 @@ function TeamSection({ team, allMembers, photoMap, photosReady, serviceType }) {
                     opacity: sectionInView ? undefined : 0,
                 }}
             >
-                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border ${c.badge}`}>
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-[0.15em] border ${c.badge}`}>
                     <span className={`w-2 h-2 rounded-full ${c.dot}`} />
                     {team.name}
                 </span>
@@ -726,7 +726,7 @@ export default function PricelistPage() {
                     </div>
 
                     <h1
-                        className="text-3xl sm:text-4xl md:text-5xl font-display font-black leading-tight tracking-tight mb-3"
+                        className="text-3xl sm:text-4xl md:text-5xl font-display font-bold leading-tight tracking-tight mb-3"
                         style={{ animation: 'fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.25s both' }}
                     >
                         Pricelist{" "}
@@ -775,7 +775,7 @@ export default function PricelistPage() {
                                 <span>{s.label}</span>
                                 {s.id === PROMO_SERVICE_ID && (
                                     <span className={`
-                                        ml-0.5 text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-sm
+                                        ml-0.5 text-[7px] font-bold uppercase tracking-[0.15em] px-1.5 py-0.5 rounded-sm
                                         ${activeService.id === s.id
                                             ? "bg-red-600 text-white"
                                             : "bg-orange-500/20 text-orange-400 border border-orange-500/30"

@@ -215,7 +215,7 @@ export default function MembersTable({
                           {/* Overlay merah kalau semua service full */}
                           {allFull && (
                             <div className="absolute inset-0 bg-red-900/50 flex items-center justify-center">
-                              <span className="text-[8px] font-black text-red-200 leading-none">FULL</span>
+                              <span className="text-[8px] font-bold text-red-200 leading-none">FULL</span>
                             </div>
                           )}
                         </div>
